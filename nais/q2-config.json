@@ -1,0 +1,12 @@
+{
+  "SERVICE_USER": "/serviceuser/data/dev/srvdokdistdpv",
+  "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv/teamdokumenthandtering",
+  "APPDYNAMICS": "/apikey/appdynamics/dev",
+  "APP_NAME": "dokdistdpv",
+  "APPD_NAME": "dokdistdpv",
+  "MIN_REPLICAS": "1",
+  "MAX_REPLICAS": "2",
+  "INGRESSES": [
+    "https://dokdistdpv.dev.intern.nav.no"
+  ]
+}

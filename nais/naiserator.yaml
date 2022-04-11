@@ -1,0 +1,51 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: {{ APP_NAME }}
+  namespace: teamdokumenthandtering
+  labels:
+    team: teamdokumenthandtering
+spec:
+  env:
+    - name: APPD_NAME
+      value: {{ APPD_NAME }}
+  image: {{ image }}
+  ingresses:
+    {{#each INGRESSES}}
+       - {{this }}
+      {{/each}}
+  liveness:
+    path: /isAlive
+    port: 8080
+    initialDelay: 30
+    failureThreshold: 10
+  port: 8080
+  webproxy: true
+  prometheus:
+    enabled: true
+    path: /actuator/prometheus
+  readiness:
+    path: /isReady
+    port: 8080
+    initialDelay: 30
+    timeout: 3
+  replicas:
+    min: {{ MIN_REPLICAS }}
+    max: {{ MAX_REPLICAS }}
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 1536Mi
+    requests:
+      cpu: 60m
+      memory: 1024Mi
+  vault:
+    enabled: true
+    paths:
+      - kvPath: {{ SERVICE_USER }}
+        mountPath: "/secrets/serviceuser/srvdokdistdpv"
+      - kvPath: {{ DOKDISTDPV_VAULT }}
+        mountPath: "/var/run/secrets/nais.io/vault"
+      - kvPath: {{ APPDYNAMICS }}
+        mountPath: /var/run/secrets/nais.io/appdynamics
