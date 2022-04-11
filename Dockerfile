@@ -17,6 +17,6 @@ USER apprunner
 
 ENV APPD_ENABLED=true
 ENV MAIN_CLASS="org.springframework.boot.loader.JarLauncher"
-ENV JAVA_OPTS="-Xmx1024 \
+ENV JAVA_OPTS="-Xmx1024m \
                -Djava.security.egd=file:/dev/./urandom \
                -Dspring.profiles.active=nais"
