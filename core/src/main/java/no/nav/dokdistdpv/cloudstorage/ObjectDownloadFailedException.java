@@ -8,9 +8,6 @@ import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public class ObjectDownloadFailedException extends DokdistdpvTechnicalException {
-	public ObjectDownloadFailedException(String message) {
-		super(message);
-	}
 
 	public ObjectDownloadFailedException(String message, Throwable cause) {
 		super(message, cause);

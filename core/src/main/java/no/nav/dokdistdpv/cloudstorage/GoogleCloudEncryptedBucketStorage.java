@@ -6,6 +6,7 @@ import com.google.crypto.tink.Aead;
 
 import java.security.GeneralSecurityException;
 
+import static java.lang.String.format;
 import static no.nav.dokdistdpv.cloudstorage.JsonSerializer.deserialize;
 
 /**
@@ -32,10 +33,10 @@ public class GoogleCloudEncryptedBucketStorage implements EncryptedBucketStorage
 			DokDistDokumentFraBucket dokDistDokumentFraBucket = deserialize(new String(plainText), DokDistDokumentFraBucket.class);
 			return dokDistDokumentFraBucket.withObjectName(objectName);
 		} catch (GeneralSecurityException | StorageException e) {
-			throw new ObjectDownloadFailedException(String.format("Teknisk feil mot Google Cloud Storage ved henting på objectName=%s. Feilmelding=%s",
+			throw new ObjectDownloadFailedException(format("Teknisk feil mot Google Cloud Storage ved henting av objectName=%s. Feilmelding=%s",
 					objectName, e.getMessage()), e);
 		} catch (IllegalStateException e) {
-			throw new ObjectDownloadFailedException(String.format("Klarte ikke unmarshalle objectName=%s etter henting fra Google Cloud Storage og dekryptering. Feilmelding=%s",
+			throw new ObjectDownloadFailedException(format("Klarte ikke unmarshalle objectName=%s etter henting fra Google Cloud Storage og dekryptering. Feilmelding=%s",
 					objectName, e.getMessage()), e);
 		}
 	}
