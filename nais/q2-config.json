@@ -1,5 +1,9 @@
 {
   "SERVICE_USER": "/serviceuser/data/dev/srvdokdistdpv",
+  "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-dev-2c5a",
+  "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-dev",
+  "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring-dev",
+  "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric-dev",
   "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv/teamdokumenthandtering",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APP_NAME": "dokdistdpv",

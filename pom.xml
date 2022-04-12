@@ -22,6 +22,8 @@
 	<properties>
 		<java.version>17</java.version>
 		<logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
+		<google-cloud.version>25.0.0</google-cloud.version>
+		<google-tink.version>1.6.1</google-tink.version>
 		<!-- provided -->
 		<lombok.version>1.18.22</lombok.version>
 		<!-- plugins -->
@@ -44,6 +46,23 @@
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
 				<version>${logstash-logback-encoder.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.cloud</groupId>
+				<artifactId>libraries-bom</artifactId>
+				<version>${google-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.crypto.tink</groupId>
+				<artifactId>tink</artifactId>
+				<version>${google-tink.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.crypto.tink</groupId>
+				<artifactId>tink-gcpkms</artifactId>
+				<version>${google-tink.version}</version>
 			</dependency>
 			<!-- provided -->
 			<dependency>

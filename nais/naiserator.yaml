@@ -9,6 +9,14 @@ spec:
   env:
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: DOKDISTMELLOMLAGER_PROJECTID
+      value: {{ DOKDISTMELLOMLAGER_PROJECTID }}
+    - name: DOKDISTMELLOMLAGER_BUCKET
+      value: {{ DOKDISTMELLOMLAGER_BUCKET }}
+    - name: DOKDISTMELLOMLAGER_KEYRING
+      value: {{ DOKDISTMELLOMLAGER_KEYRING }}
+    - name: DOKDISTMELLOMLAGER_KEYID
+      value: {{ DOKDISTMELLOMLAGER_KEYID }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
