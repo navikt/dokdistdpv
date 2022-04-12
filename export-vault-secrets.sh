@@ -2,13 +2,13 @@
 
 if test -f /secrets/serviceuser/srvdokdistdpv/username;
 then
-    echo "Setting serviceuser_username"
-    export  serviceuser_username=$(cat /secrets/serviceuser/srvdokdistdpv/username)
+    echo "Setting dokdistdpv_serviceuser_username"
+    export dokdistdpv_serviceuser_username=$(cat /secrets/serviceuser/srvdokdistdpv/username)
 fi
 if test -f /secrets/serviceuser/srvdokdistdpv/password;
 then
-    echo "Setting serviceuser_password"
-    export  serviceuser_password=$(cat /secrets/serviceuser/srvdokdistdpv/password)
+    echo "Setting dokdistdpv_serviceuser_password"
+    export dokdistdpv_serviceuser_password=$(cat /secrets/serviceuser/srvdokdistdpv/password)
 fi
 
 echo "Exporting appdynamics environment variables"

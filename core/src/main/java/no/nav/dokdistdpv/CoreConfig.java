@@ -1,6 +1,8 @@
 package no.nav.dokdistdpv;
 
 import no.nav.dokdistdpv.properties.DokdistmellomlagerProperties;
+import no.nav.dokdistdpv.properties.JmsQueueProperties;
+import no.nav.dokdistdpv.properties.ServiceuserProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,7 +12,11 @@ import java.time.Clock;
 import java.util.TimeZone;
 
 @ComponentScan
-@EnableConfigurationProperties(DokdistmellomlagerProperties.class)
+@EnableConfigurationProperties({
+		DokdistmellomlagerProperties.class,
+		ServiceuserProperties.class,
+		JmsQueueProperties.class
+})
 @Configuration
 public class CoreConfig {
 	@Bean

@@ -9,6 +9,24 @@ spec:
   env:
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: DOKDISTDPV_JMS_BROKER_HOSTNAME
+      value: {{ DOKDISTDPV_JMS_BROKER_HOSTNAME }}
+    - name: DOKDISTDPV_JMS_BROKER_NAME
+      value: {{ DOKDISTDPV_JMS_BROKER_NAME }}
+    - name: DOKDISTDPV_JMS_BROKER_PORT
+      value: "{{ DOKDISTDPV_JMS_BROKER_PORT }}"
+    - name: DOKDISTDPV_JMS_BROKER_CHANNEL
+      value: {{ DOKDISTDPV_JMS_BROKER_CHANNEL }}
+    - name: DOKDISTDPV_JMS_QUEUES_QDIST016
+      value: {{ DOKDISTDPV_JMS_QUEUES_QDIST016 }}
+    - name: DOKDISTDPV_JMS_QUEUES_QDIST016_FUNKSJONELL_FEIL
+      value: {{ DOKDISTDPV_JMS_QUEUES_QDIST016_FUNKSJONELL_FEIL }}
+    - name: DOKDISTDPV_JMS_QUEUES_QDIST017
+      value: {{ DOKDISTDPV_JMS_QUEUES_QDIST017 }}
+    - name: DOKDISTDPV_JMS_QUEUES_QDIST017_FUNKSJONELL_FEIL
+      value: {{ DOKDISTDPV_JMS_QUEUES_QDIST017_FUNKSJONELL_FEIL }}
+    - name: DOKDISTDPV_JMS_QUEUES_QDIST009
+      value: {{ DOKDISTDPV_JMS_QUEUES_QDIST009 }}
     - name: DOKDISTMELLOMLAGER_PROJECTID
       value: {{ DOKDISTMELLOMLAGER_PROJECTID }}
     - name: DOKDISTMELLOMLAGER_BUCKET
@@ -20,7 +38,7 @@ spec:
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
-       - {{this }}
+       - {{ this }}
       {{/each}}
   liveness:
     path: /isAlive
