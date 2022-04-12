@@ -24,6 +24,9 @@
 		<logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
 		<google-cloud.version>25.0.0</google-cloud.version>
 		<google-tink.version>1.6.1</google-tink.version>
+		<activemq.version>5.17.0</activemq.version>
+		<ibm-mq.version>9.2.5.0</ibm-mq.version>
+		<camel.version>3.16.0</camel.version>
 		<!-- provided -->
 		<lombok.version>1.18.22</lombok.version>
 		<!-- plugins -->
@@ -63,6 +66,30 @@
 				<groupId>com.google.crypto.tink</groupId>
 				<artifactId>tink-gcpkms</artifactId>
 				<version>${google-tink.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-jms-pool</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ibm.mq</groupId>
+				<artifactId>com.ibm.mq.allclient</artifactId>
+				<version>${ibm-mq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-spring-boot-bom</artifactId>
+				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-bom</artifactId>
+				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- provided -->
 			<dependency>
