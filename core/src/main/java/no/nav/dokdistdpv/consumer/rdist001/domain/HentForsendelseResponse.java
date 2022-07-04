@@ -1,0 +1,58 @@
+package no.nav.dokdistdpv.consumer.rdist001.domain;
+
+import java.util.List;
+
+public record HentForsendelseResponse(
+		String bestillingsId,
+		String konversasjonId,
+		String bestillendeFagsystem,
+		String modus,
+		String forsendelseStatus,
+		String tema,
+		String forsendelseTittel,
+		String batchId,
+		String dokumentProdApp,
+		Mottaker mottaker,
+		ArkivInformasjon arkivInformasjon,
+		Postadresse postadresse,
+		List<Dokument> dokumenter,
+		DistribusjonstidspunktKode distribusjonstidspunkt,
+		DistribusjonsTypeKode distribusjonstype) {
+
+	public static final String ARKIV_SYSTEM_JOARK = "JOARK";
+
+	public boolean isIkkeArkivertIJoark() {
+		return arkivInformasjon == null || !ARKIV_SYSTEM_JOARK.equals(arkivInformasjon.arkivSystem);
+	}
+
+	public record Mottaker(
+			String mottakerId,
+			String mottakerNavn,
+			String mottakerType
+	) {
+	}
+
+	public record ArkivInformasjon(
+			String arkivSystem,
+			String arkivId
+	) {
+	}
+
+	public record Postadresse(
+			String adresselinje1,
+			String adresselinje2,
+			String adresselinje3,
+			String postnummer,
+			String poststed,
+			String landkode
+	) {
+	}
+
+	public record Dokument(
+			String tilknyttetSom,
+			String dokumentObjektReferanse,
+			String arkivDokumentInfoId,
+			String dokumenttypeId
+	) {
+	}
+}

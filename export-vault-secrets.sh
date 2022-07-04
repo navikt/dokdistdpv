@@ -21,6 +21,21 @@ else
     echo "No such file or directory found at /var/run/secrets/nais.io/appdynamics/appdynamics.env"
 fi
 
+if test -f /secrets/virksomhetssertifikat/credentials.json
+then
+    echo "Setting virksomhetssertifikat_alias"
+    export virksomhetssertifikat_alias="$(cat /secrets/virksomhetssertifikat/credentials.json | jq -r '.alias')"
+    echo "Setting virksomhetssertifikat_password"
+    export virksomhetssertifikat_password="$(cat /secrets/virksomhetssertifikat/credentials.json | jq -r '.password')"
+    echo "Setting virksomhetssertifikat_type"
+    export virksomhetssertifikat_type="$(cat /secrets/virksomhetssertifikat/credentials.json | jq -r '.type')"
+fi
+if test -f /secrets/virksomhetssertifikat/key.p12.b64
+then
+    echo "Setting virksomhetssertifikat_path"
+    export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12.b64"
+fi
+
 if test -f /var/run/secrets/nais.io/vault/gcloud_serviceaccount
 then
     echo "Setting GOOGLE_APPLICATION_CREDENTIALS"

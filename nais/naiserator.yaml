@@ -35,6 +35,12 @@ spec:
       value: {{ DOKDISTMELLOMLAGER_KEYRING }}
     - name: DOKDISTMELLOMLAGER_KEYID
       value: {{ DOKDISTMELLOMLAGER_KEYID }}
+    - name: ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT
+      value: {{ ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT }}
+    - name: ALTINN_EXTERNAL_SERVICE_CODE
+      value: {{ ALTINN_EXTERNAL_SERVICE_CODE }}
+    - name: ALTINN_EXTERNAL_SERVICE_EDITION_CODE
+      value: {{ ALTINN_EXTERNAL_SERVICE_EDITION_CODE }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -73,5 +79,10 @@ spec:
         mountPath: "/secrets/serviceuser/srvdokdistdpv"
       - kvPath: {{ DOKDISTDPV_VAULT }}
         mountPath: "/var/run/secrets/nais.io/vault"
+      - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
+        mountPath: "/secrets/virksomhetssertifikat"
       - kvPath: {{ APPDYNAMICS }}
         mountPath: /var/run/secrets/nais.io/appdynamics
+  azure:
+    application:
+      enabled: true

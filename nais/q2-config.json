@@ -16,6 +16,11 @@
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring-dev",
   "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric-dev",
 
+  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/preprod/INSERT HEREEE/",
+  "ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT": "https://tt02.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
+  "ALTINN_EXTERNAL_SERVICE_CODE": "5828",
+  "ALTINN_EXTERNAL_SERVICE_EDITION_CODE": "1",
+
   "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv/teamdokumenthandtering",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APP_NAME": "dokdistdpv",
