@@ -5,6 +5,7 @@ import no.nav.dokdistdpv.exception.SafGraphQLFunctionalException;
 import no.nav.dokdistdpv.exception.SafGraphQLTechnicalException;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
+import no.nav.dokdistdpv.utils.MDCOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -39,6 +40,7 @@ public class SafGraphQLConsumer {
 
 		JournalpostQueryResponse safJournalpost = safGraphQLClient
 				.post()
+				.header("Nav-Call-Id", MDCOperations.getCallId())
 				.bodyValue(BodyInserters.fromValue(request))
 				.retrieve()
 				.bodyToMono(JournalpostQueryResponse.class)

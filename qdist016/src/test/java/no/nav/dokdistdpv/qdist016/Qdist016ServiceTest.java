@@ -1,0 +1,74 @@
+package no.nav.dokdistdpv.qdist016;
+
+import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
+import no.nav.dokdistdpv.config.cxf.AltinnClient;
+import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
+import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
+import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+
+import static no.nav.dokdistdpv.qdist016.TestUtils.createAltinnDokumenter;
+import static no.nav.dokdistdpv.qdist016.TestUtils.createDistribuerTilKanal;
+import static no.nav.dokdistdpv.qdist016.TestUtils.createHentForsendelseResponse;
+import static no.nav.dokdistdpv.qdist016.TestUtils.createHentForsendelseResponseWithKonversasjonId;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest(classes = {Qdist016Service.class})
+class Qdist016ServiceTest {
+
+	private final HentForsendelseResponse HENT_FORSENDELSE_RESPONSE = createHentForsendelseResponse();
+	private final List<AltinnDokument> ALTINN_DOKUMENTER = createAltinnDokumenter();
+	private final DistribuerTilKanal DISTRIBUER_TIL_KANAL = createDistribuerTilKanal();
+	private final ReceiptExternal RECEIPT_EXTERNAL = new ReceiptExternal();
+
+	@Autowired
+	private Qdist016Service service;
+
+	@MockBean
+	private AdministrerForsendelseConsumer administrerForsendelseeConsumer;
+
+	@MockBean
+	private DokumentService dokumentService;
+
+	@MockBean
+	private AltinnClient altinnClient;
+
+	@Test
+	void distribuerForsendelseTilDPV() {
+
+		when(administrerForsendelseeConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
+		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
+		when(altinnClient.insertCorrespondence(
+				HENT_FORSENDELSE_RESPONSE.konversasjonId(),
+				HENT_FORSENDELSE_RESPONSE,
+				ALTINN_DOKUMENTER)).thenReturn(RECEIPT_EXTERNAL);
+
+		var result = service.distribuerForsendelseTilDPV(DISTRIBUER_TIL_KANAL);
+
+		assertEquals(result, DISTRIBUER_TIL_KANAL.getForsendelseId());
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {TestUtils.KONVERSASJON_ID})
+	@NullAndEmptySource
+	void genererKonversasjonId(String konversasjonId) {
+
+		var hentForsendelseResponse = createHentForsendelseResponseWithKonversasjonId(konversasjonId);
+		var result = service.genererKonversasjonId(hentForsendelseResponse.konversasjonId(), hentForsendelseResponse);
+
+		assertNotNull(result);
+	}
+}

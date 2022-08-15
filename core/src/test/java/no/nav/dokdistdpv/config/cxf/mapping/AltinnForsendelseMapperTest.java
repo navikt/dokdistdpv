@@ -6,7 +6,6 @@ import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.Notification;
 import no.altinn.correspondenceagencyexternalaec.NotificationBEList;
 import no.altinn.correspondenceagencyexternalaec.ReceiverEndPoint;
-import no.nav.dokdistdpv.config.cxf.ServiceCode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +40,8 @@ class AltinnForsendelseMapperTest {
 	private static final String SERVICE_CODE = "5828";
 	private static final String SERVICE_EDITION_CODE = "1";
 	private static final String REPORTEE = "123456789";
-	ServiceCode serviceCode = new ServiceCode(SERVICE_CODE, SERVICE_EDITION_CODE);
+	private static final String serviceCode = SERVICE_CODE;
+	private static final String serviceEditionCode = SERVICE_EDITION_CODE;
 
 	@ParameterizedTest
 	@MethodSource("provideMessageTitleMessageBodyAndNotificationTypeForDistribusjonstype")
@@ -54,7 +54,7 @@ class AltinnForsendelseMapperTest {
 		HentForsendelseResponse forsendelse = createHentForsendelseReponse(distribusjonsTypeKode);
 		List<AltinnDokument> dokumenter = createDokumenter();
 
-		InsertCorrespondenceV2 result = mapToCorrespondence(forsendelse, dokumenter, serviceCode);
+		InsertCorrespondenceV2 result = mapToCorrespondence(forsendelse, dokumenter, serviceCode, serviceEditionCode);
 
 		assertEquals(SERVICE_CODE, result.getServiceCode());
 		assertEquals(SERVICE_EDITION_CODE, result.getServiceEdition());

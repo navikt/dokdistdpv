@@ -19,10 +19,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class SafGraphQLConfig {
 
 	@NotEmpty
-	private final String baseUrl;
+	private String baseUrl;
 
 	@NotEmpty
-	private final String scope;
+	private String scope;
 
 	@Bean("safGraphQLClient")
 	public WebClient webClient(WebClient.Builder webClientBuilder) {

@@ -40,15 +40,15 @@
 						<configuration>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/wsdl/CorrespondenceAgencyExternalAEC2.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/wsdl/CorrespondenceAgencyExternalEC2.wsdl</wsdl>
 									<extraargs>
 										<extraarg>-autoNameResolution</extraarg>
 										<extraarg>-p</extraarg>
 										<extraarg>no.altinn.correspondenceagencyexternalaec</extraarg>
 									</extraargs>
-									<wsdlLocation>classpath:wsdl/CorrespondenceAgencyExternalAEC2.wsdl</wsdlLocation>
+									<wsdlLocation>classpath:wsdl/CorrespondenceAgencyExternalEC2.wsdl</wsdlLocation>
 									<bindingFiles>
-										<bindingFile>${basedir}/src/main/resources/CorrespondenceAgencyExternalAEC2Binding.xml</bindingFile>
+										<bindingFile>${basedir}/src/main/resources/CorrespondenceAgencyExternalEC2Binding.xml</bindingFile>
 									</bindingFiles>
 								</wsdlOption>
 							</wsdlOptions>

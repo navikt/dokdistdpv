@@ -1,40 +1,45 @@
 package no.nav.dokdistdpv.config.cxf;
 
-import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalAEC2SF;
-import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalAEC2;
-import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalAEC2InsertCorrespondenceAECV2AltinnFaultFaultFaultMessage;
+import lombok.ToString;
+import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
+import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
+import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import no.nav.dokdistdpv.exception.AltinnException;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.ws.BindingProvider;
 import java.util.List;
+import java.util.Properties;
 
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
-import static no.nav.dokdistdpv.config.cxf.AltinnClientConfig.ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
 
 @Component
 public class AltinnClient {
 
-	private final ServiceCode serviceCode;
+	private AltinnProps altinnProps;
 
-	private final ICorrespondenceAgencyExternalAEC2 iCorrespondenceAgencyExternalAEC2;
+	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
-	protected AltinnClient(ServiceCode serviceCode) {
-		this.serviceCode = serviceCode;
-		this.iCorrespondenceAgencyExternalAEC2 = getClient();
+	protected AltinnClient(AltinnProps altinnProps) {
+		this.altinnProps = altinnProps;
+		this.iCorrespondenceAgencyExternalEC2 = getClient();
 	}
 
-	private ICorrespondenceAgencyExternalAEC2 getClient() {
-		CorrespondenceAgencyExternalAEC2SF service = new CorrespondenceAgencyExternalAEC2SF();
-		ICorrespondenceAgencyExternalAEC2 port = service.getCustomBindingICorrespondenceAgencyExternalAEC2();
+	private ICorrespondenceAgencyExternalEC2 getClient() {
+		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
+		ICorrespondenceAgencyExternalEC2 port = service.getCustomBindingICorrespondenceAgencyExternalEC2();
 		BindingProvider bindingProvider = (BindingProvider) port;
-		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT);
+		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProps.endpoint);
 
 		Client client = ClientProxy.getClient(port);
 		client.getRequestContext().put("security.signature.properties", SecurityCredentials.keyStoreProperties);
@@ -51,9 +56,46 @@ public class AltinnClient {
 			String konversasjonId,
 			HentForsendelseResponse forsendelse,
 			List<AltinnDokument> dokumenter
-	) throws ICorrespondenceAgencyExternalAEC2InsertCorrespondenceAECV2AltinnFaultFaultFaultMessage {
-		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, serviceCode);
+	) {
 
-		return iCorrespondenceAgencyExternalAEC2.insertCorrespondenceAECV2(konversasjonId, insertCorrespondenceV2);
+		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProps.serviceCode, altinnProps.serviceEditionCode);
+
+		try {
+			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
+					altinnProps.username, altinnProps.password, altinnProps.userCode,
+					konversasjonId, insertCorrespondenceV2);
+		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
+			throw new AltinnException(e.getMessage(), e.getCause());
+		}
 	}
+
+	@ConfigurationProperties("altinn")
+	record AltinnProps(
+			@NotNull String endpoint,
+			@NotNull String username,
+			@NotNull @ToString.Exclude String password,
+			@NotNull String userCode,
+			@NotBlank String serviceCode,
+			@NotBlank String serviceEditionCode) {
+	}
+
+	@ConfigurationProperties(prefix = "virksomhetssertifikat")
+	record SecurityCredentials(
+			@NotBlank String path,
+			@NotBlank String password,
+			@NotBlank String alias) {
+
+		public static final Properties keyStoreProperties = new Properties();
+
+		public SecurityCredentials {
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", path);
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", password);
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "pkcs12");
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", password);
+			keyStoreProperties.setProperty("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
+		}
+
+	}
+
 }

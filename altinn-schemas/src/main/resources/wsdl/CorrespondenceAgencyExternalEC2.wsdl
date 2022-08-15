@@ -1,5 +1,5 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:i0="http://www.altinn.no/services/ServiceEngine/Correspondence/2016/10" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="CorrespondenceAgencyExternalAEC2SF" targetNamespace="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02">
-	<wsp:Policy wsu:Id="CustomBinding_ICorrespondenceAgencyExternalAEC2_policy">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="CorrespondenceAgencyExternalEC2SF" targetNamespace="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10">
+	<wsp:Policy wsu:Id="CustomBinding_ICorrespondenceAgencyExternalEC2_policy">
 		<wsp:ExactlyOne>
 			<wsp:All>
 				<sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
@@ -214,55 +214,612 @@
 			</xs:complexType>
 			<xs:element name="AltinnFault" nillable="true" type="tns:AltinnFault"/>
 		</xs:schema>
-		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02">
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10">
+			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11"/>
+			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10"/>
 			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02"/>
 			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
 			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2010/10"/>
 			<xs:import namespace="http://schemas.altinn.no/services/Intermediary/Receipt/2009/10"/>
-			<xs:element name="GetCorrespondenceStatusDetailsAECV3">
+			<xs:element name="GetCorrespondenceStatusDetailsEC">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element xmlns:q1="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="1" name="filterCriteria" type="q1:CorrespondenceStatusFilterV3"/>
+						<xs:element minOccurs="1" name="systemUserName" type="xs:string"/>
+						<xs:element minOccurs="1" name="systemPassword" type="xs:string"/>
+						<xs:element xmlns:q1="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" minOccurs="1" name="filterCriteria" type="q1:CorrespondenceStatusFilter"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="GetCorrespondenceStatusDetailsAECV3Response">
+			<xs:element name="GetCorrespondenceStatusDetailsECResponse">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element xmlns:q2="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="GetCorrespondenceStatusDetailsAECV3Result" nillable="true" type="q2:CorrespondenceStatusResultV3"/>
+						<xs:element xmlns:q2="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" minOccurs="0" name="GetCorrespondenceStatusDetailsECResult" nillable="true" type="q2:CorrespondenceStatusResult"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetCorrespondenceStatusDetailsECV2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" name="systemUserName" type="xs:string"/>
+						<xs:element minOccurs="1" name="systemPassword" type="xs:string"/>
+						<xs:element xmlns:q3="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10" minOccurs="1" name="filterCriteria" type="q3:CorrespondenceStatusFilterV2"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetCorrespondenceStatusDetailsECV2Response">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q4="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10" minOccurs="0" name="GetCorrespondenceStatusDetailsECV2Result" nillable="true" type="q4:CorrespondenceStatusResultV2"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetCorrespondenceStatusDetailsECV3">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" name="systemUserName" type="xs:string"/>
+						<xs:element minOccurs="1" name="systemPassword" type="xs:string"/>
+						<xs:element xmlns:q5="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="1" name="filterCriteria" type="q5:CorrespondenceStatusFilterV3"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetCorrespondenceStatusDetailsECV3Response">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element xmlns:q6="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="GetCorrespondenceStatusDetailsECV3Result" nillable="true" type="q6:CorrespondenceStatusResultV3"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="CorrespondenceStatusHistoryRequest">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="CorrespondenceSendersReferences" nillable="true" type="q3:ArrayOfstring"/>
+						<xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="CorrespondenceSendersReferences" nillable="true" type="q7:ArrayOfstring"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="SystemPassword" nillable="true" type="xs:string"/>
+			<xs:element name="SystemUserName" nillable="true" type="xs:string"/>
 			<xs:element name="CorrespondenceStatusHistoryResult">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element xmlns:q4="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="CorrespondenceStatusInformation" nillable="true" type="q4:CorrespondenceStatusInformation"/>
-						<xs:element xmlns:q5="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="SdpStatusInformation" nillable="true" type="q5:SdpStatusInformation"/>
+						<xs:element xmlns:q8="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="CorrespondenceStatusInformation" nillable="true" type="q8:CorrespondenceStatusInformation"/>
+						<xs:element xmlns:q9="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" minOccurs="0" name="SdpStatusInformation" nillable="true" type="q9:SdpStatusInformation"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="InsertCorrespondenceAECV2">
+			<xs:element name="InsertCorrespondenceEC">
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element minOccurs="1" name="systemUserName" type="xs:string"/>
+						<xs:element minOccurs="1" name="systemPassword" type="xs:string"/>
+						<xs:element minOccurs="1" name="SystemUserCode" type="xs:string"/>
 						<xs:element minOccurs="1" name="ExternalShipmentReference" type="xs:string"/>
-						<xs:element xmlns:q6="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2010/10" minOccurs="1" name="Correspondence" type="q6:InsertCorrespondenceV2"/>
+						<xs:element xmlns:q10="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2010/10" minOccurs="1" name="Correspondence" type="q10:InsertCorrespondenceV2"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="InsertCorrespondenceAECV2Response">
+			<xs:element name="InsertCorrespondenceECResponse">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element xmlns:q7="http://schemas.altinn.no/services/Intermediary/Receipt/2009/10" minOccurs="0" name="InsertCorrespondenceAECV2Result" nillable="true" type="q7:ReceiptExternal"/>
+						<xs:element xmlns:q11="http://schemas.altinn.no/services/Intermediary/Receipt/2009/10" minOccurs="0" name="InsertCorrespondenceECResult" nillable="true" type="q11:ReceiptExternal"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11">
+			<xs:import namespace="http://schemas.altinn.no/services/serviceEntity/2013/11"/>
+			<xs:import namespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10"/>
+			<xs:complexType name="CorrespondenceStatusFilter">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents the request object used as input to the GetCorrespondenceStatusDetails operation in the CorrespondenceAgency service. It has fields for different filter options presented by the operation. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="CreatedAfterDate" nillable="true" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the creation date of the correspondence. Includes correspondence newer than the set date. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="CreatedBeforeDate" nillable="true" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the creation date of the correspondence. Includes correspondence older than the set date. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q1="http://schemas.altinn.no/services/serviceEntity/2013/11" minOccurs="0" name="CurrentStatus" type="q1:CorrespondenceStatusType">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the current status of the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="NotificationSent" nillable="true" type="xs:boolean">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the status of notifications. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="Reportee" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the recipient of the correspondence. </summary> <remarks> Value must be an organization number or social security number. </remarks></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="SendersReference" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the senders reference value on the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ServiceCode" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the service code. This field is mandatory. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ServiceEditionCode" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the service edition code. This field is mandatory. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="CorrespondenceStatusFilter" nillable="true" type="tns:CorrespondenceStatusFilter"/>
+			<xs:complexType name="CorrespondenceStatusResult">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents the response from the GetCorrespondenceStatusDetails operation in the CorrespondenceAgency service. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="LimitReached" type="xs:boolean">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value indicating whether the result set is larger than the list can hold. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="ServiceCode" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the service code for the correspondences in the list. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="ServiceEditionCode" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the service edition code for the correspondences in the list. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="StatusList" nillable="true" type="tns:ArrayOfStatus">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the list of correspondences and their statuses. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="CorrespondenceStatusResult" nillable="true" type="tns:CorrespondenceStatusResult"/>
+			<xs:complexType name="ArrayOfStatus">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Status" nillable="true" type="tns:Status"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfStatus" nillable="true" type="tns:ArrayOfStatus"/>
+			<xs:complexType name="Status">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents details about the status of a Correspondence. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="CorrespondenceID" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the unique id of the correspondence </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="CreatedDate" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the created date for the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a list of notifications that has been sent to recipients regarding the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="Reportee" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the reportee of the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="SendersReference" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the senders reference on the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="StatusChanges" nillable="true" type="tns:ArrayOfStatusChange">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a list of status changes the correspondence has gone through. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="Status" nillable="true" type="tns:Status"/>
+			<xs:complexType name="ArrayOfNotification">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="tns:Notification"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfNotification" nillable="true" type="tns:ArrayOfNotification"/>
+			<xs:complexType name="Notification">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents details about a notification. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="Recipient" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the recipient of the notification. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="SentDate" nillable="true" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the date for when the notification was sent to the recipient. </summary> <remarks> If the field is empty (null), it means that the notification has not been sent yet. </remarks></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q2="http://schemas.altinn.no/serviceengine/formsengine/2009/10" minOccurs="0" name="TransportType" type="q2:TransportType">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the type of transport the notification was sent on. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="Notification" nillable="true" type="tns:Notification"/>
+			<xs:complexType name="ArrayOfStatusChange">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="StatusChange" nillable="true" type="tns:StatusChange"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfStatusChange" nillable="true" type="tns:ArrayOfStatusChange"/>
+			<xs:complexType name="StatusChange">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents a status change on a correspondence element. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="StatusDate" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the date for when the status was changed to the given value. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q3="http://schemas.altinn.no/services/serviceEntity/2013/11" minOccurs="0" name="StatusType" type="q3:CorrespondenceStatusType">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the status that were set. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="StatusChange" nillable="true" type="tns:StatusChange"/>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/serviceEntity/2013/11" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/serviceEntity/2013/11">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:simpleType name="CorrespondenceStatusType">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Defines the different statuses a correspondence can have through it's lifetime. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Created">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that the correspondence has been created. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Read">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that the recipient has read the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Confirmed">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that the recipient has confirmed the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="CorrespondenceStatusType" nillable="true" type="tns:CorrespondenceStatusType"/>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/serviceengine/formsengine/2009/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:simpleType name="TransportType">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Defines types of transportation for sending notifications. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="SMS">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications should be sent via SMS. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Email">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications should be sent via email. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="IM">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications should be sent via IM. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Both">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">4</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications should be sent via both SMS and email. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="SMSPreferred">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">5</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications is preferred to be sent via SMS, but should be sent by email if no phone number exist. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="EmailPreferred">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that notifications is preferred to be sent via Email, but should be sent by SMS, of no email address exist. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="TransportType" nillable="true" type="tns:TransportType"/>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10">
+			<xs:import namespace="http://schemas.altinn.no/services/serviceEntity/2014/10"/>
+			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11"/>
+			<xs:complexType name="CorrespondenceStatusFilterV2">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents the request object used as input to the GetCorrespondenceStatusDetailsV2 operation in the CorrespondenceAgency service. It has fields for different filter options presented by the operation. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="CreatedAfterDate" nillable="true" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the creation date of the correspondence. Includes correspondence newer than the set date. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="CreatedBeforeDate" nillable="true" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the creation date of the correspondence. Includes correspondence older than the set date. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q1="http://schemas.altinn.no/services/serviceEntity/2014/10" minOccurs="0" name="CurrentStatus" type="q1:CorrespondenceStatusTypeV2">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the current status of the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="NotificationSent" nillable="true" type="xs:boolean">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the status of notifications. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="Reportee" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the recipient of the correspondence. </summary> <remarks> Value must be an organization number or social security number. </remarks></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="SendersReference" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the senders reference value on the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ServiceCode" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the service code. This field is mandatory. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ServiceEditionCode" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value used to filter correspondence based on the service edition code. This field is mandatory. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="CorrespondenceStatusFilterV2" nillable="true" type="tns:CorrespondenceStatusFilterV2"/>
+			<xs:complexType name="CorrespondenceStatusResultV2">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents the response from the GetCorrespondenceStatusDetails operation in the CorrespondenceAgency service. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="LimitReached" type="xs:boolean">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a value indicating whether the result set is larger than the list can hold. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="ServiceCode" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the service code for the correspondences in the list. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="ServiceEditionCode" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the service edition code for the correspondences in the list. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="StatusList" nillable="true" type="tns:ArrayOfStatusV2">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the list of correspondences and their statuses. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="CorrespondenceStatusResultV2" nillable="true" type="tns:CorrespondenceStatusResultV2"/>
+			<xs:complexType name="ArrayOfStatusV2">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="StatusV2" nillable="true" type="tns:StatusV2"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfStatusV2" nillable="true" type="tns:ArrayOfStatusV2"/>
+			<xs:complexType name="StatusV2">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents details about the status of a Correspondence. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="CorrespondenceID" type="xs:int">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the unique id of the correspondence </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="CreatedDate" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the created date for the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q2="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" minOccurs="0" name="Notifications" nillable="true" type="q2:ArrayOfNotification">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a list of notifications that has been sent to recipients regarding the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="Reportee" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the reportee of the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="SendersReference" nillable="true" type="xs:string">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the senders reference on the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="StatusChanges" nillable="true" type="tns:ArrayOfStatusChangeV2">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets a list of status changes the correspondence has gone through. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="StatusV2" nillable="true" type="tns:StatusV2"/>
+			<xs:complexType name="ArrayOfStatusChangeV2">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="StatusChangeV2" nillable="true" type="tns:StatusChangeV2"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ArrayOfStatusChangeV2" nillable="true" type="tns:ArrayOfStatusChangeV2"/>
+			<xs:complexType name="StatusChangeV2">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Represents a status change on a correspondence element. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" name="StatusDate" type="xs:dateTime">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the date for when the status was changed to the given value. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element xmlns:q3="http://schemas.altinn.no/services/serviceEntity/2014/10" minOccurs="0" name="StatusType" type="q3:CorrespondenceStatusTypeV2">
+						<xs:annotation>
+							<xs:appinfo/>
+							<xs:documentation><summary> Gets or sets the status that were set. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="StatusChangeV2" nillable="true" type="tns:StatusChangeV2"/>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/serviceEntity/2014/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/serviceEntity/2014/10">
+			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+			<xs:simpleType name="CorrespondenceStatusTypeV2">
+				<xs:annotation>
+					<xs:appinfo/>
+					<xs:documentation><summary> Defines the different statuses a correspondence can have through it's lifetime. </summary></xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="NotSet">
+						<xs:annotation>
+							<xs:documentation><summary> Specifies that the current status of the correspondence isn't important or unknown. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Created">
+						<xs:annotation>
+							<xs:documentation><summary> Specifies that the correspondence has been created. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Read">
+						<xs:annotation>
+							<xs:documentation><summary> Specifies that the recipient has read the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Confirmed">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that the recipient has confirmed the correspondence. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="Reserved">
+						<xs:annotation>
+							<xs:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">10</EnumerationValue>
+							</xs:appinfo>
+							<xs:documentation><summary> Specifies that correspondence message is reserved as the recipient has opted out for reservation from electronic messages. </summary></xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="CorrespondenceStatusTypeV2" nillable="true" type="tns:CorrespondenceStatusTypeV2"/>
 		</xs:schema>
 		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2016/02">
 			<xs:import namespace="http://schemas.altinn.no/services/serviceEntity/2014/10"/>
@@ -699,227 +1256,6 @@
 				</xs:restriction>
 			</xs:simpleType>
 			<xs:element name="SdpSetting" nillable="true" type="tns:SdpSetting"/>
-		</xs:schema>
-		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/serviceEntity/2014/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/serviceEntity/2014/10">
-			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
-			<xs:simpleType name="CorrespondenceStatusTypeV2">
-				<xs:annotation>
-					<xs:appinfo/>
-					<xs:documentation><summary> Defines the different statuses a correspondence can have through it's lifetime. </summary></xs:documentation>
-				</xs:annotation>
-				<xs:restriction base="xs:string">
-					<xs:enumeration value="NotSet">
-						<xs:annotation>
-							<xs:documentation><summary> Specifies that the current status of the correspondence isn't important or unknown. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Created">
-						<xs:annotation>
-							<xs:documentation><summary> Specifies that the correspondence has been created. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Read">
-						<xs:annotation>
-							<xs:documentation><summary> Specifies that the recipient has read the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Confirmed">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that the recipient has confirmed the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Reserved">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">10</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that correspondence message is reserved as the recipient has opted out for reservation from electronic messages. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-				</xs:restriction>
-			</xs:simpleType>
-			<xs:element name="CorrespondenceStatusTypeV2" nillable="true" type="tns:CorrespondenceStatusTypeV2"/>
-		</xs:schema>
-		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2014/10">
-			<xs:import namespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11"/>
-			<xs:import namespace="http://schemas.altinn.no/services/serviceEntity/2014/10"/>
-			<xs:complexType name="ArrayOfStatusV2">
-				<xs:sequence>
-					<xs:element minOccurs="0" maxOccurs="unbounded" name="StatusV2" nillable="true" type="tns:StatusV2"/>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="ArrayOfStatusV2" nillable="true" type="tns:ArrayOfStatusV2"/>
-			<xs:complexType name="StatusV2">
-				<xs:annotation>
-					<xs:appinfo/>
-					<xs:documentation><summary> Represents details about the status of a Correspondence. </summary></xs:documentation>
-				</xs:annotation>
-				<xs:sequence>
-					<xs:element minOccurs="0" name="CorrespondenceID" type="xs:int">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the unique id of the correspondence </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element minOccurs="0" name="CreatedDate" type="xs:dateTime">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the created date for the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element xmlns:q1="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" minOccurs="0" name="Notifications" nillable="true" type="q1:ArrayOfNotification">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets a list of notifications that has been sent to recipients regarding the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element minOccurs="0" name="Reportee" nillable="true" type="xs:string">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the reportee of the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element minOccurs="0" name="SendersReference" nillable="true" type="xs:string">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the senders reference on the correspondence. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element minOccurs="0" name="StatusChanges" nillable="true" type="tns:ArrayOfStatusChangeV2">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets a list of status changes the correspondence has gone through. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="StatusV2" nillable="true" type="tns:StatusV2"/>
-			<xs:complexType name="ArrayOfStatusChangeV2">
-				<xs:sequence>
-					<xs:element minOccurs="0" maxOccurs="unbounded" name="StatusChangeV2" nillable="true" type="tns:StatusChangeV2"/>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="ArrayOfStatusChangeV2" nillable="true" type="tns:ArrayOfStatusChangeV2"/>
-			<xs:complexType name="StatusChangeV2">
-				<xs:annotation>
-					<xs:appinfo/>
-					<xs:documentation><summary> Represents a status change on a correspondence element. </summary></xs:documentation>
-				</xs:annotation>
-				<xs:sequence>
-					<xs:element minOccurs="0" name="StatusDate" type="xs:dateTime">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the date for when the status was changed to the given value. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element xmlns:q2="http://schemas.altinn.no/services/serviceEntity/2014/10" minOccurs="0" name="StatusType" type="q2:CorrespondenceStatusTypeV2">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the status that were set. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="StatusChangeV2" nillable="true" type="tns:StatusChangeV2"/>
-		</xs:schema>
-		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11">
-			<xs:import namespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10"/>
-			<xs:complexType name="ArrayOfNotification">
-				<xs:sequence>
-					<xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="tns:Notification"/>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="ArrayOfNotification" nillable="true" type="tns:ArrayOfNotification"/>
-			<xs:complexType name="Notification">
-				<xs:annotation>
-					<xs:appinfo/>
-					<xs:documentation><summary> Represents details about a notification. </summary></xs:documentation>
-				</xs:annotation>
-				<xs:sequence>
-					<xs:element minOccurs="0" name="Recipient" nillable="true" type="xs:string">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the recipient of the notification. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element minOccurs="0" name="SentDate" nillable="true" type="xs:dateTime">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the date for when the notification was sent to the recipient. </summary> <remarks> If the field is empty (null), it means that the notification has not been sent yet. </remarks></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element xmlns:q1="http://schemas.altinn.no/serviceengine/formsengine/2009/10" minOccurs="0" name="TransportType" type="q1:TransportType">
-						<xs:annotation>
-							<xs:appinfo/>
-							<xs:documentation><summary> Gets or sets the type of transport the notification was sent on. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:sequence>
-			</xs:complexType>
-			<xs:element name="Notification" nillable="true" type="tns:Notification"/>
-		</xs:schema>
-		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.altinn.no/serviceengine/formsengine/2009/10" elementFormDefault="qualified" targetNamespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
-			<xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
-			<xs:simpleType name="TransportType">
-				<xs:annotation>
-					<xs:appinfo/>
-					<xs:documentation><summary> Defines types of transportation for sending notifications. </summary></xs:documentation>
-				</xs:annotation>
-				<xs:restriction base="xs:string">
-					<xs:enumeration value="SMS">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications should be sent via SMS. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Email">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications should be sent via email. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="IM">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications should be sent via IM. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="Both">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">4</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications should be sent via both SMS and email. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="SMSPreferred">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">5</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications is preferred to be sent via SMS, but should be sent by email if no phone number exist. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-					<xs:enumeration value="EmailPreferred">
-						<xs:annotation>
-							<xs:appinfo>
-								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
-							</xs:appinfo>
-							<xs:documentation><summary> Specifies that notifications is preferred to be sent via Email, but should be sent by SMS, of no email address exist. </summary></xs:documentation>
-						</xs:annotation>
-					</xs:enumeration>
-				</xs:restriction>
-			</xs:simpleType>
-			<xs:element name="TransportType" nillable="true" type="tns:TransportType"/>
 		</xs:schema>
 		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 			<xs:complexType name="ArrayOfstring">
@@ -1805,70 +2141,104 @@
 			<xs:element name="ReferenceType" nillable="true" type="tns:ReferenceType"/>
 		</xs:schema>
 	</wsdl:types>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_Test_InputMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_Test_InputMessage">
 		<wsdl:part xmlns:q1="http://www.altinn.no/services/2009/10" name="parameters" element="q1:Test"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_Test_OutputMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_Test_OutputMessage">
 		<wsdl:part xmlns:q2="http://www.altinn.no/services/2009/10" name="parameters" element="q2:TestResponse"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_Test_AltinnFaultFault_FaultMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_Test_AltinnFaultFault_FaultMessage">
 		<wsdl:part xmlns:q3="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q3:AltinnFault"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_InputMessage">
-		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsAECV3"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsEC"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_OutputMessage">
-		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsAECV3Response"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsECResponse"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_AltinnFaultFault_FaultMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_AltinnFaultFault_FaultMessage">
 		<wsdl:part xmlns:q4="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q4:AltinnFault"/>
 	</wsdl:message>
-	<wsdl:message name="CorrespondenceStatusHistoryRequestExternalBE">
-		<wsdl:part name="parameters" element="tns:CorrespondenceStatusHistoryRequest"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsECV2"/>
 	</wsdl:message>
-	<wsdl:message name="CorrespondenceStatusHistoryResultExternalBE">
-		<wsdl:part name="parameters" element="tns:CorrespondenceStatusHistoryResult"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsECV2Response"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusHistoryAEC_AltinnFaultFault_FaultMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_AltinnFaultFault_FaultMessage">
 		<wsdl:part xmlns:q5="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q5:AltinnFault"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_InputMessage">
-		<wsdl:part name="parameters" element="tns:InsertCorrespondenceAECV2"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_InputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsECV3"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_OutputMessage">
-		<wsdl:part name="parameters" element="tns:InsertCorrespondenceAECV2Response"/>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GetCorrespondenceStatusDetailsECV3Response"/>
 	</wsdl:message>
-	<wsdl:message name="ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_AltinnFaultFault_FaultMessage">
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_AltinnFaultFault_FaultMessage">
 		<wsdl:part xmlns:q6="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q6:AltinnFault"/>
 	</wsdl:message>
-	<wsdl:portType name="ICorrespondenceAgencyExternalAEC2">
+	<wsdl:message name="CorrespondenceStatusHistoryRequest">
+		<wsdl:part name="parameters" element="tns:CorrespondenceStatusHistoryRequest"/>
+	</wsdl:message>
+	<wsdl:message name="CorrespondenceStatusHistoryRequest_Headers">
+		<wsdl:part name="SystemPassword" element="tns:SystemPassword"/>
+		<wsdl:part name="SystemUserName" element="tns:SystemUserName"/>
+	</wsdl:message>
+	<wsdl:message name="CorrespondenceStatusHistoryResult">
+		<wsdl:part name="parameters" element="tns:CorrespondenceStatusHistoryResult"/>
+	</wsdl:message>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusHistoryEC_AltinnFaultFault_FaultMessage">
+		<wsdl:part xmlns:q7="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q7:AltinnFault"/>
+	</wsdl:message>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_InputMessage">
+		<wsdl:part name="parameters" element="tns:InsertCorrespondenceEC"/>
+	</wsdl:message>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_OutputMessage">
+		<wsdl:part name="parameters" element="tns:InsertCorrespondenceECResponse"/>
+	</wsdl:message>
+	<wsdl:message name="ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_AltinnFaultFault_FaultMessage">
+		<wsdl:part xmlns:q8="http://www.altinn.no/services/common/fault/2009/10" name="detail" element="q8:AltinnFault"/>
+	</wsdl:message>
+	<wsdl:portType name="ICorrespondenceAgencyExternalEC2">
 		<wsdl:documentation><summary> External interface for exposing service operations for correspondence for AgencySystem using certificate. </summary></wsdl:documentation>
 		<wsdl:operation name="Test">
-			<wsdl:input wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/Test" message="tns:ICorrespondenceAgencyExternalAEC2_Test_InputMessage"/>
-			<wsdl:output wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/TestResponse" message="tns:ICorrespondenceAgencyExternalAEC2_Test_OutputMessage"/>
-			<wsdl:fault wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/TestAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalAEC2_Test_AltinnFaultFault_FaultMessage"/>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/Test" message="tns:ICorrespondenceAgencyExternalEC2_Test_InputMessage"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/TestResponse" message="tns:ICorrespondenceAgencyExternalEC2_Test_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/2009/10/IAltinnContractBase/TestAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_Test_AltinnFaultFault_FaultMessage"/>
 		</wsdl:operation>
-		<wsdl:operation name="GetCorrespondenceStatusDetailsAECV3">
-			<wsdl:documentation><summary> GetCorrespondenceStatusDetailsECV3 is the 3rd version of GetCorrespondenceStatusDetailsEC. This operation is versioned to include status information about secure digital post </summary> <param name="filterCriteria"> Filter options for search for correspondence. </param> <returns> A list of correspondence details that matched the filter options."/&gt; </returns></wsdl:documentation>
-			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusDetailsAECV3" message="tns:ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_InputMessage"/>
-			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusDetailsAECV3Response" message="tns:ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_OutputMessage"/>
-			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusDetailsAECV3AltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusDetailsAECV3_AltinnFaultFault_FaultMessage"/>
+		<wsdl:operation name="GetCorrespondenceStatusDetailsEC">
+			<wsdl:documentation><summary> This operation will retrieve a list of Correspondence elements with a few details related to the status of the Correspondence. Agencies can for example use this service to see if their correspondence is read or confirmed by the recipient(reportee). </summary> <param name="systemUserName"> System user name is the system identifier for the end user system as registered in Altinn - mandatory parameter </param> <param name="systemPassword"> System password is the password for the registered end user system - mandatory parameter </param> <param name="filterCriteria"> Filter options for search for correspondence. </param> <returns> A list of correspondence details that matched the filter options."/&gt; </returns></wsdl:documentation>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsEC" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_InputMessage"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECResponse" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsEC_AltinnFaultFault_FaultMessage"/>
 		</wsdl:operation>
-		<wsdl:operation name="GetCorrespondenceStatusHistoryAEC">
+		<wsdl:operation name="GetCorrespondenceStatusDetailsECV2">
+			<wsdl:documentation><summary> GetCorrespondenceStatusDetailsECV2 is the V2 version operation for GetCorrespondenceStatusDetailsEC. This operation is versioned to include a new correspondence status filter which allow agencies to filter and get the reserved status correspondences. This operation will retrieve a list of Correspondence elements with a few details related to the status of the Correspondence. Agencies can for example use this service to see if their correspondence is read, confirmed or reserved by the recipient(reportee). </summary> <param name="systemUserName"> System user name is the system identifier for the end user system as registered in Altinn - mandatory parameter </param> <param name="systemPassword"> System password is the password for the registered end user system - mandatory parameter </param> <param name="filterCriteria"> Filter options for search for correspondence. </param> <returns> A list of correspondence details that matched the filter options."/&gt; </returns></wsdl:documentation>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV2" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_InputMessage"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV2Response" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV2AltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV2_AltinnFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetCorrespondenceStatusDetailsECV3">
+			<wsdl:documentation><summary> GetCorrespondenceStatusDetailsECV3 is the 3rd version of GetCorrespondenceStatusDetailsEC. This operation is versioned to include status information about secure digital post </summary> <param name="systemUserName"> System user name is the system identifier for the end user system as registered in Altinn - mandatory parameter </param> <param name="systemPassword"> System password is the password for the registered end user system - mandatory parameter </param> <param name="filterCriteria"> Filter options for search for correspondence. </param> <returns> A list of correspondence details that matched the filter options. </returns></wsdl:documentation>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV3" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_InputMessage"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV3Response" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV3AltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusDetailsECV3_AltinnFaultFault_FaultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetCorrespondenceStatusHistoryEC">
 			<wsdl:documentation><summary> Retrieves correspondence status history for a set of senders references. The information retrieved is the same as for GetCorrespondenceStatusDetails, but is based only in senders references in order to allow service owners access to common correspondence services. </summary> <param name="referenceRequest"> contains senders references for the Correspondences to retrieve status for. </param> <returns> A list of correspondence details that matched the senders references. </returns></wsdl:documentation>
-			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusHistoryAEC" name="CorrespondenceStatusHistoryRequestExternalBE" message="tns:CorrespondenceStatusHistoryRequestExternalBE"/>
-			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusHistoryAECResponse" name="CorrespondenceStatusHistoryResultExternalBE" message="tns:CorrespondenceStatusHistoryResultExternalBE"/>
-			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusHistoryAECAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalAEC2_GetCorrespondenceStatusHistoryAEC_AltinnFaultFault_FaultMessage"/>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusHistoryEC" name="CorrespondenceStatusHistoryRequest" message="tns:CorrespondenceStatusHistoryRequest"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusHistoryECResponse" name="CorrespondenceStatusHistoryResult" message="tns:CorrespondenceStatusHistoryResult"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusHistoryECAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_GetCorrespondenceStatusHistoryEC_AltinnFaultFault_FaultMessage"/>
 		</wsdl:operation>
-		<wsdl:operation name="InsertCorrespondenceAECV2">
-			<wsdl:documentation><summary> Sends one or more correspondences to users. </summary> <remarks> Optional additional information include CaseId used if the correspondence(s) shall be a part of a collaboration service and AllowForwarding in order to specify whether the correspondence(s) has the ability to be forwarded as email or not by the end user in SBL. Note that when not submitting the AllowForwarding element it is default that the correspondence(s) can be forwarded. </remarks> <param name="ExternalShipmentReference"> An external reference to the batch request - mandatory parameter </param> <param name="Correspondence"> InsertCorrespondenceBEV2 entity with information about the correspondences - mandatory parameter </param> <returns> A ReceiptExternalBE entity with reference information for the correspondence </returns></wsdl:documentation>
-			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/InsertCorrespondenceAECV2" message="tns:ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_InputMessage"/>
-			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/InsertCorrespondenceAECV2Response" message="tns:ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_OutputMessage"/>
-			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/InsertCorrespondenceAECV2AltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalAEC2_InsertCorrespondenceAECV2_AltinnFaultFault_FaultMessage"/>
+		<wsdl:operation name="InsertCorrespondenceEC">
+			<wsdl:documentation><summary> Sends one or more correspondences to users. </summary> <remarks> Optional additional information include CaseId used if the correspondence(s) shall be a part of a collaboration service and AllowForwarding in order to specify whether the correspondence(s) has the ability to be forwarded as email or not by the end user in SBL. Note that when not submitting the AllowForwarding element it is default that the correspondence(s) can be forwarded. </remarks> <param name="systemUserName"> System user name is the relevant agency system name that is registered in Altinn - mandatory parameter </param> <param name="systemPassword"> System password is the password for the corresponding registered agency system - mandatory parameter </param> <param name="SystemUserCode"> System user code is the unique representation of the agency system - mandatory parameter </param> <param name="ExternalShipmentReference"> An external reference to the batch request - mandatory parameter </param> <param name="Correspondence"> InsertCorrespondenceBEV2 entity with information about the correspondences - mandatory parameter </param> <returns> A ReceiptExternalBE entity with reference information for the correspondence </returns></wsdl:documentation>
+			<wsdl:input wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/InsertCorrespondenceEC" message="tns:ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_InputMessage"/>
+			<wsdl:output wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/InsertCorrespondenceECResponse" message="tns:ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_OutputMessage"/>
+			<wsdl:fault wsaw:Action="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/InsertCorrespondenceECAltinnFaultFault" name="AltinnFaultFault" message="tns:ICorrespondenceAgencyExternalEC2_InsertCorrespondenceEC_AltinnFaultFault_FaultMessage"/>
 		</wsdl:operation>
 	</wsdl:portType>
-	<wsdl:binding name="CustomBinding_ICorrespondenceAgencyExternalAEC2" type="tns:ICorrespondenceAgencyExternalAEC2">
-		<wsp:PolicyReference URI="#CustomBinding_ICorrespondenceAgencyExternalAEC2_policy"/>
+	<wsdl:binding name="CustomBinding_ICorrespondenceAgencyExternalEC2" type="tns:ICorrespondenceAgencyExternalEC2">
+		<wsp:PolicyReference URI="#CustomBinding_ICorrespondenceAgencyExternalEC2_policy"/>
 		<soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
 		<wsdl:operation name="Test">
 			<soap12:operation soapAction="http://www.altinn.no/services/2009/10/IAltinnContractBase/Test" style="document"/>
@@ -1882,8 +2252,8 @@
 				<soap12:fault use="literal" name="AltinnFaultFault" namespace=""/>
 			</wsdl:fault>
 		</wsdl:operation>
-		<wsdl:operation name="GetCorrespondenceStatusDetailsAECV3">
-			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusDetailsAECV3" style="document"/>
+		<wsdl:operation name="GetCorrespondenceStatusDetailsEC">
+			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsEC" style="document"/>
 			<wsdl:input>
 				<soap12:body use="literal"/>
 			</wsdl:input>
@@ -1894,20 +2264,46 @@
 				<soap12:fault use="literal" name="AltinnFaultFault" namespace=""/>
 			</wsdl:fault>
 		</wsdl:operation>
-		<wsdl:operation name="GetCorrespondenceStatusHistoryAEC">
-			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/GetCorrespondenceStatusHistoryAEC" style="document"/>
-			<wsdl:input name="CorrespondenceStatusHistoryRequestExternalBE">
+		<wsdl:operation name="GetCorrespondenceStatusDetailsECV2">
+			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV2" style="document"/>
+			<wsdl:input>
 				<soap12:body use="literal"/>
 			</wsdl:input>
-			<wsdl:output name="CorrespondenceStatusHistoryResultExternalBE">
+			<wsdl:output>
 				<soap12:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="AltinnFaultFault">
 				<soap12:fault use="literal" name="AltinnFaultFault" namespace=""/>
 			</wsdl:fault>
 		</wsdl:operation>
-		<wsdl:operation name="InsertCorrespondenceAECV2">
-			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2017/02/ICorrespondenceAgencyExternalAEC/InsertCorrespondenceAECV2" style="document"/>
+		<wsdl:operation name="GetCorrespondenceStatusDetailsECV3">
+			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusDetailsECV3" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="AltinnFaultFault">
+				<soap12:fault use="literal" name="AltinnFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetCorrespondenceStatusHistoryEC">
+			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/GetCorrespondenceStatusHistoryEC" style="document"/>
+			<wsdl:input name="CorrespondenceStatusHistoryRequest">
+				<soap12:header message="tns:CorrespondenceStatusHistoryRequest_Headers" part="SystemPassword" use="literal"/>
+				<soap12:header message="tns:CorrespondenceStatusHistoryRequest_Headers" part="SystemUserName" use="literal"/>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="CorrespondenceStatusHistoryResult">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="AltinnFaultFault">
+				<soap12:fault use="literal" name="AltinnFaultFault" namespace=""/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="InsertCorrespondenceEC">
+			<soap12:operation soapAction="http://www.altinn.no/services/ServiceEngine/Correspondence/2010/10/ICorrespondenceAgencyExternalEC/InsertCorrespondenceEC" style="document"/>
 			<wsdl:input>
 				<soap12:body use="literal"/>
 			</wsdl:input>
@@ -1919,11 +2315,11 @@
 			</wsdl:fault>
 		</wsdl:operation>
 	</wsdl:binding>
-	<wsdl:service name="CorrespondenceAgencyExternalAEC2SF">
-		<wsdl:port name="CustomBinding_ICorrespondenceAgencyExternalAEC2" binding="tns:CustomBinding_ICorrespondenceAgencyExternalAEC2">
-			<soap12:address location="https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalAEC2.svc"/>
+	<wsdl:service name="CorrespondenceAgencyExternalEC2SF">
+		<wsdl:port name="CustomBinding_ICorrespondenceAgencyExternalEC2" binding="tns:CustomBinding_ICorrespondenceAgencyExternalEC2">
+			<soap12:address location="https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc"/>
 			<wsa10:EndpointReference>
-				<wsa10:Address>https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalAEC2.svc</wsa10:Address>
+				<wsa10:Address>https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc</wsa10:Address>
 			</wsa10:EndpointReference>
 		</wsdl:port>
 	</wsdl:service>

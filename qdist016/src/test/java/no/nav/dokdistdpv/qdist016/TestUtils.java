@@ -1,11 +1,15 @@
 package no.nav.dokdistdpv.qdist016;
 
 import no.nav.dokdistdpv.cloudstorage.DokDistDokumentFraBucket;
+import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.saf.JournalpostQueryResponse;
+import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -15,6 +19,7 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktK
 
 public class TestUtils {
 
+	public static final String FORSENDELSE_ID = randomUUID().toString();
 	public static final String BESTILLINGS_ID = randomUUID().toString();
 	public static final String KONVERSASJON_ID = "54ebcff5-784e-4503-821b-fadc42361879";
 	public static final String FORSENDELSESTATUS = "KLAR_FOR_DIST";
@@ -138,5 +143,24 @@ public class TestUtils {
 						new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID3, TITTEL_3))
 				)
 				.build();
+	}
+
+	public static List<AltinnDokument> createAltinnDokumenter() {
+		var pdf1 = "PDF for dokument 1".getBytes(UTF_8);
+		var pdf2 = "PDF for dokument 2".getBytes(UTF_8);
+		var pdf3 = "PDF for dokument 3".getBytes(UTF_8);
+		var tittel1 = "Hoveddokument";
+		var tittel2 = "Vedlegg 1";
+		var tittel3 = "Vedlegg 2";
+
+		return List.of(
+				new AltinnDokument(tittel1, pdf1),
+				new AltinnDokument(tittel2, pdf2),
+				new AltinnDokument(tittel3, pdf3)
+		);
+	}
+
+	public static DistribuerTilKanal createDistribuerTilKanal() {
+		return new DistribuerTilKanal().withForsendelseId(FORSENDELSE_ID);
 	}
 }

@@ -19,7 +19,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public class AdministrerForsendelseConfig {
 
 	@NotEmpty
-	private final String baseUrl;
+	private String baseUrl;
 
 	@Bean("administrerForsendelseClient")
 	public WebClient webClient(WebClient.Builder webClientBuilder,

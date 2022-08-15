@@ -54,7 +54,7 @@
 			</dependency>
 			<dependency>
 				<groupId>no.nav.dokdistdpv</groupId>
-				<artifactId>qdist011</artifactId>
+				<artifactId>qdist016</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
