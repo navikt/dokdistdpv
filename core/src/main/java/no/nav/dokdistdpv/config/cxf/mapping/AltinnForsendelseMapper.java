@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.config.cxf.mapping;
 
+import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import static no.nav.dokdistdpv.config.cxf.mapping.ContentMapper.mapContent;
 import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.mapNotifications;
 
+@Slf4j
 public class AltinnForsendelseMapper {
 
 	public static final String LANGUAGE_CODE_BOKMAAL = "1044";
@@ -19,6 +21,8 @@ public class AltinnForsendelseMapper {
 			String serviceCode,
 			String serviceEditionCode
 	) {
+
+		log.info("Mapper til altinn forsendelse. serviceCode={}, serviceEditionCode={}, reportee={}, ", serviceCode, serviceEditionCode, forsendelse.mottaker().mottakerId());
 
 		InsertCorrespondenceV2 insertCorrespondenceV2 = new InsertCorrespondenceV2();
 

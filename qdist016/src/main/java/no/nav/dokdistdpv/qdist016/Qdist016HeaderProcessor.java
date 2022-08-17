@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.qdist016.metrics;
+package no.nav.dokdistdpv.qdist016;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

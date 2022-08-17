@@ -4,6 +4,8 @@ import no.altinn.correspondenceagencyexternalaec.Notification;
 import no.altinn.correspondenceagencyexternalaec.NotificationBEList;
 import no.altinn.correspondenceagencyexternalaec.ReceiverEndPoint;
 import no.altinn.correspondenceagencyexternalaec.ReceiverEndPointBEList;
+import no.altinn.correspondenceagencyexternalaec.TextToken;
+import no.altinn.correspondenceagencyexternalaec.TextTokenSubstitutionBEList;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
@@ -23,10 +25,22 @@ public class NotificationsMapper {
 		notification.setFromAddress(FROM_ADDRESS);
 		notification.setLanguageCode(LANGUAGE_CODE_BOKMAAL);
 		notification.setNotificationType(mapNotificationType(distribusjonsTypeKode));
+		notification.setTextTokens(mapTextTokens(notification.getNotificationType()));
 		notification.setReceiverEndPoints(mapReceiverEndpoints());
 		notificationList.getNotification().add(notification);
 
 		return notificationList;
+	}
+
+	private static TextTokenSubstitutionBEList mapTextTokens(String notificationType) {
+		TextTokenSubstitutionBEList textTokenSubstitutionBEList = new TextTokenSubstitutionBEList();
+
+		TextToken textToken = new TextToken();
+		textToken.setTokenNum(1);
+		textToken.setTokenValue("Dummy test token for " + notificationType);
+		textTokenSubstitutionBEList.getTextToken().add(textToken);
+
+		return textTokenSubstitutionBEList;
 	}
 
 	private static ReceiverEndPointBEList mapReceiverEndpoints() {

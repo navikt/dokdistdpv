@@ -19,8 +19,8 @@
 
   "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/preprod/shared",
   "ALTINN_ENDPOINT": "https://tt02.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
-  "ALTINN_EXTERNAL_SERVICE_CODE": "5828",
-  "ALTINN_EXTERNAL_SERVICE_EDITION_CODE": "1",
+  "ALTINN_SERVICE_CODE": "5828",
+  "ALTINN_SERVICE_EDITION_CODE": "1",
 
   "ADMINISTRERFORSENDELSE_BASE_URL": "https://app-q2.adeo.no/dokdist",
 
@@ -32,7 +32,7 @@
   "APP_NAME": "dokdistdpv",
   "APPD_NAME": "dokdistdpv",
   "MIN_REPLICAS": "1",
-  "MAX_REPLICAS": "2",
+  "MAX_REPLICAS": "1",
   "INGRESSES": [
     "https://dokdistdpv.dev.intern.nav.no"
   ]

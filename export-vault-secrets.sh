@@ -33,7 +33,10 @@ fi
 if test -f /secrets/virksomhetssertifikat/key.p12.b64
 then
     echo "Setting virksomhetssertifikat_path"
-    export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12.b64"
+    export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12"
+
+    echo "Converting certificate from base64"
+    base64 --decode /secrets/virksomhetssertifikat/key.p12.b64 > /secrets/virksomhetssertifikat/key.p12
 fi
 
 if test -f /var/run/secrets/nais.io/vault/gcloud_serviceaccount

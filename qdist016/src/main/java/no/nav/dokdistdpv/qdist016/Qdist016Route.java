@@ -4,8 +4,6 @@ import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvFunctionalException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
-import no.nav.dokdistdpv.qdist016.metrics.Qdist016HeaderProcessor;
-import no.nav.dokdistdpv.qdist016.metrics.Qdist016MetricsRoutePolicy;
 import no.nav.dokdistdpv.utils.MDCRemoveProcessor;
 import no.nav.dokdistdpv.utils.MDCSetProcessor;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
@@ -33,7 +31,6 @@ public class Qdist016Route extends RouteBuilder {
 	private final Queue qdist016;
 	private final Queue qdist016FunksjonellFeil;
 	private final Queue qdist016TekniskFeil;
-	private final Qdist016MetricsRoutePolicy qdist016MetricsRoutePolicy;
 	private final DokdistdpvProperties dokdistdpvProperties;
 
 	public Qdist016Route(CamelContext context,
@@ -41,14 +38,12 @@ public class Qdist016Route extends RouteBuilder {
 						 Queue qdist016,
 						 Queue qdist016FunksjonellFeil,
 						 Queue qdist016TekniskFeil,
-						 Qdist016MetricsRoutePolicy qdist016MetricsRoutePolicy,
 						 DokdistdpvProperties dokdistdpvProperties) {
 		super(context);
 		this.qdist016Service = qdist016Service;
 		this.qdist016 = qdist016;
 		this.qdist016FunksjonellFeil = qdist016FunksjonellFeil;
 		this.qdist016TekniskFeil = qdist016TekniskFeil;
-		this.qdist016MetricsRoutePolicy = qdist016MetricsRoutePolicy;
 		this.dokdistdpvProperties = dokdistdpvProperties;
 	}
 
@@ -83,14 +78,14 @@ public class Qdist016Route extends RouteBuilder {
 		from("jms:" + qdist016.getQueueName() + "?transacted=true")
 				.autoStartup(dokdistdpvProperties.getQdist016().isAutostartup())
 				.routeId(SERVICE_ID)
-				.routePolicy(qdist016MetricsRoutePolicy)
 				.setExchangePattern(ExchangePattern.InOnly)
 				.process(new MDCSetProcessor())
 				.process(new Qdist016HeaderProcessor())
-				.log(INFO, log, "qdist016 har forsendelse med " + getForsendelseId())
+				.log(INFO, log, "qdist016 har mottatt forsendelse med id " + getForsendelseId())
 				.to("validator:no/nav/meldinger/virksomhet/dokdistfordeling/xsd/qdist008/out/distribuertilkanal.xsd")
 				.unmarshal(new JaxbDataFormat(JAXBContext.newInstance(DistribuerTilKanal.class)))
 				.bean(qdist016Service)
+				.log(INFO, log, format("qdist016 har distribuert forsendelse med id=%s til Altinn", getForsendelseId()))
 				.end()
 				.process(new MDCRemoveProcessor());
 	}

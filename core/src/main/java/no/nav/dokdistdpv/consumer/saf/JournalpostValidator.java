@@ -26,7 +26,7 @@ public class JournalpostValidator {
 									.toList()));
 		}
 
-		journalpostQueryResponse.getDokumenter().forEach(dokumentInfo -> validateDokument(dokumentInfo, journalpostid));
+		journalpostQueryResponse.getData().journalpost().dokumenter().forEach(dokumentInfo -> validateDokument(dokumentInfo, journalpostid));
 	}
 
 	private void validateDokument(JournalpostQueryResponse.DokumentInfo dokumentInfo, String journalpostId) {

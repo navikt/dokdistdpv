@@ -39,10 +39,10 @@ spec:
       value: {{ DOKDISTMELLOMLAGER_KEYID }}
     - name: ALTINN_ENDPOINT
       value: {{ ALTINN_ENDPOINT }}
-    - name: ALTINN_EXTERNAL_SERVICE_CODE
-      value: "{{ ALTINN_EXTERNAL_SERVICE_CODE }}"
-    - name: ALTINN_EXTERNAL_SERVICE_EDITION_CODE
-      value: "{{ ALTINN_EXTERNAL_SERVICE_EDITION_CODE }}"
+    - name: ALTINN_SERVICE_CODE
+      value: "{{ ALTINN_SERVICE_CODE }}"
+    - name: ALTINN_SERVICE_EDITION_CODE
+      value: "{{ ALTINN_SERVICE_EDITION_CODE }}"
     - name: SAF_BASE_URL
       value: {{ SAF_BASE_URL }}
     - name: SAF_SCOPE

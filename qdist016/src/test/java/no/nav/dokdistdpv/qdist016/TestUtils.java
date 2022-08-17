@@ -137,11 +137,13 @@ public class TestUtils {
 
 		return JournalpostQueryResponse
 				.builder()
-				.dokumenter(List.of(
-						new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID1, TITTEL_1),
-						new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID2, TITTEL_2),
-						new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID3, TITTEL_3))
-				)
+				.data(new JournalpostQueryResponse.Data(
+						new JournalpostQueryResponse.Journalpost(
+								List.of(
+										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID1, TITTEL_1),
+										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID2, TITTEL_2),
+										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID3, TITTEL_3))
+						)))
 				.build();
 	}
 

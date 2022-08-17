@@ -8,7 +8,6 @@ import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKa
 import org.apache.camel.Handler;
 import org.springframework.stereotype.Service;
 
-import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -17,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Service
 public class Qdist016Service {
 
-	private static final String FORSENDELSE_STATUS_OVERSENDT = "OVERSENDT";
+	private static final String FORSENDELSE_STATUS_EKSPEDERT = "EKSPEDERT";
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokumentService dokumentService;
@@ -43,9 +42,7 @@ public class Qdist016Service {
 		var dokumenter = dokumentService.hentDokumenter(forsendelse);
 
 		altinnClient.insertCorrespondence(konversasjonId, forsendelse, dokumenter);
-		administrerForsendelseConsumer.oppdaterStatus(forsendelseId, FORSENDELSE_STATUS_OVERSENDT);
-
-		log.info(format("qdist016 har distribuert forsendelse med id=%s til Altinn", forsendelseId));
+		administrerForsendelseConsumer.oppdaterStatus(forsendelseId, FORSENDELSE_STATUS_EKSPEDERT);
 
 		return forsendelseId;
 	}

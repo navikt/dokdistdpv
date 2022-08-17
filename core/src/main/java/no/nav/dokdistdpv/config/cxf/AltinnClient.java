@@ -1,6 +1,8 @@
 package no.nav.dokdistdpv.config.cxf;
 
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import no.altinn.correspondenceagencyexternalaec.AltinnFault;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
@@ -9,6 +11,7 @@ import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,14 +27,18 @@ import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
 
 @Component
+@Slf4j
 public class AltinnClient {
 
 	private AltinnProps altinnProps;
+	private SecurityCredentials securityCredentials;
 
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
-	protected AltinnClient(AltinnProps altinnProps) {
+	protected AltinnClient(AltinnProps altinnProps,
+						   SecurityCredentials securityCredentials) {
 		this.altinnProps = altinnProps;
+		this.securityCredentials = securityCredentials;
 		this.iCorrespondenceAgencyExternalEC2 = getClient();
 	}
 
@@ -60,17 +67,47 @@ public class AltinnClient {
 
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProps.serviceCode, altinnProps.serviceEditionCode);
 
+		log.info("Distribuerer forsendelse med konversasjonId={}, mottaker={} til Altinn", konversasjonId, insertCorrespondenceV2.getReportee());
+
 		try {
-			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
-					altinnProps.username, altinnProps.password, altinnProps.userCode,
-					konversasjonId, insertCorrespondenceV2);
+			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
+					altinnProps.username,
+					altinnProps.password,
+					altinnProps.userCode,
+					konversasjonId,
+					insertCorrespondenceV2);
+
+			log.info("Kvittering fra Altinn: id={}, text={}, type={}, status={}",
+					receipt.getReceiptId(),
+					receipt.getReceiptText(),
+					receipt.getReceiptTypeName(),
+					receipt.getReceiptStatusCode());
+
+			return receipt;
+
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
+			log.warn(getAltinnFaultAsString(e.getFaultInfo()));
 			throw new AltinnException(e.getMessage(), e.getCause());
 		}
 	}
 
+	private String getAltinnFaultAsString(AltinnFault fault) {
+
+		return "ErrorMessage:" + getSafeString(fault.getAltinnErrorMessage()) + '/' +
+				"ExtendedErrorMessage:" + getSafeString(fault.getAltinnExtendedErrorMessage()) + '/' +
+				"LocalizedErrorMessage:" + getSafeString(fault.getAltinnLocalizedErrorMessage()) + '/' +
+				"ErrorGuid:" + getSafeString(fault.getErrorGuid()) + '/' +
+				"ErrorID:" + fault.getErrorID() + '/' +
+				"UserGuid:" + getSafeString(fault.getUserGuid()) + '/' +
+				"UserId:" + getSafeString(fault.getUserId());
+	}
+
+	private String getSafeString(String element) {
+		return element != null ? element : "null";
+	}
+
 	@ConfigurationProperties("altinn")
-	record AltinnProps(
+	public record AltinnProps(
 			@NotNull String endpoint,
 			@NotNull String username,
 			@NotNull @ToString.Exclude String password,
@@ -80,7 +117,7 @@ public class AltinnClient {
 	}
 
 	@ConfigurationProperties(prefix = "virksomhetssertifikat")
-	record SecurityCredentials(
+	public record SecurityCredentials(
 			@NotBlank String path,
 			@NotBlank String password,
 			@NotBlank String alias) {

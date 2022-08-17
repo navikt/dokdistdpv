@@ -8,6 +8,7 @@ import no.nav.dokdistdpv.exception.KunneIkkeFinneDokumentException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -40,6 +41,7 @@ public class DokumentService {
 				.stream()
 				.filter(dokument -> HOVEDDOKUMENT.equals(dokument.tilknyttetSom()))
 				.map(hoveddokument -> storage.downloadObject(hoveddokument.dokumentObjektReferanse(), forsendelse.bestillingsId()))
+				.filter(Objects::nonNull)
 				.map(nedlastetHoveddokument -> new AltinnDokument(forsendelse.forsendelseTittel(), nedlastetHoveddokument.getPdf()))
 				.findFirst()
 				.orElseThrow(() -> new KunneIkkeFinneDokumentException("Kunne ikke finne hoveddokument"));
@@ -53,6 +55,7 @@ public class DokumentService {
 					.stream()
 					.filter(dokument -> VEDLEGG.equals(dokument.tilknyttetSom()))
 					.map(vedlegg -> storage.downloadObject(vedlegg.dokumentObjektReferanse(), forsendelse.bestillingsId()))
+					.filter(Objects::nonNull)
 					.map(nedlastetVedlegg -> new AltinnDokument("Vedlegg " + counter.getAndIncrement(), nedlastetVedlegg.getPdf()))
 					.toList();
 		} else {
@@ -63,7 +66,7 @@ public class DokumentService {
 					.filter(dokument -> VEDLEGG.equals(dokument.tilknyttetSom()))
 					.map(vedlegg -> {
 						var pdf = storage.downloadObject(vedlegg.dokumentObjektReferanse(), forsendelse.bestillingsId()).getPdf();
-						var tittel = response.getDokumenter().stream()
+						var tittel = response.getData().journalpost().dokumenter().stream()
 								.filter(dokumentInfo -> dokumentInfo.dokumentInfoId().equals(vedlegg.arkivDokumentInfoId()))
 								.findAny()
 								.orElseThrow(() -> new KunneIkkeFinneDokumentException(

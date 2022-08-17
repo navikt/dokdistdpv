@@ -23,4 +23,6 @@
 	<logger name="no.nav.dokdistdpv" level="INFO" additivity="false">
 		<appender-ref ref="applikasjonslogg"/>
 	</logger>
+
+	<logger name="org.apache.cxf" level="INFO" additivity="false"/>
 </included>

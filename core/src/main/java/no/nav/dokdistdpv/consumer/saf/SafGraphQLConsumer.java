@@ -1,5 +1,8 @@
 package no.nav.dokdistdpv.consumer.saf;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.exception.SafGraphQLFunctionalException;
 import no.nav.dokdistdpv.exception.SafGraphQLTechnicalException;
@@ -7,7 +10,6 @@ import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import no.nav.dokdistdpv.utils.MDCOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -41,7 +43,7 @@ public class SafGraphQLConsumer {
 		JournalpostQueryResponse safJournalpost = safGraphQLClient
 				.post()
 				.header("Nav-Call-Id", MDCOperations.getCallId())
-				.bodyValue(BodyInserters.fromValue(request))
+				.bodyValue(request)
 				.retrieve()
 				.bodyToMono(JournalpostQueryResponse.class)
 				.doOnError(this::handleError)
@@ -66,15 +68,14 @@ public class SafGraphQLConsumer {
 		}
 	}
 
-
 	private static final String JOURNALPOST_QUERY = """
 			query journalpost($queryJournalpostId: String!) {
-			  journalpost(journalpostId: $queryJournalpostId) {
-			    dokumenter {
-			      dokumentInfoId
-			      tittel
-			    }
-			  }
-			}
-			""";
+				  journalpost(journalpostId: $queryJournalpostId) {
+					dokumenter {
+					  dokumentInfoId
+					  tittel
+					}
+				  }
+				}
+			""".replaceAll("\n", "").replaceAll("\t", "");
 }
