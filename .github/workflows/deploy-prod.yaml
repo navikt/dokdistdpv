@@ -15,24 +15,22 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
     secrets: inherit
 
-#  deploy-q1:
-#    uses: navikt/dok-workflows/.github/workflows/deploy.yaml@main
-#    needs: build
-#    with:
-#      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-#      NAIS_RESOURCE: nais/naiserator.yaml
-#      NAIS_VARIABLES: nais/q1-config.json
-#    secrets: inherit
+  deploy-q1:
+    uses: navikt/dok-workflows/.github/workflows/deploy.yaml@main
+    needs: build
+    with:
+      NAIS_CLUSTER: dev-fss
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+      NAIS_RESOURCE: nais/naiserator.yaml
+      NAIS_VARIABLES: nais/q1-config.json
+    secrets: inherit
 
   deploy-prod:
-    name: Deploy to NAIS
+    uses: navikt/dok-workflows/.github/workflows/deploy.yaml@main
     needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-fss
-          RESOURCE: nais/naiserator.yaml
-          VARS: nais/p-config.json
+    with:
+      NAIS_CLUSTER: prod-fss
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+      NAIS_RESOURCE: nais/naiserator.yaml
+      NAIS_VARIABLES: nais/p-config.json
+    secrets: inherit
