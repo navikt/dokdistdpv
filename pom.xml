@@ -27,8 +27,7 @@
 		<activemq.version>5.17.0</activemq.version>
 		<ibm-mq.version>9.2.5.0</ibm-mq.version>
 		<camel.version>3.16.0</camel.version>
-		<!-- provided -->
-		<lombok.version>1.18.22</lombok.version>
+
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
 	</properties>
