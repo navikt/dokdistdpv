@@ -1,0 +1,26 @@
+name: Release Drafter
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    uses: navikt/dok-workflows/.github/workflows/build-and-publish.yaml@main
+    with:
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    secrets: inherit
+
+  deploy-q1:
+    uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
+    needs: build-and-publish
+    with:
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+      NAIS_VARIABLES: nais/q1-config.json
+    secrets: inherit
+
+  update_release_draft:
+    uses: navikt/dok-workflows/.github/workflows/release-drafter.yml@main
+    needs: deploy-q1
+    secrets: inherit
