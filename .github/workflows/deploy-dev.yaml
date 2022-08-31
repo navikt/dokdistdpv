@@ -2,6 +2,11 @@ name: Manual deploy to dev
 
 on:
   workflow_dispatch:
+    inputs:
+      namespace:
+        required: true
+        type: string
+        description: Namespace
 
 jobs:
 
@@ -9,5 +14,5 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
     with:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-      NAIS_VARIABLES: nais/q1-config.json
+      NAIS_VARIABLES: nais/${inputs.namespace}-config.json
     secrets: inherit
