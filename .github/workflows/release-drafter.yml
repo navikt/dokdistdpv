@@ -13,9 +13,6 @@ on:
   # pull_request_target:
   #   types: [opened, reopened, synchronize]
 
-permissions:
-  contents: read
-
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
