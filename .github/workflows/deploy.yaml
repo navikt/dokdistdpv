@@ -1,9 +1,7 @@
 name: Build, push, and deploy
 
 on:
-  push:
-    branches:
-      - introduser-github-actions
+  workflow_dispatch:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
