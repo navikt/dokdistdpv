@@ -1,14 +1,9 @@
-name: Build, push, and deploy
+name: Manual deploy
 
 on:
   workflow_dispatch:
 
 jobs:
-#  build:
-#    uses: navikt/dok-workflows/.github/workflows/build.yaml@main
-#    with:
-#      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-#    secrets: inherit
 
   deploy-q1:
     uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
