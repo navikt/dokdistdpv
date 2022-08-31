@@ -16,6 +16,9 @@ on:
 env:
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
+permissions:
+  contents: read
+
 jobs:
 
   build:
