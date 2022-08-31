@@ -1,0 +1,34 @@
+name: Release Drafter
+
+on:
+  push:
+    # branches to consider in the event; optional, defaults to all
+    branches:
+      - main
+  # pull_request event is required only for autolabeler
+  pull_request:
+    # Only following types are handled by the action, but one can default to all as well
+    types: [opened, reopened, synchronize]
+  # pull_request_target event is required for autolabeler to support PRs from forks
+  # pull_request_target:
+  #   types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    uses: navikt/dok-workflows/.github/workflows/build.yaml@main
+    with:
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    secrets: inherit
+
+  deploy-q1:
+    uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
+    needs: build
+    with:
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+      NAIS_VARIABLES: nais/q1-config.json
+    secrets: inherit
+
+  update_release_draft:
+    uses: navikt/dok-workflows/.github/workflows/release-drafter.yml@main
+    needs: deploy-q1
+    secrets: inherit
