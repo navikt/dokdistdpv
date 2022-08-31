@@ -15,16 +15,6 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
     secrets: inherit
 
-  deploy-q1:
-    uses: navikt/dok-workflows/.github/workflows/deploy.yaml@main
-    needs: build
-    with:
-      NAIS_CLUSTER: dev-fss
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-      NAIS_RESOURCE: nais/naiserator.yaml
-      NAIS_VARIABLES: nais/q1-config.json
-    secrets: inherit
-
   deploy-prod:
     uses: navikt/dok-workflows/.github/workflows/deploy.yaml@main
     needs: build
