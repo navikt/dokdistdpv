@@ -3,10 +3,14 @@ name: Manual deploy to dev
 on:
   workflow_dispatch:
     inputs:
-      namespace:
-        required: true
-        type: string
-        description: Namespace
+      q1:
+        type: boolean
+        description: Deploy til q1
+        required: false
+      q2:
+        type: boolean
+        description: Deploy til q2
+        required: false
 
 jobs:
 
