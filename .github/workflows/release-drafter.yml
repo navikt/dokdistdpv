@@ -33,6 +33,7 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
       NAIS_RESOURCE: nais/naiserator.yaml
       NAIS_VARIABLES: nais/q1-config.json
+      NAIS_CLUSTER: dev-fss
     secrets: inherit
 
   update_release_draft:
