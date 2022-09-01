@@ -7,11 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 
-/**
- * Konfigurasjon for servicebrukeren til applikasjonen.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @ConfigurationProperties("dokdistdpv.serviceuser")
 @Validated

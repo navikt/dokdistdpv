@@ -1,15 +1,11 @@
 package no.nav.dokdistdpv.qdist016;
 
-import no.nav.dokdistdpv.cloudstorage.DokDistDokumentFraBucket;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
-import no.nav.dokdistdpv.consumer.saf.JournalpostQueryResponse;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -39,10 +35,6 @@ public class TestUtils {
 
 	public static HentForsendelseResponse createHentForsendelseResponseWithKonversasjonId(String konversasjonId) {
 		return createHentForsendelseResponse(konversasjonId, createArkivinformasjon());
-	}
-
-	public static HentForsendelseResponse createHentForsendelseResponseWithArkivinformasjon(HentForsendelseResponse.ArkivInformasjon arkivinformasjon) {
-		return createHentForsendelseResponse(KONVERSASJON_ID, arkivinformasjon);
 	}
 
 	public static HentForsendelseResponse createHentForsendelseResponse(String konversasjonId, HentForsendelseResponse.ArkivInformasjon arkivInformasjon) {
@@ -110,41 +102,6 @@ public class TestUtils {
 				new HentForsendelseResponse.Dokument(TILKNYTTETSOM_2, DOKUMENTOBJEKTREFERANSE_2, ARKIVDOKUMENTINFO_ID_2, DOKUMENTTYPE_ID_2),
 				new HentForsendelseResponse.Dokument(TILKNYTTETSOM_3, DOKUMENTOBJEKTREFERANSE_3, ARKIVDOKUMENTINFO_ID_3, DOKUMENTTYPE_ID_3)
 		);
-	}
-
-	public static List<DokDistDokumentFraBucket> hentDokumenterFraGcpStorage() {
-		var PDF_1 = "PDF for dokument 1".getBytes(UTF_8);
-		var PDF_2 = "PDF for dokument 2".getBytes(UTF_8);
-		var PDF_3 = "PDF for dokument 3".getBytes(UTF_8);
-		var OBJECTNAME_1 = "uuidForPdf1";
-		var OBJECTNAME_2 = "uuidForPdf2";
-		var OBJECTNAME_3 = "uuidForPdf3";
-
-		return List.of(
-				new DokDistDokumentFraBucket(PDF_1, OBJECTNAME_1),
-				new DokDistDokumentFraBucket(PDF_2, OBJECTNAME_2),
-				new DokDistDokumentFraBucket(PDF_3, OBJECTNAME_3)
-		);
-	}
-
-	public static JournalpostQueryResponse hentJournalpostFraSaf() {
-		var DOKUMENTINFO_ID1 = "D1";
-		var DOKUMENTINFO_ID2 = "D2";
-		var DOKUMENTINFO_ID3 = "D3";
-		var TITTEL_1 = "Søknad om permisjon";
-		var TITTEL_2 = "Vedlegg om arbeid";
-		var TITTEL_3 = "Vedlegg om helse";
-
-		return JournalpostQueryResponse
-				.builder()
-				.data(new JournalpostQueryResponse.Data(
-						new JournalpostQueryResponse.Journalpost(
-								List.of(
-										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID1, TITTEL_1),
-										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID2, TITTEL_2),
-										new JournalpostQueryResponse.DokumentInfo(DOKUMENTINFO_ID3, TITTEL_3))
-						)))
-				.build();
 	}
 
 	public static List<AltinnDokument> createAltinnDokumenter() {

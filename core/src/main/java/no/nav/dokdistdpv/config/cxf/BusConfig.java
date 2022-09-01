@@ -1,6 +1,5 @@
 package no.nav.dokdistdpv.config.cxf;
 
-import com.google.api.client.util.LoggingOutputStream;
 import no.nav.dokdistdpv.config.cxf.interceptor.BadContextTokenInFaultInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
@@ -30,9 +29,7 @@ public class BusConfig {
 		loggingFeature.initialize(bus);
 		bus.getFeatures().add(loggingFeature);
 		bus.getInInterceptors().add(new CookiesInInterceptor());
-		bus.getInInterceptors().add(new LoggingInInterceptor());
 		bus.getOutInterceptors().add(new CookiesOutInterceptor());
-		bus.getOutInterceptors().add(new LoggingOutInterceptor());
 		bus.getOutInterceptors().add(new HeaderInterceptor());
 		bus.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
 

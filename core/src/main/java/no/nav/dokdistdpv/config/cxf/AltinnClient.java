@@ -2,7 +2,6 @@ package no.nav.dokdistdpv.config.cxf;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import no.altinn.correspondenceagencyexternalaec.AltinnFault;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
@@ -11,7 +10,6 @@ import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -67,7 +65,7 @@ public class AltinnClient {
 
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProps.serviceCode, altinnProps.serviceEditionCode);
 
-		log.info("Distribuerer forsendelse med konversasjonId={}, mottaker={} til Altinn", konversasjonId, insertCorrespondenceV2.getReportee());
+		log.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
 
 		try {
 			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
@@ -77,34 +75,20 @@ public class AltinnClient {
 					konversasjonId,
 					insertCorrespondenceV2);
 
-			log.info("Kvittering fra Altinn: id={}, text={}, type={}, status={}",
-					receipt.getReceiptId(),
-					receipt.getReceiptText(),
+			log.info("Forsendelse distribuert til Altinn med status={} og statusCode={}",
 					receipt.getReceiptTypeName(),
 					receipt.getReceiptStatusCode());
 
 			return receipt;
 
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
-			log.warn(getAltinnFaultAsString(e.getFaultInfo()));
+			var errorMsg = e.getFaultInfo().getAltinnErrorMessage() != null ? e.getFaultInfo().getAltinnErrorMessage() : "Ukjent feil";
+			var errorGuid = e.getFaultInfo().getUserGuid() != null ? e.getFaultInfo().getErrorGuid() : "Ukjent GUID";
+			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", errorMsg, errorGuid);
 			throw new AltinnException(e.getMessage(), e.getCause());
 		}
 	}
 
-	private String getAltinnFaultAsString(AltinnFault fault) {
-
-		return "ErrorMessage:" + getSafeString(fault.getAltinnErrorMessage()) + '/' +
-				"ExtendedErrorMessage:" + getSafeString(fault.getAltinnExtendedErrorMessage()) + '/' +
-				"LocalizedErrorMessage:" + getSafeString(fault.getAltinnLocalizedErrorMessage()) + '/' +
-				"ErrorGuid:" + getSafeString(fault.getErrorGuid()) + '/' +
-				"ErrorID:" + fault.getErrorID() + '/' +
-				"UserGuid:" + getSafeString(fault.getUserGuid()) + '/' +
-				"UserId:" + getSafeString(fault.getUserId());
-	}
-
-	private String getSafeString(String element) {
-		return element != null ? element : "null";
-	}
 
 	@ConfigurationProperties("altinn")
 	public record AltinnProps(

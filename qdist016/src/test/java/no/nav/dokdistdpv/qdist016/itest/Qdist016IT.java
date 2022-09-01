@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import lombok.SneakyThrows;
 import no.nav.dokdistdpv.cloudstorage.DokDistDokumentFraBucket;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
-import no.nav.dokdistdpv.cloudstorage.ObjectDownloadFailedException;
+import no.nav.dokdistdpv.exception.ObjectDownloadFailedException;
 import no.nav.dokdistdpv.utils.MDCOperations;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.jupiter.api.BeforeEach;

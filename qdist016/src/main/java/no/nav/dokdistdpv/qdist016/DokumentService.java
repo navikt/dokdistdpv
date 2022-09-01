@@ -18,11 +18,11 @@ import static java.util.Collections.singletonList;
 @Service
 public class DokumentService {
 
-	private final EncryptedBucketStorage storage;
-	private final SafGraphQLConsumer safConsumer;
-
 	private final String HOVEDDOKUMENT = "HOVEDDOKUMENT";
 	private final String VEDLEGG = "VEDLEGG";
+
+	private final EncryptedBucketStorage storage;
+	private final SafGraphQLConsumer safConsumer;
 
 	public DokumentService(EncryptedBucketStorage storage, SafGraphQLConsumer safConsumer) {
 		this.storage = storage;

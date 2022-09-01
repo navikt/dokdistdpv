@@ -3,6 +3,7 @@ package no.nav.dokdistdpv.cloudstorage;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.crypto.tink.Aead;
+import no.nav.dokdistdpv.exception.ObjectDownloadFailedException;
 
 import java.security.GeneralSecurityException;
 

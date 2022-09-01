@@ -20,11 +20,6 @@ import static com.ibm.msg.client.jms.JmsConstants.JMS_IBM_ENCODING;
 import static com.ibm.msg.client.jms.JmsConstants.USERID;
 import static com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT;
 
-/**
- * JMS kø konfigurasjon og connectionfactory.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Configuration
 @Profile({"nais", "local"})
 public class JmsConfig {

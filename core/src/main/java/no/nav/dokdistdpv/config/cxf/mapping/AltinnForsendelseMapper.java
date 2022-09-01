@@ -21,9 +21,6 @@ public class AltinnForsendelseMapper {
 			String serviceCode,
 			String serviceEditionCode
 	) {
-
-		log.info("Mapper til altinn forsendelse. serviceCode={}, serviceEditionCode={}, reportee={}, ", serviceCode, serviceEditionCode, forsendelse.mottaker().mottakerId());
-
 		InsertCorrespondenceV2 insertCorrespondenceV2 = new InsertCorrespondenceV2();
 
 		insertCorrespondenceV2.setServiceCode(serviceCode);

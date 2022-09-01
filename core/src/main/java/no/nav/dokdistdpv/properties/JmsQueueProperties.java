@@ -7,11 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
-/**
- * Konfigurasjon for MQ broker og køer for JMS API.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @ConfigurationProperties("dokdistdpv.jms")
 @Validated
