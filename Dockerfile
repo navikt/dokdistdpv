@@ -12,9 +12,7 @@ COPY --from=builder build/application/ ./
 COPY export-vault-secrets.sh /init-scripts/10-export-vault-secrets.sh
 COPY run-java.sh /
 USER root
-RUN export "http_proxy=http://webproxy-utvikler.nav.no:8088/" \
-    && export "https_proxy=http://webproxy-utvikler.nav.no:8088/" \
-    && apt-get install -y --no-install-recommends jq
+RUN apt-get install -y --no-install-recommends jq
 RUN chmod +x /run-java.sh
 USER apprunner
 

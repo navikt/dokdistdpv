@@ -1,0 +1,11 @@
+name: Build and push
+
+on:
+  push:
+
+jobs:
+  build:
+    uses: navikt/dok-workflows/.github/workflows/build-and-publish.yaml@main
+    with:
+      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    secrets: inherit
