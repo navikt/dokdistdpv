@@ -1,4 +1,4 @@
-name: Release Drafter
+name: Build and deploy to all environments in dev, and create release draft
 
 on:
   push:
@@ -12,15 +12,14 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
     secrets: inherit
 
-  deploy-q1:
-    uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
+  deploy-to-all-dev-environments:
     needs: build-and-publish
+    uses: navikt/dok-workflows/.github/workflows/deploy-to-all-dev-environments.yaml@main
     with:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-      NAIS_VARIABLES: nais/q1-config.json
     secrets: inherit
 
   update_release_draft:
     uses: navikt/dok-workflows/.github/workflows/release-drafter.yml@main
-    needs: deploy-q1
+    needs: deploy-to-all-dev-environments
     secrets: inherit
