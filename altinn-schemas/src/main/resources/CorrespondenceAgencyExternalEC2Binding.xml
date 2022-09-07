@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxws:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+			   xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+			   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+			   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+			   version="2.1">
+	<jaxws:bindings	node="wsdl:definitions/wsdl:types/xsd:schema[@targetNamespace='http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11']">
+		<jaxb:globalBindings generateElementProperty="false"/>
+		<jaxb:schemaBindings>
+			<jaxb:package name="no.altinn.correspondenceagencyexternalaec.correspondence"/>
+		</jaxb:schemaBindings>
+	</jaxws:bindings>
+</jaxws:bindings>

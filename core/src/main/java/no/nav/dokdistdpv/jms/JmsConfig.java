@@ -20,11 +20,6 @@ import static com.ibm.msg.client.jms.JmsConstants.JMS_IBM_ENCODING;
 import static com.ibm.msg.client.jms.JmsConstants.USERID;
 import static com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT;
 
-/**
- * JMS kø konfigurasjon og connectionfactory.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Configuration
 @Profile({"nais", "local"})
 public class JmsConfig {
@@ -33,6 +28,11 @@ public class JmsConfig {
 	@Bean
 	public Queue qdist016(JmsQueueProperties jmsQueueProperties) throws JMSException {
 		return new MQQueue(jmsQueueProperties.getQueues().getQdist016());
+	}
+
+	@Bean
+	public Queue qdist016TekniskFeil(JmsQueueProperties jmsQueueProperties) throws JMSException {
+		return new MQQueue(jmsQueueProperties.getQueues().getQdist016TekniskFeil());
 	}
 
 	@Bean
