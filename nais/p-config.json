@@ -6,6 +6,7 @@
   "DOKDISTDPV_JMS_BROKER_PORT": "1414",
   "DOKDISTDPV_JMS_BROKER_CHANNEL": "P_DOKDISTDPI",
   "DOKDISTDPV_JMS_QUEUES_QDIST016": "QA.P_DOKDISTDPV.QDIST016_DIST_TIL_DPV",
+  "DOKDISTDPV_JMS_QUEUES_QDIST016_TEKNISK_FEIL": "QA.P_DOKDISTDPV.QDIST016_DIST_TIL_DPV_BOQ",
   "DOKDISTDPV_JMS_QUEUES_QDIST016_FUNKSJONELL_FEIL": "QA.P_DOKDISTDPV.QDIST016_FUNK_FEIL",
   "DOKDISTDPV_JMS_QUEUES_QDIST017": "QA.P_DOKDISTDPV.QDIST017_KVITTERING_FRA_DPV",
   "DOKDISTDPV_JMS_QUEUES_QDIST017_FUNKSJONELL_FEIL": "QA.P_DOKDISTDPV.QDIST017_FUNK_FEIL",
@@ -16,10 +17,15 @@
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring",
   "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric",
 
-  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/INSERT HEREEE/",
+  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/sdp",
   "ALTINN_ENDPOINT": "https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
   "ALTINN_EXTERNAL_SERVICE_CODE": "5828",
   "ALTINN_EXTERNAL_SERVICE_EDITION_CODE": "1",
+
+  "ADMINISTRERFORSENDELSE_BASE_URL": "https://app.adeo.no/dokdist",
+
+  "SAF_BASE_URL": "https://saf.intern.nav.no/graphql",
+  "SAF_SCOPE": "api://prod-fss.teamdokumenthandtering.saf/.default",
 
   "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
   "APPDYNAMICS": "/apikey/appdynamics/prod",
