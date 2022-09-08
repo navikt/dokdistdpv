@@ -17,7 +17,7 @@
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring",
   "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric",
 
-  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/Arbeids-og-velferdsetaten",
+  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/sdp",
   "ALTINN_ENDPOINT": "https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
   "ALTINN_EXTERNAL_SERVICE_CODE": "5828",
   "ALTINN_EXTERNAL_SERVICE_EDITION_CODE": "1",
