@@ -13,11 +13,15 @@ import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREF
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.FROM_ADDRESS;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.LANGUAGE_CODE_BOKMAAL;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
 
 public class NotificationsMapper {
 
 	public final static String NOTIFICATION_FOR_ANNET = "VarselDPVUtenRevarsel";
 	public final static String NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT = "VarselDPVMedRevarsel";
+	public static final String NOTIFICATION_TEXT_FORMAT = "%s %s har mottatt %s «%s» fra NAV i Altinn. " +
+			"For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» eller rollen «Taushetsbelagt post» i Altinn. " +
+			"Les mer om tildeling av tilganger og roller på www.altinn.no.";
 
 	public static NotificationBEList mapNotifications(HentForsendelseResponse forsendelse) {
 		NotificationBEList notificationList = new NotificationBEList();
@@ -63,15 +67,24 @@ public class NotificationsMapper {
 	}
 
 	private static String generateNotificationContentFor(HentForsendelseResponse forsendelse) {
-		var nullSafeDistribusjonsTypeKode = forsendelse.distribusjonstype() == null ? ANNET : forsendelse.distribusjonstype();
+		var nullSafeDistribusjonsTypeKode = forsendelse.distribusjonstype() == null ? VIKTIG : forsendelse.distribusjonstype();
+		var mottaker = forsendelse.mottaker();
 		return switch (nullSafeDistribusjonsTypeKode) {
-			case VEDTAK -> "Du har mottatt vedtak «";
-			case VIKTIG -> "Du har mottatt viktig brev «";
-			case ANNET -> "Du har mottatt melding «";
-		}
-				+ forsendelse.forsendelseTittel() +
-				"» fra NAV for " + forsendelse.mottaker().mottakerId() +  // $reporteeNumber$ ?
-				", " + forsendelse.mottaker().mottakerNavn() + // $reporteeName$ ?
-				" på www.altinn.no. Gå til min meldingsboks i Altinn for å lese det.";
+			case VEDTAK -> NOTIFICATION_TEXT_FORMAT.formatted(mottaker.mottakerId(),
+					mottaker.mottakerNavn(),
+					"vedtaket",
+					forsendelse.forsendelseTittel(),
+					"vedtaket", mottaker.mottakerNavn());
+			case VIKTIG -> NOTIFICATION_TEXT_FORMAT.formatted(mottaker.mottakerId(),
+					mottaker.mottakerNavn(),
+					"viktig brev",
+					forsendelse.forsendelseTittel(),
+					"brevet", mottaker.mottakerNavn());
+			case ANNET -> NOTIFICATION_TEXT_FORMAT.formatted(mottaker.mottakerId(),
+					mottaker.mottakerNavn(),
+					"meldingen",
+					forsendelse.forsendelseTittel(),
+					"meldingen", mottaker.mottakerNavn());
+		};
 	}
 }
