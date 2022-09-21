@@ -6,6 +6,7 @@ import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.Notification;
 import no.altinn.correspondenceagencyexternalaec.NotificationBEList;
 import no.altinn.correspondenceagencyexternalaec.ReceiverEndPoint;
+import no.altinn.correspondenceagencyexternalaec.TextToken;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.UNSPECIFIED;
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
@@ -27,6 +29,7 @@ import static no.nav.dokdistdpv.config.cxf.mapping.ContentMapper.MESSAGE_TITLE_V
 import static no.nav.dokdistdpv.config.cxf.mapping.ContentMapper.MESSAGE_TITLE_VIKTIG;
 import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.NOTIFICATION_FOR_ANNET;
 import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT;
+import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.NOTIFICATION_TEXT_FORMAT;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
@@ -36,12 +39,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class AltinnForsendelseMapperTest {
 
-	private final static String FORSENDELSETITTEL = "Tittel på forsendelse";
+	private final static String FORSENDELSE_TITTEL = "Oppfølging av ansatt";
+	private static final String MESSAGE_BODY_ANNET = format("Du har fått en melding som gjelder %s.", FORSENDELSE_TITTEL);
+	private static final String MESSAGE_BODY_VIKTIG = format("Du har fått et brev som du må lese: %s.", FORSENDELSE_TITTEL);
+	private static final String MESSAGE_BODY_VEDTAK = format("Du har fått et vedtak som gjelder %s.", FORSENDELSE_TITTEL);
 	private static final String SERVICE_CODE = "5828";
 	private static final String SERVICE_EDITION_CODE = "1";
-	private static final String REPORTEE = "123456789";
-	private static final String serviceCode = SERVICE_CODE;
-	private static final String serviceEditionCode = SERVICE_EDITION_CODE;
+	private static final String REPORTEE = "986228608";
+	private static final String REPORTEE_NAME = "YARA INTERNATIONAL ASA";
+	private static final String NOTIFICATION_TEXT_VEDTAK = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "vedtaket", FORSENDELSE_TITTEL, "vedtaket", REPORTEE_NAME);
+	private static final String NOTIFICATION_TEXT_VIKTIG = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "viktig brev", FORSENDELSE_TITTEL, "brevet", REPORTEE_NAME);
+	private static final String NOTIFICATION_TEXT_ANNET = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "meldingen", FORSENDELSE_TITTEL, "meldingen", REPORTEE_NAME);
 
 	@ParameterizedTest
 	@MethodSource("provideMessageTitleMessageBodyAndNotificationTypeForDistribusjonstype")
@@ -49,23 +57,25 @@ class AltinnForsendelseMapperTest {
 			DistribusjonsTypeKode distribusjonsTypeKode,
 			String expectedMessageTitle,
 			String expectedMessageBody,
-			String expectedNotificationType
+			String expectedNotificationType,
+			String expectedNotificationTextContent
 	) {
 		HentForsendelseResponse forsendelse = createHentForsendelseReponse(distribusjonsTypeKode);
 		List<AltinnDokument> dokumenter = createDokumenter();
 
-		InsertCorrespondenceV2 result = mapToCorrespondence(forsendelse, dokumenter, serviceCode, serviceEditionCode);
+		InsertCorrespondenceV2 result = mapToCorrespondence(forsendelse, dokumenter, SERVICE_CODE, SERVICE_EDITION_CODE);
 
 		assertEquals(SERVICE_CODE, result.getServiceCode());
 		assertEquals(SERVICE_EDITION_CODE, result.getServiceEdition());
 		assertEquals(REPORTEE, result.getReportee());
 
 		assertContent(expectedMessageTitle, expectedMessageBody, forsendelse, dokumenter, result);
-		assertNotifications(expectedNotificationType, result);
+		assertNotifications(expectedNotificationType, expectedNotificationTextContent, result);
 	}
 
 	private void assertNotifications(
 			String expectedNotificationType,
+			String expectedNotificationTextContent,
 			InsertCorrespondenceV2 result
 	) {
 		NotificationBEList notificationList = result.getNotifications();
@@ -79,6 +89,10 @@ class AltinnForsendelseMapperTest {
 		ReceiverEndPoint receiverEndPoint = notification.getReceiverEndPoints().getReceiverEndPoint().get(0);
 		assertEquals(EMAIL_PREFERRED, receiverEndPoint.getTransportType());
 		assertNull(receiverEndPoint.getReceiverAddress());
+
+		TextToken textToken = notification.getTextTokens().getTextToken().get(0);
+		assertEquals(1, textToken.getTokenNum());
+		assertEquals(expectedNotificationTextContent, textToken.getTokenValue());
 	}
 
 	private void assertContent(
@@ -110,10 +124,10 @@ class AltinnForsendelseMapperTest {
 
 	private static Stream<Arguments> provideMessageTitleMessageBodyAndNotificationTypeForDistribusjonstype() {
 		return Stream.of(
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, String.format("Du har fått et vedtak som gjelder %s.", FORSENDELSETITTEL), NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT),
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, String.format("Du har fått et brev som du må lese: %s.", FORSENDELSETITTEL), NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, String.format("Du har fått en melding som gjelder %s.", FORSENDELSETITTEL), NOTIFICATION_FOR_ANNET),
-				Arguments.of(null, MESSAGE_TITLE_VIKTIG, String.format("Du har fått et brev som du må lese: %s.", FORSENDELSETITTEL), NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT)
+				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, MESSAGE_BODY_VEDTAK, NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT, NOTIFICATION_TEXT_VEDTAK),
+				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT, NOTIFICATION_TEXT_VIKTIG),
+				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, MESSAGE_BODY_ANNET, NOTIFICATION_FOR_ANNET, NOTIFICATION_TEXT_ANNET),
+				Arguments.of(null, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT, NOTIFICATION_TEXT_VIKTIG)
 		);
 	}
 
@@ -125,18 +139,18 @@ class AltinnForsendelseMapperTest {
 				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse3", "arkivDokumentInfoId3", null)
 		);
 
-		HentForsendelseResponse.Mottaker mottaker = new HentForsendelseResponse.Mottaker(REPORTEE, null, null);
+		HentForsendelseResponse.Mottaker mottaker = new HentForsendelseResponse.Mottaker(REPORTEE, REPORTEE_NAME, null);
 
 		return new HentForsendelseResponse(
 				"bestillingsId",
 				"konversasjonId",
-				"bestillendeFagsystem",
-				"modus",
-				"forsendelseStatus",
-				"tema",
-				FORSENDELSETITTEL,
+				"ESYFO",
+				"P",
+				"KLAR_FOR_DIST",
+				"SYK",
+				FORSENDELSE_TITTEL,
 				"batchId",
-				"dokumentProdApp",
+				"ESYFO",
 				mottaker,
 				null,
 				null,
