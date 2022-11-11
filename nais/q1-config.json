@@ -25,7 +25,7 @@
   "ADMINISTRERFORSENDELSE_BASE_URL": "https://app-q1.adeo.no/dokdist",
 
   "SAF_BASE_URL": "https://saf-q1.dev.intern.nav.no/graphql",
-  "SAF_SCOPE": "api://dev-fss.teamdokumenthandtering.saf/.default",
+  "SAF_SCOPE": "api://dev-fss.teamdokumenthandtering.saf-q1/.default",
 
   "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv-q1/teamdokumenthandtering",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
