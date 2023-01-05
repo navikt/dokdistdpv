@@ -27,7 +27,10 @@
 
 		<logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
 		<camel.version>3.18.2</camel.version>
-		<google-cloud.version>26.2.0</google-cloud.version>
+
+		<!-- Får feilmelding ved versjon > 25.4.0: IllegalStateException: You are currently running with version 2.1.1 of google-api-client.
+			You need at least version 1.15 of google-api-client to run version 1.25.0 of the Cloud Key Management Service (KMS) API library -->
+		<google-cloud.version>25.4.0</google-cloud.version>
 		<google-tink.version>1.7.0</google-tink.version>
 		<ibm-mq.version>9.3.1.0</ibm-mq.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
