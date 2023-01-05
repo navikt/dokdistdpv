@@ -2,7 +2,6 @@ package no.nav.dokdistdpv.qdist016.itest;
 
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.config.AzureConfig;
-import no.nav.dokdistdpv.config.LokalCacheConfig;
 import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.config.cxf.AltinnClient;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
@@ -15,13 +14,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.retry.annotation.EnableRetry;
 
 import static org.mockito.Mockito.mock;
 
 @Configuration
 @Profile("itest")
-//@EnableRetry
 @EnableConfigurationProperties({
 		AzureConfig.class,
 		ServiceuserProperties.class,

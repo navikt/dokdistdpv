@@ -59,8 +59,10 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @EnableAutoConfiguration
-@SpringBootTest(classes = {ApplicationTestConfig.class},
-		webEnvironment = RANDOM_PORT)
+@SpringBootTest(
+		classes = {ApplicationTestConfig.class},
+		webEnvironment = RANDOM_PORT
+)
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
 public class Qdist016IT {

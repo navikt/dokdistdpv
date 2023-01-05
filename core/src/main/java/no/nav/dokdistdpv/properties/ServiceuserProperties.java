@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 public class ServiceuserProperties {
 	@NotEmpty
 	private String username;
+
 	@NotEmpty
 	@ToString.Exclude
 	private String password;
