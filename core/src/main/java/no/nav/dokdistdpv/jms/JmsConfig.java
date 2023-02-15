@@ -43,16 +43,6 @@ public class JmsConfig {
 	}
 
 	@Bean
-	public Queue qdist017(JmsQueueProperties jmsQueueProperties) throws JMSException {
-		return new MQQueue(jmsQueueProperties.getQueues().getQdist017());
-	}
-
-	@Bean
-	public Queue qdist017FunksjonellFeil(JmsQueueProperties jmsQueueProperties) throws JMSException {
-		return new MQQueue(jmsQueueProperties.getQueues().getQdist017FunksjonellFeil());
-	}
-
-	@Bean
 	public Queue qdist009(JmsQueueProperties jmsQueueProperties) throws JMSException {
 		return new MQQueue(jmsQueueProperties.getQueues().getQdist009());
 	}
