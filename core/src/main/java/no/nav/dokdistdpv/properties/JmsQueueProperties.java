@@ -38,10 +38,6 @@ public class JmsQueueProperties {
 		@NotEmpty
 		private String qdist016FunksjonellFeil;
 		@NotEmpty
-		private String qdist017;
-		@NotEmpty
-		private String qdist017FunksjonellFeil;
-		@NotEmpty
 		private String qdist009;
 	}
 }
