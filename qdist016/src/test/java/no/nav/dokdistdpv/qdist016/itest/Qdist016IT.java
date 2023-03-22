@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -75,7 +76,8 @@ public class Qdist016IT {
 	public static final String HOVEDDOK_TEST_CONTENT = "HOVEDDOK_TEST_CONTENT";
 	public static final String VEDLEGG1_TEST_CONTENT = "VEDLEGG1_TEST_CONTENT";
 	public static final String VEDLEGG2_TEST_CONTENT = "VEDLEGG2_TEST_CONTENT";
-	public static String CALL_ID;
+
+	private static final String HENTFORSENDELSE_URL = "/rest/v1/administrerforsendelse/" + FORSENDELSE_ID;
 
 	@Autowired
 	private EncryptedBucketStorage encryptedBucketStorage;
@@ -111,13 +113,13 @@ public class Qdist016IT {
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/" + FORSENDELSE_ID)));
+			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
 			verify(1, putRequestedFor(urlPathEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/"))
 					.withQueryParam("forsendelseId", equalTo(FORSENDELSE_ID))
 					.withQueryParam("konversasjonId", matching("([a-zA-Z0-9/-]*)")));
 			verify(1, postRequestedFor(urlEqualTo("/safgraphql")));
 			verify(1, postRequestedFor(urlEqualTo("/altinn")));
-			verify(1, postRequestedFor(urlEqualTo("/azure_token")));
+			verify(2, postRequestedFor(urlEqualTo("/azure_token")));
 			verify(1, putRequestedFor(urlPathEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/"))
 					.withQueryParam("forsendelseId", equalTo(FORSENDELSE_ID))
 					.withQueryParam("forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT)));
@@ -131,23 +133,19 @@ public class Qdist016IT {
 	@Test
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnAdministrerForsendelseServerError() {
-		stubGetForsendelseServerError();
+		stubDokdistGetForsendelse(INTERNAL_SERVER_ERROR);
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016TekniskFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
 
 	@Test
 	@SneakyThrows
 	public void shouldFailToFunksjonellFeilQueueOnAdministrerForsendelseClientError() {
-		stubGetForsendelseNotFound();
+		stubDokdistGetForsendelse(NOT_FOUND);
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016FunksjonellFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@Test
@@ -157,9 +155,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016FunksjonellFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@Test
@@ -172,9 +168,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016TekniskFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
 
 	@Test
@@ -187,9 +181,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016TekniskFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
 
 	@Test
@@ -203,9 +195,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016FunksjonellFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@Test
@@ -219,9 +209,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016TekniskFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
 
 	@Test
@@ -236,9 +224,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016FunksjonellFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@SneakyThrows
@@ -253,9 +239,7 @@ public class Qdist016IT {
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016FunksjonellFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@SneakyThrows
@@ -270,9 +254,7 @@ public class Qdist016IT {
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			assertMessageOnQueue(qdist016TekniskFeil);
-		});
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
 
 	@SneakyThrows
@@ -304,11 +286,18 @@ public class Qdist016IT {
 	}
 
 	private void stubDokdistGetForsendelse(String bodyFileName) {
-		stubFor(get(urlEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/" + FORSENDELSE_ID))
+		stubFor(get(urlEqualTo(HENTFORSENDELSE_URL))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile(bodyFileName)));
+	}
+
+	private void stubDokdistGetForsendelse(HttpStatus status) {
+		stubFor(get(urlEqualTo(HENTFORSENDELSE_URL))
+				.willReturn(aResponse()
+						.withStatus(status.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
 	private void stubDokdistPutForsendelse(int statusValue) {
@@ -317,21 +306,6 @@ public class Qdist016IT {
 						.withStatus(statusValue)
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
-
-	private void stubGetForsendelseServerError() {
-		stubFor(get(urlEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/" + FORSENDELSE_ID))
-				.willReturn(aResponse()
-						.withStatus(INTERNAL_SERVER_ERROR.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
-	}
-
-	private void stubGetForsendelseNotFound() {
-		stubFor(get(urlEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/" + FORSENDELSE_ID))
-				.willReturn(aResponse()
-						.withStatus(NOT_FOUND.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
-	}
-
 
 	private void stubSafPostJournalpost() {
 		stubFor(post(urlMatching("/safgraphql"))
