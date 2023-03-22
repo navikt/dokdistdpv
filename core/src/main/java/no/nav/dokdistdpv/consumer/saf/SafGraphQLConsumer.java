@@ -1,8 +1,5 @@
 package no.nav.dokdistdpv.consumer.saf;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.exception.SafGraphQLFunctionalException;
 import no.nav.dokdistdpv.exception.SafGraphQLTechnicalException;
@@ -55,7 +52,7 @@ public class SafGraphQLConsumer {
 	}
 
 	private void handleError(Throwable error) {
-		if(error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new SafGraphQLFunctionalException(
 					String.format("Kall mot SAF (GraphQL) feilet med status=%s, feilmelding=%s",
 							response.getRawStatusCode(),

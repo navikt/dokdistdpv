@@ -38,6 +38,7 @@ public class GoogleCloudStorageConfiguration {
 		KeyTemplate keyTemplate = KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, KeyTemplates.get(KEYTEMPLATE));
 		KeysetHandle handle = KeysetHandle.generateNew(keyTemplate);
 		Aead aead = handle.getPrimitive(Aead.class);
+
 		Storage storage = StorageOptions.newBuilder()
 				.setProjectId(dokdistmellomlagerProperties.getProjectid())
 				.setTransportOptions(StorageOptions.getDefaultHttpTransportOptions().toBuilder()
@@ -46,6 +47,7 @@ public class GoogleCloudStorageConfiguration {
 						.setHttpTransportFactory(ApacheHttpTransport::new)
 						.build())
 				.build().getService();
+
 		return new GoogleCloudEncryptedBucketStorage(storage, dokdistmellomlagerProperties.getBucket(), aead);
 	}
 }
