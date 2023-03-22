@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 @Configuration
 public class CoreConfig {
+
 	@Bean
 	Clock clock() {
 		return Clock.system(TimeZone.getTimeZone("Europe/Oslo").toZoneId());

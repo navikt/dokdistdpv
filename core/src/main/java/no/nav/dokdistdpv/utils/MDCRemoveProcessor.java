@@ -7,6 +7,7 @@ import static no.nav.dokdistdpv.utils.MDCOperations.removeCallId;
 import static no.nav.dokdistdpv.utils.MDCOperations.removeConsumerId;
 
 public class MDCRemoveProcessor implements Processor {
+
 	@Override
 	public void process(Exchange exchange) {
 		removeCallId();

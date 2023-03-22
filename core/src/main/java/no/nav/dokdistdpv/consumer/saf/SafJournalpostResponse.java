@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SafJournalpostResponse {
+
 	private String journalpostId;
 	private Sak sak;
 	private String opprettetAvNavn;
@@ -38,45 +39,45 @@ public class SafJournalpostResponse {
 	@Value
 	@Builder
 	public static class AvsenderMottaker {
-		private String navn;
+		String navn;
 	}
 
 	@Value
 	@Builder
 	public static class Sak {
-		private String arkivsaksnummer;
-		private LocalDateTime datoOpprettet;
+		String arkivsaksnummer;
+		LocalDateTime datoOpprettet;
 	}
 
 	@Value
 	@Builder
 	public static class RelevantDato {
-		private LocalDateTime dato;
-		private String datotype;
+		LocalDateTime dato;
+		String datotype;
 	}
 
 	@Value
 	@Builder
 	public static class Bruker {
-		private String id;
-		private String type;
+		String id;
+		String type;
 	}
 
 	@Value
 	@Builder
 	public static class DokumentInfo {
-		private String dokumentInfoId;
-		private String dokumentstatus;
-		private String tittel;
-		private String originalJournalpostId;
+		String dokumentInfoId;
+		String dokumentstatus;
+		String tittel;
+		String originalJournalpostId;
 		@Builder.Default
-		private List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
+		List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
 
 		@Value
 		@Builder
 		public static class Dokumentvariant {
-			private String variantformat;
-			private String filtype;
+			String variantformat;
+			String filtype;
 		}
 	}
 }
