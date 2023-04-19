@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.9</version>
+		<version>2.7.10</version>
 	</parent>
 
 	<groupId>no.nav.dokdistdpv</groupId>
@@ -26,9 +26,9 @@
 		<java.version>17</java.version>
 
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<camel.version>3.20.2</camel.version>
+		<camel.version>3.20.3</camel.version>
 
-		<google-cloud.version>26.10.0</google-cloud.version>
+		<google-cloud.version>26.12.0</google-cloud.version>
 		<google-tink.version>1.8.0</google-tink.version>
 		<ibm-mq.version>9.3.2.0</ibm-mq.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
