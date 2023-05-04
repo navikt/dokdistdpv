@@ -15,7 +15,7 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktK
 
 public class TestUtils {
 
-	public static final String FORSENDELSE_ID = randomUUID().toString();
+	public static final String FORSENDELSE_ID = "1234567";
 	public static final String BESTILLINGS_ID = randomUUID().toString();
 	public static final String KONVERSASJON_ID = "54ebcff5-784e-4503-821b-fadc42361879";
 	public static final String FORSENDELSESTATUS = "KLAR_FOR_DIST";
