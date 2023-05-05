@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -21,14 +22,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class AdministrerForsendelseConsumer {
 
-	private final WebClient administrerForsendelseClient;
 	private final WebClient webClient;
 
-	public AdministrerForsendelseConsumer(WebClient administrerForsendelseClient,
-										  WebClient webClient,
+	public AdministrerForsendelseConsumer(WebClient webClient,
 										  DokdistdpvProperties dokdistdpvProperties,
 										  AzureToken azureToken) {
-		this.administrerForsendelseClient = administrerForsendelseClient;
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken,
@@ -67,8 +65,18 @@ public class AdministrerForsendelseConsumer {
 				.doOnError(this::handleError)
 				.block();
 
-		log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til forsendelseStatus={}",
-				oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.forsendelseStatus());
+		oppdaterForsendelseLog(oppdaterForsendelse);
+	}
+
+	private void oppdaterForsendelseLog(OppdaterForsendelseRequest oppdaterForsendelse) {
+		if (isNotBlank(oppdaterForsendelse.forsendelseStatus())) {
+			log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til forsendelseStatus={}",
+					oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.forsendelseStatus());
+		}
+		if (isNotBlank(oppdaterForsendelse.konversasjonId())) {
+			log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til konversasjonId={}",
+					oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.konversasjonId());
+		}
 	}
 
 	private void handleError(Throwable error) {

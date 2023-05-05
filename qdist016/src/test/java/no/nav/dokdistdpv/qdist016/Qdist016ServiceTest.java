@@ -40,7 +40,7 @@ class Qdist016ServiceTest {
 	private Qdist016Service service;
 
 	@MockBean
-	private AdministrerForsendelseConsumer administrerForsendelseeConsumer;
+	private AdministrerForsendelseConsumer administrerForsendelseConsumer;
 
 	@MockBean
 	private DokumentService dokumentService;
@@ -51,9 +51,9 @@ class Qdist016ServiceTest {
 	@Test
 	void distribuerForsendelseTilDPV() {
 
-		when(administrerForsendelseeConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
+		when(administrerForsendelseConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
 		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
-		doNothing().when(administrerForsendelseeConsumer).oppdaterForsendelse(any(OppdaterForsendelseRequest.class));
+		doNothing().when(administrerForsendelseConsumer).oppdaterForsendelse(any(OppdaterForsendelseRequest.class));
 		when(altinnClient.insertCorrespondence(
 				HENT_FORSENDELSE_RESPONSE.konversasjonId(),
 				HENT_FORSENDELSE_RESPONSE,
