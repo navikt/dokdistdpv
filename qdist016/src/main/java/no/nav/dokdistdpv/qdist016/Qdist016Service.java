@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.config.cxf.AltinnClient;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 import org.apache.camel.Handler;
 import org.springframework.stereotype.Service;
 
+import static java.lang.Long.valueOf;
 import static java.util.UUID.randomUUID;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -42,7 +44,9 @@ public class Qdist016Service {
 		var dokumenter = dokumentService.hentDokumenter(forsendelse);
 
 		altinnClient.insertCorrespondence(konversasjonId, forsendelse, dokumenter);
-		administrerForsendelseConsumer.oppdaterStatus(forsendelseId, FORSENDELSE_STATUS_EKSPEDERT);
+		administrerForsendelseConsumer.oppdaterForsendelse(
+				new OppdaterForsendelseRequest(valueOf(forsendelseId), FORSENDELSE_STATUS_EKSPEDERT, null));
+
 
 		return forsendelseId;
 	}
@@ -52,7 +56,8 @@ public class Qdist016Service {
 
 		if (isBlank(konversasjonId)) {
 			konversasjonId = randomUUID().toString();
-			administrerForsendelseConsumer.persisterKonversasjonId(forsendelseId, konversasjonId);
+			administrerForsendelseConsumer.oppdaterForsendelse(
+					new OppdaterForsendelseRequest(valueOf(forsendelseId), null, konversasjonId));
 		}
 
 		return konversasjonId;

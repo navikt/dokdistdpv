@@ -2,18 +2,19 @@ package no.nav.dokdistdpv.consumer.rdist001;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
 import no.nav.dokdistdpv.exception.AdministrerForsendelseFunctionalException;
 import no.nav.dokdistdpv.exception.AdministrerForsendelseTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
-import no.nav.dokdistdpv.utils.MDCOperations;
 import no.nav.dokdistdpv.utils.NavHeadersFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -21,14 +22,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class AdministrerForsendelseConsumer {
 
-	private final WebClient administrerForsendelseClient;
 	private final WebClient webClient;
 
-	public AdministrerForsendelseConsumer(WebClient administrerForsendelseClient,
-										  WebClient webClient,
+	public AdministrerForsendelseConsumer(WebClient webClient,
 										  DokdistdpvProperties dokdistdpvProperties,
 										  AzureToken azureToken) {
-		this.administrerForsendelseClient = administrerForsendelseClient;
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken,
@@ -56,38 +54,33 @@ public class AdministrerForsendelseConsumer {
 		return response;
 	}
 
-	public void persisterKonversasjonId(String forsendelseId, String konversasjonId) {
+	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelse) {
+		log.info("oppdaterForsendelse oppdaterer forsendelse med forsendelseId={}", oppdaterForsendelse.forsendelseId());
 
-		administrerForsendelseClient.put()
-				.uri(uriBuilder -> uriBuilder
-						.path("/rest/v1/administrerforsendelse/")
-						.queryParam("forsendelseId", forsendelseId)
-						.queryParam("konversasjonId", konversasjonId)
-						.build())
-				.header("Nav-Call-Id", MDCOperations.getCallId())
+		webClient.put()
+				.uri("/oppdaterforsendelse")
+				.bodyValue(oppdaterForsendelse)
 				.retrieve()
 				.toBodilessEntity()
 				.doOnError(this::handleError)
 				.block();
+
+		oppdaterForsendelseLog(oppdaterForsendelse);
 	}
 
-	public void oppdaterStatus(String forsendelseId, String forsendelseStatus) {
-
-		administrerForsendelseClient.put()
-				.uri(uriBuilder -> uriBuilder
-						.path("/rest/v1/administrerforsendelse/")
-						.queryParam("forsendelseId", forsendelseId)
-						.queryParam("forsendelseStatus", forsendelseStatus)
-						.build())
-				.header("Nav-Call-Id", MDCOperations.getCallId())
-				.retrieve()
-				.toBodilessEntity()
-				.doOnError(this::handleError)
-				.block();
+	private void oppdaterForsendelseLog(OppdaterForsendelseRequest oppdaterForsendelse) {
+		if (isNotBlank(oppdaterForsendelse.forsendelseStatus())) {
+			log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til forsendelseStatus={}",
+					oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.forsendelseStatus());
+		}
+		if (isNotBlank(oppdaterForsendelse.konversasjonId())) {
+			log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til konversasjonId={}",
+					oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.konversasjonId());
+		}
 	}
 
 	private void handleError(Throwable error) {
-		if(error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
 							response.getRawStatusCode(),

@@ -28,10 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
@@ -68,7 +66,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @ActiveProfiles("itest")
 public class Qdist016IT {
 	private static final String FORSENDELSE_ID = "256569";
-	private static final String FORSENDELSE_STATUS_EKSPEDERT = "EKSPEDERT";
 
 	public static final String DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK = "dokumentObjektReferanseHoveddok";
 	public static final String DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1 = "dokumentObjektReferanseVedlegg1";
@@ -76,8 +73,9 @@ public class Qdist016IT {
 	public static final String HOVEDDOK_TEST_CONTENT = "HOVEDDOK_TEST_CONTENT";
 	public static final String VEDLEGG1_TEST_CONTENT = "VEDLEGG1_TEST_CONTENT";
 	public static final String VEDLEGG2_TEST_CONTENT = "VEDLEGG2_TEST_CONTENT";
-
 	private static final String HENTFORSENDELSE_URL = "/rest/v1/administrerforsendelse/" + FORSENDELSE_ID;
+	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
+
 
 	@Autowired
 	private EncryptedBucketStorage encryptedBucketStorage;
@@ -105,7 +103,7 @@ public class Qdist016IT {
 	@Test
 	public void shouldProcessForsendelseOgSendTilDigitalPost() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 		stubSafPostJournalpost();
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
@@ -114,20 +112,16 @@ public class Qdist016IT {
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
-			verify(1, putRequestedFor(urlPathEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/"))
-					.withQueryParam("forsendelseId", equalTo(FORSENDELSE_ID))
-					.withQueryParam("konversasjonId", matching("([a-zA-Z0-9/-]*)")));
+			verify(2, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
 			verify(1, postRequestedFor(urlEqualTo("/safgraphql")));
 			verify(1, postRequestedFor(urlEqualTo("/altinn")));
-			verify(2, postRequestedFor(urlEqualTo("/azure_token")));
-			verify(1, putRequestedFor(urlPathEqualTo("/administrerforsendelse/rest/v1/administrerforsendelse/"))
-					.withQueryParam("forsendelseId", equalTo(FORSENDELSE_ID))
-					.withQueryParam("forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT)));
+			verify(4, postRequestedFor(urlEqualTo("/azure_token")));
 
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG2), anyString());
 		});
+
 	}
 
 	@Test
@@ -162,7 +156,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentHoveddokumentNotFoundInBucket() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 
 		stubDownloadObjectHoveddokumentNotFound();
 
@@ -175,7 +169,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggNotFoundInBucket() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy-ikke-joark.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 
 		stubDownloadObjectVedleggNotFound();
 
@@ -188,7 +182,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggWhenJournalpostNotFoundInSaf() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 
 		stubSafPostJournalpostNotFound();
@@ -202,7 +196,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggWhenSafServerError() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 
 		stubSafPostJournalpostServerError();
@@ -216,7 +210,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToFunksjonellFeilQueueOnAltinnException() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(OK.value());
+		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 		stubSafPostJournalpost();
 
@@ -232,7 +226,7 @@ public class Qdist016IT {
 	public void shouldFailToFunksjonellQueueOnPutForsendelseNotFound() {
 
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(NOT_FOUND.value());
+		stubPutOppdaterForsendelse(NOT_FOUND.value());
 
 		stubDownloadObject();
 		stubSafPostJournalpost();
@@ -247,7 +241,7 @@ public class Qdist016IT {
 	public void shouldFailToTekniskFeilQueueOnPutForsendelseServerError() {
 
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubDokdistPutForsendelse(INTERNAL_SERVER_ERROR.value());
+		stubPutOppdaterForsendelse(INTERNAL_SERVER_ERROR.value());
 
 		stubDownloadObject();
 		stubSafPostJournalpost();
@@ -300,8 +294,8 @@ public class Qdist016IT {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
-	private void stubDokdistPutForsendelse(int statusValue) {
-		stubFor(put(urlPathMatching("/administrerforsendelse/rest/v1/administrerforsendelse?(.*?)"))
+	private void stubPutOppdaterForsendelse(int statusValue) {
+		stubFor(put(urlPathMatching(OPPDATERFORSENDELSE_URL))
 				.willReturn(aResponse()
 						.withStatus(statusValue)
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
