@@ -11,6 +11,7 @@ import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.slf4j.Logger;
@@ -59,6 +60,11 @@ public class AltinnClient {
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
 		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
+		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
+		outInterceptor.setSensitiveElementNames(Set.of("systemPassword"));
+		client.getEndpoint().getOutInterceptors().add(outInterceptor);
+		client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
+
 		return port;
 	}
 
