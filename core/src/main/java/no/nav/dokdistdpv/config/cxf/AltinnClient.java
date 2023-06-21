@@ -59,10 +59,6 @@ public class AltinnClient {
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
 		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
-		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-		outInterceptor.setSensitiveElementNames(Set.of("systemPassword"));
-		client.getEndpoint().getOutInterceptors().add(outInterceptor);
-
 		return port;
 	}
 

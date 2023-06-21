@@ -26,7 +26,7 @@
 		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
 			<maxFileSize>50MB</maxFileSize>
 		</triggeringPolicy>
-		<encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
 	</appender>
 
 	<root level="WARN">
@@ -39,7 +39,10 @@
 
 	<logger name="org.apache.cxf" level="INFO" additivity="false"/>
 
-	<logger name="org.apache.cxf.ext.logging" level="INFO" additivity="false">
+	<logger name="secureLog" level="DEBUG" additivity="false">
+		<appender-ref ref="secureLog"/>
+	</logger>
+	<logger name="org.apache.cxf.ext.logging" level="DEBUG" additivity="false">
 		<appender-ref ref="secureLog"/>
 	</logger>
 </included>
