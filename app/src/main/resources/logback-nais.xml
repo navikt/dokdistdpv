@@ -40,7 +40,7 @@
 	<logger name="secureLog" level="DEBUG" additivity="false">
 		<appender-ref ref="secureLog"/>
 	</logger>
-	<logger name="org.apache.cxf" level="DEBUG" additivity="false">
+	<logger name="org.apache.cxf.services" level="INFO" additivity="false">
 		<appender-ref ref="secureLog"/>
 	</logger>
 </included>
