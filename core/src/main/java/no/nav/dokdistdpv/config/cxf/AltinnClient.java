@@ -11,7 +11,11 @@ import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.ws.BindingProvider;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
@@ -28,6 +33,7 @@ import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapTo
 @Slf4j
 public class AltinnClient {
 
+	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 	private AltinnProps altinnProps;
 	private SecurityCredentials securityCredentials;
 
@@ -53,6 +59,14 @@ public class AltinnClient {
 		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
+		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
+		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
+		outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
+		outInterceptor.setPrettyLogging(true);
+		outInterceptor.setLimit(1024 * 1024 * 100);
+		client.getEndpoint().getOutInterceptors().add(outInterceptor);
+		client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
+		client.getEndpoint().getInFaultInterceptors().add(new LoggingInInterceptor());
 
 		return port;
 	}
@@ -66,6 +80,7 @@ public class AltinnClient {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProps.serviceCode, altinnProps.serviceEditionCode);
 
 		log.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
+		secureLog.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
 
 		try {
 			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
@@ -76,6 +91,9 @@ public class AltinnClient {
 					insertCorrespondenceV2);
 
 			log.info("Forsendelse distribuert til Altinn med status={} og statusCode={}",
+					receipt.getReceiptTypeName(),
+					receipt.getReceiptStatusCode());
+			secureLog.info("Forsendelse distribuert til Altinn med status={} og statusCode={}",
 					receipt.getReceiptTypeName(),
 					receipt.getReceiptStatusCode());
 
