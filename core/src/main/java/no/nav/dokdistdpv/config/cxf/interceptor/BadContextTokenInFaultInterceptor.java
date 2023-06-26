@@ -20,7 +20,7 @@ import static org.apache.cxf.ws.security.tokenstore.TokenStoreUtils.getTokenStor
  * Interceptor for å håndtere feil med context token.
  */
 @Slf4j
-public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor {
+public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<Message> {
 
     private static final String ERROR_CODE_BAD_CONTEXT_TOKEN = "BadContextToken";
 

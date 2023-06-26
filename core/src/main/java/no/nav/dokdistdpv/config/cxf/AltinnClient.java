@@ -7,6 +7,10 @@ import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
+import no.nav.dokdistdpv.config.cxf.interceptor.BadContextTokenInFaultInterceptor;
+import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
+import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
+import no.nav.dokdistdpv.config.cxf.interceptor.HeaderInterceptor;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
@@ -60,14 +64,17 @@ public class AltinnClient {
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
 		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
+		client.getInInterceptors().add(new LoggingInInterceptor());
+		client.getInInterceptors().add(new CookiesInInterceptor());
+		client.getOutInterceptors().add(new CookiesOutInterceptor());
+		client.getOutInterceptors().add(new HeaderInterceptor());
 		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
 		outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
 		outInterceptor.setPrettyLogging(true);
 		outInterceptor.setLimit(1024 * 1024 * 100);
-		client.getEndpoint().getOutInterceptors().add(outInterceptor);
-		client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
-		client.getEndpoint().getInFaultInterceptors().add(new LoggingInInterceptor());
-
+		client.getOutInterceptors().add(outInterceptor);
+		client.getInFaultInterceptors().add(new LoggingInInterceptor());
+		client.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
 		return port;
 	}
 
