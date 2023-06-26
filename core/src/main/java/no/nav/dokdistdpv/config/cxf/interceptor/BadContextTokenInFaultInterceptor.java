@@ -35,6 +35,10 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
         if (exception instanceof SoapFault soapFault) {
             log.error("Server Gods not happy, sent you a soapFault.. Trying to recover..");
             List<QName> subCodes = soapFault.getSubCodes();
+            if(subCodes == null) {
+                message.setContent(Exception.class, soapFault);
+                return;
+            }
             for (QName subCode : subCodes) {
                 log.error("Found subCode: " + subCode.getLocalPart());
                 if (subCode.getLocalPart().equalsIgnoreCase(ERROR_CODE_BAD_CONTEXT_TOKEN)) {
