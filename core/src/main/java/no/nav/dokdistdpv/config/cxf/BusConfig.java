@@ -23,17 +23,11 @@ public class BusConfig {
 	@Bean
 	public Bus springBus() {
 		Bus bus = new SpringBus();
-
 		LoggingFeature loggingFeature = new LoggingFeature();
 		loggingFeature.setPrettyLogging(true);
 		loggingFeature.setSensitiveElementNames(Set.of("systemPassword"));
 		loggingFeature.initialize(bus);
 		bus.getFeatures().add(loggingFeature);
-		bus.getInInterceptors().add(new CookiesInInterceptor());
-		bus.getOutInterceptors().add(new CookiesOutInterceptor());
-		bus.getOutInterceptors().add(new HeaderInterceptor());
-		bus.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
-
 		return bus;
 	}
 

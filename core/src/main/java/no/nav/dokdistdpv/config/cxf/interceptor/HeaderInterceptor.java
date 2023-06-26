@@ -18,7 +18,7 @@ import static org.apache.cxf.phase.Phase.PRE_PROTOCOL_ENDING;
  * i header på utgående webservice melding.
  */
 @Slf4j
-public class HeaderInterceptor extends AbstractPhaseInterceptor {
+public class HeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
     public HeaderInterceptor() {
         super(PRE_PROTOCOL_ENDING);
