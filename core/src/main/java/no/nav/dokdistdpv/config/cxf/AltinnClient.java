@@ -7,13 +7,10 @@ import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
-import no.nav.dokdistdpv.config.cxf.interceptor.BadContextTokenInFaultInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.HeaderInterceptor;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
+import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
@@ -40,14 +37,17 @@ public class AltinnClient {
 	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 	private AltinnProps altinnProps;
 	private SecurityCredentials securityCredentials;
+	private Bus bus;
 
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
 	protected AltinnClient(AltinnProps altinnProps,
-						   SecurityCredentials securityCredentials) {
+						   SecurityCredentials securityCredentials,
+						   Bus bus) {
 		this.altinnProps = altinnProps;
 		this.securityCredentials = securityCredentials;
 		this.iCorrespondenceAgencyExternalEC2 = getClient();
+		this.bus = bus;
 	}
 
 	private ICorrespondenceAgencyExternalEC2 getClient() {
@@ -63,18 +63,13 @@ public class AltinnClient {
 		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
-		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
 		client.getInInterceptors().add(new LoggingInInterceptor());
-		client.getInInterceptors().add(new CookiesInInterceptor());
-		client.getOutInterceptors().add(new CookiesOutInterceptor());
-		client.getOutInterceptors().add(new HeaderInterceptor());
 		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
 		outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
 		outInterceptor.setPrettyLogging(true);
 		outInterceptor.setLimit(1024 * 1024 * 100);
 		client.getOutInterceptors().add(outInterceptor);
 		client.getInFaultInterceptors().add(new LoggingInInterceptor());
-		client.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
 		return port;
 	}
 
