@@ -63,18 +63,13 @@ public class AltinnClient {
 		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
-		client.getRequestContext().put("org.apache.cxf.logging.enable", true);
 		client.getInInterceptors().add(new LoggingInInterceptor());
-//		client.getInInterceptors().add(new CookiesInInterceptor());
-//		client.getOutInterceptors().add(new CookiesOutInterceptor());
-//		client.getOutInterceptors().add(new HeaderInterceptor());
 		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
 		outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
 		outInterceptor.setPrettyLogging(true);
 		outInterceptor.setLimit(1024 * 1024 * 100);
 		client.getOutInterceptors().add(outInterceptor);
 		client.getInFaultInterceptors().add(new LoggingInInterceptor());
-//		client.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
 		return port;
 	}
 

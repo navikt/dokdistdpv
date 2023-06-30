@@ -8,14 +8,11 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BusConfig {
-	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 	/**
 	 * Initialiserer CFX Bus med nødvendige interceptors og logging.
 	 *
@@ -31,7 +28,6 @@ public class BusConfig {
 
 		bus.getInInterceptors().add(new LoggingInInterceptor());
 		bus.getOutInterceptors().add(new LoggingOutInterceptor());
-		secureLog.info("springBus={}", bus);
 		return bus;
 	}
 
