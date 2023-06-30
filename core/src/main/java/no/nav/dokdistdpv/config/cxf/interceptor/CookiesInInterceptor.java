@@ -17,20 +17,20 @@ import java.util.Map;
  * Den vil da finnes som en attributt <i>Set-Cookie</i>. Hvis funnet så lagres den i {@link CookieStore}.
  */
 public class CookiesInInterceptor extends AbstractPhaseInterceptor<Message> {
-    private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
+	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 
-    public CookiesInInterceptor() {
-        super(Phase.PRE_PROTOCOL);
-    }
+	public CookiesInInterceptor() {
+		super(Phase.PRE_PROTOCOL);
+	}
 
-    @Override
-    public void handleMessage(Message message) throws Fault {
-        Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
-        List<Cookie> cookies= headers.get("Set-Cookie");
-        if(cookies != null) {
-            secureLog.info("CookiesInInterceptor -- cookie to be stored in cookiestore: " + cookies.get(0));
-            CookieStore.setCookie(cookies.get(0));
-        }
-    }
+	@Override
+	public void handleMessage(Message message) throws Fault {
+		Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
+		List<Cookie> cookies = headers.get("Set-Cookie");
+		if (cookies != null) {
+			secureLog.info("CookiesInInterceptor -- cookie to be stored in cookiestore: " + cookies.get(0));
+			CookieStore.setCookie(cookies.get(0));
+		}
+	}
 
 }
