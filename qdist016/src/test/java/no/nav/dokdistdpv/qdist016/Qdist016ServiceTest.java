@@ -1,11 +1,13 @@
 package no.nav.dokdistdpv.qdist016;
 
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
+import no.altinn.correspondenceagencyexternalaec.ReceiptStatusEnum;
 import no.nav.dokdistdpv.config.cxf.AltinnClient;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
+import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,8 +26,11 @@ import static no.nav.dokdistdpv.qdist016.TestUtils.createHentForsendelseResponse
 import static no.nav.dokdistdpv.qdist016.TestUtils.createHentForsendelseResponseWithKonversasjonId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {Qdist016Service.class})
@@ -34,7 +39,6 @@ class Qdist016ServiceTest {
 	private final HentForsendelseResponse HENT_FORSENDELSE_RESPONSE = createHentForsendelseResponse();
 	private final List<AltinnDokument> ALTINN_DOKUMENTER = createAltinnDokumenter();
 	private final DistribuerTilKanal DISTRIBUER_TIL_KANAL = createDistribuerTilKanal();
-	private final ReceiptExternal RECEIPT_EXTERNAL = new ReceiptExternal();
 
 	@Autowired
 	private Qdist016Service service;
@@ -50,6 +54,8 @@ class Qdist016ServiceTest {
 
 	@Test
 	void distribuerForsendelseTilDPV() {
+		final ReceiptExternal receiptExternalOk = new ReceiptExternal();
+		receiptExternalOk.setReceiptStatusCode(ReceiptStatusEnum.OK);
 
 		when(administrerForsendelseConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
 		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
@@ -57,11 +63,27 @@ class Qdist016ServiceTest {
 		when(altinnClient.insertCorrespondence(
 				HENT_FORSENDELSE_RESPONSE.konversasjonId(),
 				HENT_FORSENDELSE_RESPONSE,
-				ALTINN_DOKUMENTER)).thenReturn(RECEIPT_EXTERNAL);
+				ALTINN_DOKUMENTER)).thenReturn(receiptExternalOk);
 
 		var result = service.distribuerForsendelseTilDPV(DISTRIBUER_TIL_KANAL);
-
 		assertEquals(result, DISTRIBUER_TIL_KANAL.getForsendelseId());
+	}
+
+	@Test
+	void distribuerForsendelseTilDPVHandterFeil() {
+		final ReceiptExternal receiptExternalNotOk = new ReceiptExternal();
+		receiptExternalNotOk.setReceiptStatusCode(ReceiptStatusEnum.VALIDATION_FAILED);
+
+		when(administrerForsendelseConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
+		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
+		doNothing().when(administrerForsendelseConsumer).oppdaterForsendelse(any(OppdaterForsendelseRequest.class));
+		when(altinnClient.insertCorrespondence(
+				HENT_FORSENDELSE_RESPONSE.konversasjonId(),
+				HENT_FORSENDELSE_RESPONSE,
+				ALTINN_DOKUMENTER)).thenReturn(receiptExternalNotOk);
+
+		assertThrows(AltinnException.class, () ->
+				service.distribuerForsendelseTilDPV(DISTRIBUER_TIL_KANAL));
 	}
 
 	@ParameterizedTest

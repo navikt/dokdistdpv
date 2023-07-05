@@ -15,8 +15,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +32,6 @@ import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapTo
 @Slf4j
 public class AltinnClient {
 
-	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 	private AltinnProps altinnProps;
 	private SecurityCredentials securityCredentials;
 	private Bus bus;
@@ -81,9 +78,6 @@ public class AltinnClient {
 
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProps.serviceCode, altinnProps.serviceEditionCode);
 
-		log.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
-		secureLog.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
-
 		try {
 			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
 					altinnProps.username,
@@ -92,12 +86,6 @@ public class AltinnClient {
 					konversasjonId,
 					insertCorrespondenceV2);
 
-			log.info("Forsendelse distribuert til Altinn med status={} og statusCode={}",
-					receipt.getReceiptTypeName(),
-					receipt.getReceiptStatusCode());
-			secureLog.info("Forsendelse distribuert til Altinn med status={} og statusCode={}",
-					receipt.getReceiptTypeName(),
-					receipt.getReceiptStatusCode());
 
 			return receipt;
 

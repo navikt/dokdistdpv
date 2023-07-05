@@ -221,6 +221,21 @@ public class Qdist016IT {
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
+	@Test
+	@SneakyThrows
+	public void shouldFailToFunksjonellFeilQueueOnAltinnNotOkStatus() {
+		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
+		stubPutOppdaterForsendelse(OK.value());
+		stubDownloadObject();
+		stubSafPostJournalpost();
+
+		stubAltinnInsertCorrespondence("altinn/altinnResponseRejected.xml");
+
+		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
+	}
+
 	@SneakyThrows
 	@Test
 	public void shouldFailToFunksjonellQueueOnPutForsendelseNotFound() {
