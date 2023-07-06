@@ -68,7 +68,7 @@ public class AltinnClient {
 		if(dokdistdpvProperties.getQdist016().isAltinnlogg()) {
 			client.getInInterceptors().add(new LoggingInInterceptor());
 			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-			outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
+			outInterceptor.setSensitiveElementNames(Set.of("ns2:systemPassword"));
 			outInterceptor.setPrettyLogging(true);
 			outInterceptor.setLimit(1024 * 1024 * 100);
 			client.getOutInterceptors().add(outInterceptor);
