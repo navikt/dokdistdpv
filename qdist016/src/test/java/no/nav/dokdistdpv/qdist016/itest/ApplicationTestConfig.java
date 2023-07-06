@@ -35,7 +35,7 @@ import static org.mockito.Mockito.mock;
 		LocalTestCacheConfig.class
 })
 @ComponentScan(basePackages = "no.nav.dokdistdpv")
-public abstract class ApplicationTestConfig {
+public class ApplicationTestConfig {
 
 	@Bean
 	public EncryptedBucketStorage bucketStorage() {
