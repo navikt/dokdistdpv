@@ -19,6 +19,14 @@ public class DokdistdpvProperties {
 	@Validated
 	public static class Qdist016 {
 		private boolean autostartup;
+		/**
+		 * Toggler logging av Altinn request/response payloads i secureLog
+		 * Krever medlemskap i AD gruppen 0000-GA-SECURE_LOG_TEAM_DOKUMENTHANDTERING
+		 * <p>
+		 * Kan konfigureres i vault uten kodeendring:
+		 * dokdistdpv_qdist016_altinnlogg=true
+		 */
+		private boolean altinnlogg = false;
 	}
 
 	@Data

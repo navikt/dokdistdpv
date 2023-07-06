@@ -7,7 +7,6 @@ import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.utils.MDCRemoveProcessor;
 import no.nav.dokdistdpv.utils.MDCSetProcessor;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
@@ -33,13 +32,11 @@ public class Qdist016Route extends RouteBuilder {
 	private final Queue qdist016TekniskFeil;
 	private final DokdistdpvProperties dokdistdpvProperties;
 
-	public Qdist016Route(CamelContext context,
-						 Qdist016Service qdist016Service,
+	public Qdist016Route(Qdist016Service qdist016Service,
 						 Queue qdist016,
 						 Queue qdist016FunksjonellFeil,
 						 Queue qdist016TekniskFeil,
 						 DokdistdpvProperties dokdistdpvProperties) {
-		super(context);
 		this.qdist016Service = qdist016Service;
 		this.qdist016 = qdist016;
 		this.qdist016FunksjonellFeil = qdist016FunksjonellFeil;

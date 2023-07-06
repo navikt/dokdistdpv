@@ -4,6 +4,7 @@ import no.nav.dokdistdpv.config.cxf.interceptor.BadContextTokenInFaultIntercepto
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.HeaderInterceptor;
+import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
@@ -19,16 +20,17 @@ public class BusConfig {
 	 * @return Bus
 	 */
 	@Bean
-	public Bus springBus() {
+	public Bus springBus(DokdistdpvProperties dokdistdpvProperties) {
 		SpringBus bus = new SpringBus();
 		bus.getInInterceptors().add(new CookiesInInterceptor());
 		bus.getOutInterceptors().add(new CookiesOutInterceptor());
 		bus.getOutInterceptors().add(new HeaderInterceptor());
 		bus.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
 
-		bus.getInInterceptors().add(new LoggingInInterceptor());
-		bus.getOutInterceptors().add(new LoggingOutInterceptor());
+		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
+			bus.getInInterceptors().add(new LoggingInInterceptor());
+			bus.getOutInterceptors().add(new LoggingOutInterceptor());
+		}
 		return bus;
 	}
-
 }

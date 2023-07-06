@@ -10,6 +10,7 @@ import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
+import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
@@ -32,15 +33,19 @@ import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapTo
 @Slf4j
 public class AltinnClient {
 
+	private final DokdistdpvProperties dokdistdpvProperties;
+	// Autowiring av altinnProps, securityCredentials, bus sikrer at konfigurerte verdier blir injected etter at ressursene er konfigurert
 	private AltinnProps altinnProps;
 	private SecurityCredentials securityCredentials;
 	private Bus bus;
 
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
-	protected AltinnClient(AltinnProps altinnProps,
+	protected AltinnClient(DokdistdpvProperties dokdistdpvProperties,
+						   AltinnProps altinnProps,
 						   SecurityCredentials securityCredentials,
 						   Bus bus) {
+		this.dokdistdpvProperties = dokdistdpvProperties;
 		this.altinnProps = altinnProps;
 		this.securityCredentials = securityCredentials;
 		this.iCorrespondenceAgencyExternalEC2 = getClient();
@@ -60,13 +65,15 @@ public class AltinnClient {
 		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
-		client.getInInterceptors().add(new LoggingInInterceptor());
-		LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-		outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
-		outInterceptor.setPrettyLogging(true);
-		outInterceptor.setLimit(1024 * 1024 * 100);
-		client.getOutInterceptors().add(outInterceptor);
-		client.getInFaultInterceptors().add(new LoggingInInterceptor());
+		if(dokdistdpvProperties.getQdist016().isAltinnlogg()) {
+			client.getInInterceptors().add(new LoggingInInterceptor());
+			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
+			outInterceptor.setSensitiveElementNames(Set.of("*:systemPassword"));
+			outInterceptor.setPrettyLogging(true);
+			outInterceptor.setLimit(1024 * 1024 * 100);
+			client.getOutInterceptors().add(outInterceptor);
+			client.getInFaultInterceptors().add(new LoggingInInterceptor());
+		}
 		return port;
 	}
 
