@@ -1,5 +1,9 @@
 package no.nav.dokdistdpv.config.cxf;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
@@ -19,14 +23,11 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.xml.ws.BindingProvider;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
+import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
 
 @Component
@@ -65,7 +66,7 @@ public class AltinnClient {
 		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
-		if(dokdistdpvProperties.getQdist016().isAltinnlogg()) {
+		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
 			client.getInInterceptors().add(new LoggingInInterceptor());
 			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
 			outInterceptor.setSensitiveElementNames(Set.of("ns2:systemPassword"));
@@ -100,6 +101,9 @@ public class AltinnClient {
 			var errorMsg = e.getFaultInfo().getAltinnErrorMessage() != null ? e.getFaultInfo().getAltinnErrorMessage() : "Ukjent feil";
 			var errorGuid = e.getFaultInfo().getUserGuid() != null ? e.getFaultInfo().getErrorGuid() : "Ukjent GUID";
 			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", errorMsg, errorGuid);
+			throw new AltinnException(e.getMessage(), e.getCause());
+		} catch (WebServiceException e) {
+			log.warn("Error ved distribusjon til Altinn med feilmelding={}", e.getMessage());
 			throw new AltinnException(e.getMessage(), e.getCause());
 		}
 	}

@@ -120,6 +120,8 @@ public class TestUtils {
 	}
 
 	public static DistribuerTilKanal createDistribuerTilKanal() {
-		return new DistribuerTilKanal().withForsendelseId(FORSENDELSE_ID);
+		DistribuerTilKanal distribuerTilKanal = new DistribuerTilKanal();
+		distribuerTilKanal.setForsendelseId(FORSENDELSE_ID);
+		return distribuerTilKanal;
 	}
 }

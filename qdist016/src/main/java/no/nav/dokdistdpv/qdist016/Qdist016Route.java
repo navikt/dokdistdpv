@@ -1,5 +1,7 @@
 package no.nav.dokdistdpv.qdist016;
 
+import jakarta.jms.Queue;
+import jakarta.xml.bind.JAXBContext;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvFunctionalException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
@@ -11,9 +13,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.springframework.stereotype.Component;
-
-import javax.jms.Queue;
-import javax.xml.bind.JAXBContext;
 
 import static java.lang.String.format;
 import static no.nav.dokdistdpv.utils.DokdistdpvConstant.PROPERTY_FORSENDELSE_ID;
@@ -64,7 +63,7 @@ public class Qdist016Route extends RouteBuilder {
 				.handled(true)
 				.useOriginalMessage()
 				.log(WARN, log, "${exception}; " + getForsendelseId())
- 				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
+				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
 
 		onException(AltinnException.class)
 				.handled(true)
