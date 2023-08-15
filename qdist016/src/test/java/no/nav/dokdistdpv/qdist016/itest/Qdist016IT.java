@@ -111,10 +111,10 @@ public class Qdist016IT {
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
-			verify(1, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
+			verify(2, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
 			verify(1, postRequestedFor(urlEqualTo("/safgraphql")));
 			verify(1, postRequestedFor(urlEqualTo("/altinn")));
-			verify(3, postRequestedFor(urlEqualTo("/azure_token")));
+			verify(4, postRequestedFor(urlEqualTo("/azure_token")));
 
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString());
