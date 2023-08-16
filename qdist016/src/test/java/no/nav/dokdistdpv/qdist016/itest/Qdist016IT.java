@@ -232,7 +232,7 @@ public class Qdist016IT {
 
 		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
 
-		await().atMost(100, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
 	@SneakyThrows
