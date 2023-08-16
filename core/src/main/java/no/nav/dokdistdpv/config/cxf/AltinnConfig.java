@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
+import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
 
 @Profile("nais")
 @Configuration
@@ -36,7 +37,7 @@ public class AltinnConfig {
 		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
 		client.getRequestContext().put("security.must-understand", true);
 		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
-		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
+		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
 
