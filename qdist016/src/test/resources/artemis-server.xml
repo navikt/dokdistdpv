@@ -8,8 +8,8 @@
 		<persistence-enabled>false</persistence-enabled>
 		<address-settings>
 			<address-setting match="qdist016">
-				<dead-letter-address>qdist016Bq</dead-letter-address>
-				<expiry-address>qdist016Bq</expiry-address>
+				<dead-letter-address>qdist016_boq</dead-letter-address>
+				<expiry-address>qdist016_boq</expiry-address>
 				<max-delivery-attempts>1</max-delivery-attempts>
 			</address-setting>
 		</address-settings>
