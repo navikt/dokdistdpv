@@ -18,9 +18,9 @@
   "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric-dev",
 
   "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/preprod/shared/",
-  "ALTINN_INSERT_CORRESPONDENCE_SERVICE_ENDPOINT": "https://tt02.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
-  "ALTINN_EXTERNAL_SERVICE_CODE": "5828",
-  "ALTINN_EXTERNAL_SERVICE_EDITION_CODE": "1",
+  "ALTINN_ENDPOINT": "https://tt02.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
+  "ALTINN_SERVICE_CODE": "5828",
+  "ALTINN_SERVICE_EDITION_CODE": "1",
 
   "ADMINISTRERFORSENDELSE_BASE_URL": "https://app-q1.adeo.no/dokdist",
 
