@@ -12,7 +12,6 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.util.Properties;
 import java.util.Set;
@@ -20,7 +19,6 @@ import java.util.Set;
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
 
-@Profile("nais")
 @Configuration
 public class AltinnConfig {
 
@@ -33,13 +31,7 @@ public class AltinnConfig {
 		BindingProvider bindingProvider = (BindingProvider) port;
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProperties.endpoint());
 
-		Client client = ClientProxy.getClient(port);
-		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
-		client.getRequestContext().put("security.must-understand", true);
-		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
-		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
-		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
-		client.getRequestContext().put("security.issue.after.failed.renew", true);
+		Client client = getClient(port, keyStoreProperties);
 
 		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
 			client.getInInterceptors().add(new LoggingInInterceptor());
@@ -53,7 +45,19 @@ public class AltinnConfig {
 		return port;
 	}
 
-	public Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {
+	public Client getClient(ICorrespondenceAgencyExternalEC2 port, KeyStoreProperties keyStoreProperties) {
+		Client client = ClientProxy.getClient(port);
+		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
+		client.getRequestContext().put("security.must-understand", true);
+		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
+		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
+		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
+		client.getRequestContext().put("security.issue.after.failed.renew", true);
+
+		return client;
+	}
+
+	private Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {
 		final Properties properties = new Properties();
 		properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
 		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyStoreProperties.path());

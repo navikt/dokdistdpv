@@ -1,66 +1,27 @@
 package no.nav.dokdistdpv.qdist016.itest;
 
-import jakarta.xml.ws.BindingProvider;
-import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
-import no.nav.dokdistdpv.properties.AltinnProperties;
-import no.nav.dokdistdpv.properties.DokdistdpvProperties;
-import no.nav.dokdistdpv.properties.KeyStoreProperties;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.ext.logging.LoggingInInterceptor;
-import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-import java.util.Properties;
-import java.util.Set;
 
-import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
-
-@Profile("itest")
 @Configuration
 public class AltinnTestConfig {
+
+	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
+
+	public AltinnTestConfig(ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2) {
+		this.iCorrespondenceAgencyExternalEC2 = iCorrespondenceAgencyExternalEC2;
+	}
+
 	@Bean
-	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
-																			 DokdistdpvProperties dokdistdpvProperties,
-																			 KeyStoreProperties keyStoreProperties) {
-		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
-		ICorrespondenceAgencyExternalEC2 port = service.getCustomBindingICorrespondenceAgencyExternalEC2();
-		BindingProvider bindingProvider = (BindingProvider) port;
-		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProperties.endpoint());
-
-		Client client = ClientProxy.getClient(port);
-		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
-		client.getRequestContext().put("security.must-understand", true);
-		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
-		client.getRequestContext().put("javax.xml.ws.session.maintain", true);
-		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
-		client.getRequestContext().put("security.issue.after.failed.renew", true);
+	public Client getClient() {
+		Client client = ClientProxy.getClient(iCorrespondenceAgencyExternalEC2);
 		client.getRequestContext().put(HttpClientHTTPConduit.FORCE_HTTP_VERSION, "1.1");
-
-		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
-			client.getInInterceptors().add(new LoggingInInterceptor());
-			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-			outInterceptor.setSensitiveElementNames(Set.of("ns2:systemPassword"));
-			outInterceptor.setPrettyLogging(true);
-			outInterceptor.setLimit(1024 * 1024 * 100);
-			client.getOutInterceptors().add(outInterceptor);
-			client.getInFaultInterceptors().add(new LoggingInInterceptor());
-		}
-		return port;
+		return client;
 	}
 
-	public Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {
-		final Properties properties = new Properties();
-		properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyStoreProperties.path());
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", keyStoreProperties.password());
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "pkcs12");
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", keyStoreProperties.password());
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.alias", keyStoreProperties.alias());
-		return properties;
-	}
 }
