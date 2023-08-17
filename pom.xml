@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.12</version>
+		<version>3.1.1</version>
 	</parent>
 
 	<groupId>no.nav.dokdistdpv</groupId>
@@ -26,21 +26,22 @@
 		<java.version>17</java.version>
 
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<camel.version>3.20.6</camel.version>
+		<camel.version>4.0.0-RC1</camel.version>
 
 		<google-cloud.version>26.16.0</google-cloud.version>
 		<tink.version>1.9.0</tink.version>
 		<tink-gcpkms.version>1.8.0</tink-gcpkms.version>
-		<ibm-mq.version>9.3.2.1</ibm-mq.version>
+		<ibm.mq.client.version>9.3.3.0</ibm.mq.client.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
+		<httpclient.version>4.5.14</httpclient.version>
 
 		<!-- 3.6.0 gir trøbbel for testene -->
-		<cxf.version>3.5.6</cxf.version>
+		<cxf.version>4.0.2</cxf.version>
 
-		<melding-virksomhet-dokdistfordeling.version>5-7ff79fc</melding-virksomhet-dokdistfordeling.version>
+		<melding-virksomhet-dokdistfordeling.version>6-4049b35</melding-virksomhet-dokdistfordeling.version>
 
 		<!-- Test -->
-		<spring-cloud-contract-wiremock.version>3.1.7</spring-cloud-contract-wiremock.version>
+		<spring-cloud-contract-wiremock.version>4.0.3</spring-cloud-contract-wiremock.version>
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -89,6 +90,18 @@
 				<version>${tink-gcpkms.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 			<!-- Soap mot Altinn -->
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
@@ -106,8 +119,8 @@
 
 			<dependency>
 				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mq.allclient</artifactId>
-				<version>${ibm-mq.version}</version>
+				<artifactId>com.ibm.mq.jakarta.client</artifactId>
+				<version>${ibm.mq.client.version}</version>
 			</dependency>
 
 			<!-- Camel -->
@@ -150,6 +163,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>artemis-jakarta-server</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

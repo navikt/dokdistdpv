@@ -1,12 +1,14 @@
 package no.nav.dokdistdpv.qdist016.itest;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
+import jakarta.xml.bind.JAXBElement;
 import lombok.SneakyThrows;
 import no.nav.dokdistdpv.cloudstorage.DokDistDokumentFraBucket;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.exception.ObjectDownloadFailedException;
 import no.nav.dokdistdpv.utils.MDCOperations;
-import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,9 +23,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import wiremock.org.apache.commons.io.IOUtils;
 
-import javax.jms.Queue;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -267,7 +266,7 @@ public class Qdist016IT {
 	}
 
 	@SneakyThrows
-	private void assertMessageOnQueue(javax.jms.Queue queue) {
+	private void assertMessageOnQueue(Queue queue) {
 		String message = receive(queue);
 		assertNotNull(message);
 		assertEquals(message, classpathToString("__files/qdist016-happy.xml"));
@@ -352,11 +351,10 @@ public class Qdist016IT {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response.json")));
 	}
-	//
 
 	private void sendStringMessage(Queue queue, final String message, final String callId) {
 		jmsTemplate.send(queue, session -> {
-			TextMessage msg = new ActiveMQTextMessage();
+			TextMessage msg = session.createTextMessage();
 			msg.setText(message);
 			if (callId != null) {
 				msg.setStringProperty("callId", callId);

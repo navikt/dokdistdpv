@@ -88,12 +88,12 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-jms-pool</artifactId>
+			<groupId>org.messaginghub</groupId>
+			<artifactId>pooled-jms</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.ibm.mq</groupId>
-			<artifactId>com.ibm.mq.allclient</artifactId>
+			<artifactId>com.ibm.mq.jakarta.client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>

@@ -1,11 +1,10 @@
 package no.nav.dokdistdpv.properties;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @ConfigurationProperties("dokdistdpv.serviceuser")

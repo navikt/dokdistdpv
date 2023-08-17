@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jaxws:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-			   xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+<jaxws:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+				xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws"
 			   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			   xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
-			   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-			   version="2.1">
+				xsi:schemaLocation="https://jakarta.ee/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+			   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" version="3.0">
 	<jaxws:bindings	node="wsdl:definitions/wsdl:types/xsd:schema[@targetNamespace='http://schemas.altinn.no/services/ServiceEngine/Correspondence/2013/11']">
 		<jaxb:globalBindings generateElementProperty="false"/>
 		<jaxb:schemaBindings>
