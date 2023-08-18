@@ -6,6 +6,7 @@ import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.properties.KeyStoreProperties;
+import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
@@ -20,7 +21,13 @@ import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
 
 @Configuration
-public class AltinnConfig {
+public class AltinnClientConfig {
+
+	private final Bus bus;
+
+	public AltinnClientConfig(Bus bus) {
+		this.bus = bus;
+	}
 
 	@Bean
 	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
