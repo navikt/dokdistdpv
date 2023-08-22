@@ -11,6 +11,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +26,7 @@ public class AltinnClientConfig {
 
 	private final Bus bus;
 
+	@Autowired
 	public AltinnClientConfig(Bus bus) {
 		this.bus = bus;
 	}
