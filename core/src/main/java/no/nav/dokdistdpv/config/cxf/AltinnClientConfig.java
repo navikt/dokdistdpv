@@ -11,7 +11,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,15 +23,8 @@ import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
 @Configuration
 public class AltinnClientConfig {
 
-	private final Bus bus;
-
-	@Autowired
-	public AltinnClientConfig(Bus bus) {
-		this.bus = bus;
-	}
-
 	@Bean
-	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
+	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties, Bus bus,
 																			 DokdistdpvProperties dokdistdpvProperties,
 																			 KeyStoreProperties keyStoreProperties) {
 		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
