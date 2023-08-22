@@ -26,7 +26,7 @@
 		<java.version>17</java.version>
 
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<camel.version>4.0.0-RC1</camel.version>
+		<camel.version>4.0.0</camel.version>
 
 		<google-cloud.version>26.16.0</google-cloud.version>
 		<tink.version>1.9.0</tink.version>
@@ -35,7 +35,6 @@
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
 		<httpclient.version>4.5.14</httpclient.version>
 
-		<!-- 3.6.0 gir trøbbel for testene -->
 		<cxf.version>4.0.2</cxf.version>
 
 		<melding-virksomhet-dokdistfordeling.version>6-4049b35</melding-virksomhet-dokdistfordeling.version>

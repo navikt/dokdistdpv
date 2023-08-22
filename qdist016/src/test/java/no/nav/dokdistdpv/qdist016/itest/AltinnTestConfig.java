@@ -6,8 +6,10 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 
+@Profile("itest")
 @Configuration
 public class AltinnTestConfig {
 
