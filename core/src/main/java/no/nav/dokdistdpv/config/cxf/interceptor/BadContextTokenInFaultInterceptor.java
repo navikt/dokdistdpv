@@ -4,9 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.config.cxf.cookies.CookieStore;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.binding.soap.interceptor.Soap12FaultInInterceptor;
+import org.apache.cxf.common.security.SecurityToken;
+import org.apache.cxf.common.security.UsernameToken;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.ws.security.tokenstore.TokenStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -22,6 +26,7 @@ import static org.apache.cxf.ws.security.tokenstore.TokenStoreUtils.getTokenStor
 @Slf4j
 public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<Message> {
 
+	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
     private static final String ERROR_CODE_BAD_CONTEXT_TOKEN = "BadContextToken";
 
     public BadContextTokenInFaultInterceptor() {
@@ -59,7 +64,17 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
     }
 
     private void removeTokenFromMessageAndTokenStore(Message message, String tokenId) throws TokenStoreException {
+		Object token = message.getExchange().getEndpoint().get(TOKEN);
+		if (token instanceof UsernameToken usernameToken) {
+			log.error("removeToken  token: UsernameToken created={} name={} token={}",  usernameToken.getCreatedTime(), usernameToken.getName(), token);
+		} else
+		if (token instanceof SecurityToken securityToken) {
+			secureLog.error("removeToken  token-type={} token={}", securityToken.getTokenType(), token);
+		} else {
+			secureLog.error("removeToken  unable to determine token type, token={}", token);
+		}
         message.getExchange().getEndpoint().remove(TOKEN);
+
         message.getExchange().getEndpoint().remove(TOKEN_ID);
         message.getExchange().remove(TOKEN_ID);
         message.getExchange().remove(TOKEN);
