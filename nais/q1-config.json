@@ -1,7 +1,7 @@
 {
   "SERVICE_USER": "/serviceuser/data/dev/srvdokdistdpv",
 
-  "DOKDISTDPV_JMS_BROKER_HOSTNAME": "b27apvl219.preprod.local",
+  "DOKDISTDPV_JMS_BROKER_HOSTNAME": "mqls01.preprod.local",
   "DOKDISTDPV_JMS_BROKER_NAME": "MQLS01",
   "DOKDISTDPV_JMS_BROKER_PORT": "1413",
   "DOKDISTDPV_JMS_BROKER_CHANNEL": "Q1_DOKDISTDPV",
