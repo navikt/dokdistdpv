@@ -54,6 +54,7 @@ public class AltinnClientConfig {
 		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
 		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
 		client.getRequestContext().put("security.issue.after.failed.renew", true);
+		client.getRequestContext().put("security.sts.token.imminent-expiry-value", 15);
 
 		return client;
 	}
