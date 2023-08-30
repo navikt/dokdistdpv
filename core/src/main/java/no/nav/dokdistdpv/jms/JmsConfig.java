@@ -59,7 +59,6 @@ public class JmsConfig {
 
 		mqConnectionFactory.setHostName(jmsQueueProperties.getBroker().getHostname());
 		mqConnectionFactory.setPort(jmsQueueProperties.getBroker().getPort());
-		mqConnectionFactory.setChannel(jmsQueueProperties.getBroker().getChannel());
 		mqConnectionFactory.setQueueManager(jmsQueueProperties.getBroker().getName());
 		mqConnectionFactory.setTransportType(WMQ_CM_CLIENT);
 		mqConnectionFactory.setCCSID(UTF_8_WITH_PUA);
