@@ -28,6 +28,7 @@
   "SAF_SCOPE": "api://dev-fss.teamdokumenthandtering.saf-q1/.default",
 
   "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv-q1/teamdokumenthandtering",
+  "DOKDISTDPV_CERT": "/kv/preprod/fss/dokdistdpv-q1/certificate",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APP_NAME": "dokdistdpv-q1",
   "APPD_NAME": "dokdistdpv-q1",
