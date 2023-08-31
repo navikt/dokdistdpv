@@ -91,6 +91,8 @@ spec:
         mountPath: "/secrets/virksomhetssertifikat"
       - kvPath: {{ APPDYNAMICS }}
         mountPath: /var/run/secrets/nais.io/appdynamics
+      - kvPath: {{ DOKDISTDPV_CERT }}
+        mountPath: /var/run/secrets/nais.io/certificate
   azure:
     application:
       enabled: true

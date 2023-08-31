@@ -1,10 +1,10 @@
 {
   "SERVICE_USER": "/serviceuser/data/prod/srvdokdistdpv",
 
-  "DOKDISTDPV_JMS_BROKER_HOSTNAME": "a01apvl247.adeo.no",
+  "DOKDISTDPV_JMS_BROKER_HOSTNAME": "mpls01.adeo.no",
   "DOKDISTDPV_JMS_BROKER_NAME": "MPLS01",
   "DOKDISTDPV_JMS_BROKER_PORT": "1414",
-  "DOKDISTDPV_JMS_BROKER_CHANNEL": "P_DOKDISTDPI",
+  "DOKDISTDPV_JMS_BROKER_CHANNEL": "P_DOKDISTDPV",
   "DOKDISTDPV_JMS_QUEUES_QDIST016": "QA.P_DOKDISTDPV.QDIST016_DIST_TIL_DPV",
   "DOKDISTDPV_JMS_QUEUES_QDIST016_TEKNISK_FEIL": "QA.P_DOKDISTDPV.QDIST016_DIST_TIL_DPV_BOQ",
   "DOKDISTDPV_JMS_QUEUES_QDIST016_FUNKSJONELL_FEIL": "QA.P_DOKDISTDPV.QDIST016_FUNK_FEIL",
@@ -28,6 +28,7 @@
   "SAF_SCOPE": "api://prod-fss.teamdokumenthandtering.saf/.default",
 
   "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
+  "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate",
   "APPDYNAMICS": "/apikey/appdynamics/prod",
   "APP_NAME": "dokdistdpv",
   "APPD_NAME": "dokdistdpv",

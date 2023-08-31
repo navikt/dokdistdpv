@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import static com.ibm.mq.constants.CMQC.MQENC_NATIVE;
 import static com.ibm.msg.client.jakarta.jms.JmsConstants.JMS_IBM_CHARACTER_SET;
 import static com.ibm.msg.client.jakarta.jms.JmsConstants.JMS_IBM_ENCODING;
@@ -23,6 +25,7 @@ import static com.ibm.msg.client.jakarta.wmq.common.CommonConstants.WMQ_CM_CLIEN
 @Profile({"nais", "local"})
 public class JmsConfig {
 	private static final int UTF_8_WITH_PUA = 1208;
+	private static final String ANY_TLS13_OR_HIGHER = "*TLS13ORHIGHER";
 
 	@Bean
 	public Queue qdist016(JmsQueueProperties jmsQueueProperties) throws JMSException {
@@ -56,13 +59,17 @@ public class JmsConfig {
 
 		mqConnectionFactory.setHostName(jmsQueueProperties.getBroker().getHostname());
 		mqConnectionFactory.setPort(jmsQueueProperties.getBroker().getPort());
-		mqConnectionFactory.setChannel(jmsQueueProperties.getBroker().getChannel());
 		mqConnectionFactory.setQueueManager(jmsQueueProperties.getBroker().getName());
 		mqConnectionFactory.setTransportType(WMQ_CM_CLIENT);
 		mqConnectionFactory.setCCSID(UTF_8_WITH_PUA);
 		mqConnectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
 		mqConnectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
 		mqConnectionFactory.setStringProperty(USERID, serviceuserProperties.getUsername());
+
+		mqConnectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
+		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		mqConnectionFactory.setSSLSocketFactory(factory);
+		mqConnectionFactory.setChannel(jmsQueueProperties.getBroker().getChannel());
 
 		UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
 		adapter.setTargetConnectionFactory(mqConnectionFactory);

@@ -10,6 +10,7 @@ COPY --from=builder build/snapshot-dependencies/ ./
 COPY --from=builder build/spring-boot-loader/ ./
 COPY --from=builder build/application/ ./
 COPY export-vault-secrets.sh /init-scripts/10-export-vault-secrets.sh
+COPY dokdistdpv-java-opts.sh /init-scripts/20-dokdistdpv-java-opts.sh
 COPY run-java.sh /
 USER root
 RUN apt-get install -y --no-install-recommends jq
@@ -18,6 +19,3 @@ USER apprunner
 
 ENV APPD_ENABLED=true
 ENV MAIN_CLASS="org.springframework.boot.loader.JarLauncher"
-ENV JAVA_OPTS="-Xmx1024m \
-               -Djava.security.egd=file:/dev/./urandom \
-               -Dspring.profiles.active=nais"
