@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.stream.Collectors.joining;
 import static org.apache.cxf.phase.Phase.UNMARSHAL;
 import static org.apache.cxf.ws.security.SecurityConstants.TOKEN;
 import static org.apache.cxf.ws.security.SecurityConstants.TOKEN_ID;
@@ -38,14 +40,22 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
     public void handleMessage(Message message) {
         Exception exception = message.getContent(Exception.class);
         if (exception instanceof SoapFault soapFault) {
-            log.error("Server Gods not happy, sent you a soapFault.. Trying to recover..");
+			var statusCode = soapFault.getStatusCode();
+			var errorMessage = soapFault.getMessage();
+			var errorDetail = soapFault.getDetail() != null ? soapFault.getDetail().getTextContent() : "";
+
             List<QName> subCodes = soapFault.getSubCodes();
+
             if(subCodes == null) {
                 message.setContent(Exception.class, soapFault);
-                return;
-            }
+				log.error("Server Gods not happy, sent you a soapFault.. Trying to recover.. {} {} {} subcodes = null", statusCode, errorMessage, errorDetail, soapFault);
+				return;
+            } else {
+				var subcodesparsed = subCodes.stream().filter(Objects::nonNull).map(QName::getLocalPart).collect(joining(", "));
+				log.error("Server Gods not happy, sent you a soapFault.. Trying to recover.. {} {} {} subcodes {} ", statusCode, errorMessage, errorDetail, subcodesparsed, soapFault);
+			}
+
             for (QName subCode : subCodes) {
-                log.error("Found subCode: " + subCode.getLocalPart());
                 if (subCode.getLocalPart().equalsIgnoreCase(ERROR_CODE_BAD_CONTEXT_TOKEN)) {
                     String tokenId = (String)message.getContextualProperty(TOKEN_ID);
 
