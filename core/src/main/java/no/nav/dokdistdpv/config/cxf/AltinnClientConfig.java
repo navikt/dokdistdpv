@@ -11,11 +11,14 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
@@ -33,6 +36,8 @@ public class AltinnClientConfig {
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProperties.endpoint());
 
 		Client client = getClient(port, keyStoreProperties);
+		STSConfigUtil.configureStsRequestSamlToken(client);
+		setClientTimeout(client);
 
 		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
 			client.getInInterceptors().add(new LoggingInInterceptor());
@@ -70,4 +75,11 @@ public class AltinnClientConfig {
 		return properties;
 	}
 
+	private void setClientTimeout(Client client) {
+		HTTPConduit conduit = (HTTPConduit) client.getConduit();
+		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+		httpClientPolicy.setConnectionTimeout(TimeUnit.SECONDS.toMillis(2));
+		httpClientPolicy.setReceiveTimeout(TimeUnit.SECONDS.toMillis(20));
+		conduit.setClient(httpClientPolicy);
+	}
 }
