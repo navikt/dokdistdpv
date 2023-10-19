@@ -19,12 +19,16 @@ import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
+import static org.apache.cxf.rt.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT;
+import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILED_RENEW;
+import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
 
 @Configuration
 public class AltinnClientConfig {
 
 	@Bean
-	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties, Bus bus,
+	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
+																			 Bus bus,
 																			 DokdistdpvProperties dokdistdpvProperties,
 																			 KeyStoreProperties keyStoreProperties) {
 		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
@@ -52,10 +56,9 @@ public class AltinnClientConfig {
 		client.getRequestContext().put("security.must-understand", true);
 		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
 		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
-		client.getRequestContext().put("security.cache.issued.token.in.endpoint", true);
-		client.getRequestContext().put("security.issue.after.failed.renew", true);
-		client.getRequestContext().put("security.sts.token.imminent-expiry-value", 15);
-
+		client.getRequestContext().put(CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
+		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
+		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
 		return client;
 	}
 
