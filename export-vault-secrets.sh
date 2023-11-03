@@ -21,8 +21,8 @@ else
     echo "No such file or directory found at /var/run/secrets/nais.io/appdynamics/appdynamics.env"
 fi
 
-export new_credentials_2023_path=/secrets/virksomhetssertifikat/sdp/credentials_2023.json
-export old_credentials_path=/secrets/virksomhetssertifikat/sdp/credentials.json
+export new_credentials_2023_path=/secrets/virksomhetssertifikat/credentials_2023.json
+export old_credentials_path=/secrets/virksomhetssertifikat/credentials.json
 
 if test -f $new_credentials_2023_path
 then
@@ -42,7 +42,7 @@ else
 
 fi
 
-if test -f /secrets/virksomhetssertifikat/sdp/274258896775237957919470-2023-10-11.p12.b64
+if test -f /secrets/virksomhetssertifikat/274258896775237957919470-2023-10-11.p12.b64
 then
     echo "Setting virksomhetssertifikat_path"
     export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12"
