@@ -21,7 +21,7 @@ public class NotificationsMapper {
 	public final static String NOTIFICATION_FOR_VEDTAK_VIKTIG_ELLER_IKKE_SATT = "VarselDPVMedRevarsel";
 	public static final String NOTIFICATION_TEXT_FORMAT = "%s %s har mottatt %s «%s» fra NAV i Altinn. " +
 			"For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» eller rollen «Taushetsbelagt post» i Altinn. " +
-			"Les mer om tildeling av tilganger og roller på www.altinn.no.";
+			"Les mer om tildeling av tilganger og roller på Altinn.";
 
 	public static NotificationBEList mapNotifications(HentForsendelseResponse forsendelse) {
 		NotificationBEList notificationList = new NotificationBEList();
