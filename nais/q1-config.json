@@ -11,6 +11,8 @@
   "DOKDISTDPV_JMS_QUEUES_QDIST009": "QA.Q1_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT",
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin-q1/.default",
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin-q1.dev.intern.nav.no/rest/v1/administrerforsendelse",
+  "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q1.dev.intern.nav.no/rest",
+  "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
 
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-dev-2c5a",
   "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-dev",
