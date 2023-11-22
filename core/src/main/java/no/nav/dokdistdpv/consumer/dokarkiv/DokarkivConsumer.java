@@ -62,10 +62,10 @@ public class DokarkivConsumer {
 	}
 
 	@Retryable(retryFor = DokarkivTechnicalException.class)
-	public String oppdaterDistribusjonsinfo(String journalpostId, OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest) {
+	public void oppdaterDistribusjonsinfo(String journalpostId, OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest) {
 		log.info("oppdaterDistribusjonsinfo mottatt kall til å oppdatere datoLest for journalpostId={}", journalpostId);
 
-		return webClient.patch()
+		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
 						.path("/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
@@ -79,7 +79,7 @@ public class DokarkivConsumer {
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new DokarkivFunctionalException(
-					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
+					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
 					error) {
 			};
 		} else {

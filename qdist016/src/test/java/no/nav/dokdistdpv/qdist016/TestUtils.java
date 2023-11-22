@@ -19,12 +19,8 @@ public class TestUtils {
 	public static final String BESTILLINGS_ID = randomUUID().toString();
 	public static final String KONVERSASJON_ID = "54ebcff5-784e-4503-821b-fadc42361879";
 	public static final String FORSENDELSESTATUS = "KLAR_FOR_DIST";
-	public static final String BESTILLENDE_FAGSYSTEM = "HOTSAK";
 	public static final String TEMA = "HJE";
-	public static final String MODUS = "T";
 	public static final String FORSENDELSETITTEL = "Vedtak om støtte";
-	public static final String BATCH_ID = "1234";
-	public static final String DOKUMENT_PROD_APP = "dokprod";
 	public static final DistribusjonstidspunktKode DISTRIBUSJONSTIDSPUNKT = KJERNETID;
 	public static final DistribusjonsTypeKode DISTRIBUSJONSTYPE = VEDTAK;
 

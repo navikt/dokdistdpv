@@ -127,7 +127,7 @@ public class AdministrerForsendelseConsumer {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
-							response.getRawStatusCode(),
+							response.getStatusCode(),
 							response.getMessage()),
 					error);
 		} else {
