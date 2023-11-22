@@ -20,6 +20,7 @@
 		<module>core</module>
 		<module>qdist016</module>
 		<module>altinn-schemas</module>
+		<module>sdit007</module>
 	</modules>
 
 	<properties>
@@ -63,6 +64,7 @@
 				<artifactId>qdist016</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
 
 			<dependency>
 				<groupId>net.logstash.logback</groupId>

@@ -3,15 +3,12 @@ package no.nav.dokdistdpv.consumer.rdist001.domain;
 import java.util.List;
 
 public record HentForsendelseResponse(
+		Long forsendelseId,
 		String bestillingsId,
 		String konversasjonId,
-		String bestillendeFagsystem,
-		String modus,
 		String forsendelseStatus,
 		String tema,
 		String forsendelseTittel,
-		String batchId,
-		String dokumentProdApp,
 		Mottaker mottaker,
 		ArkivInformasjon arkivInformasjon,
 		Postadresse postadresse,

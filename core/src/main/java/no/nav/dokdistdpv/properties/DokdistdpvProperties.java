@@ -13,6 +13,7 @@ public class DokdistdpvProperties {
 
 	private final Qdist016 qdist016 = new Qdist016();
 	private final Endpoints endpoints = new Endpoints();
+	private final Sdist007 sdist007 = new Sdist007();
 
 	@Data
 	@Validated
@@ -30,10 +31,18 @@ public class DokdistdpvProperties {
 
 	@Data
 	@Validated
+	public static class Sdist007 {
+		private boolean autostartup;
+		private String cronScheduler;
+	}
+
+	@Data
+	@Validated
 	public static class Endpoints {
 		@NotNull
 		private AppEndpoint dokdistadmin;
-
+		@NotNull
+		private AppEndpoint dokarkiv;
 	}
 
 	@Data
