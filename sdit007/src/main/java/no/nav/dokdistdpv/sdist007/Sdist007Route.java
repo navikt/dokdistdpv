@@ -35,7 +35,7 @@ public class Sdist007Route extends RouteBuilder {
 	}
 
 	@Override
-	public void configure() throws Exception {
+	public void configure() {
 
 		errorHandler(defaultErrorHandler()
 				.maximumRedeliveries(0)

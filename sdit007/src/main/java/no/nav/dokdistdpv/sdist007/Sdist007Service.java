@@ -70,12 +70,9 @@ public class Sdist007Service {
 
 					Optional<Long> forsendelseId = oppdaterDistribusjonOrSendNotificationToAltinn(hentForsendelseResponse);
 
-					if (forsendelseId.isPresent()) {
-						return Forsendelse.builder()
-								.forsendelseId(forsendelseId.get()).
-								build();
-					}
-					return null;
+					return forsendelseId.isPresent() ? Forsendelse.builder()
+							.forsendelseId(forsendelseId.get()).
+							build() : null;
 				})
 				.filter(Objects::nonNull)
 				.toList();
@@ -85,7 +82,7 @@ public class Sdist007Service {
 
 	private List<HentForsendelserResponse> hentUlestForsendelser(List<String> ulesteJournalposter) {
 		return partition(ulesteJournalposter, MAX_JOURNALPOSTS_PER_REQUEST).stream()
-				.map(journalposter -> administrerForsendelseConsumer.hentForsendelser(journalposter))
+				.map(administrerForsendelseConsumer::hentForsendelser)
 				.toList();
 	}
 
@@ -95,7 +92,7 @@ public class Sdist007Service {
 		log.info("Mottatt kall til å hente correspondenceStatus fra altinn for konversasjonId={}, journalpostId={}", hentForsendelseResponse.konversasjonId(), journalpostId);
 
 		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinnClient.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),
-						hentForsendelseResponse.konversasjonId());
+				hentForsendelseResponse.konversasjonId());
 
 
 		if (correspondenceStatusResultV3.isEmpty()) {
@@ -149,7 +146,7 @@ public class Sdist007Service {
 				.filter(statusV2 -> isStatusReadOrConfirmed(statusV2.getStatusType()))
 				.map(StatusChangeV2::getStatusDate)
 				.max(XMLGregorianCalendar::compare);
-		return convertToOffsetDateTime(statusDate.get());
+		return statusDate.isPresent() ? convertToOffsetDateTime(statusDate.get()) : null;
 	}
 
 	private List<CorrespondenceStatusTypeV2> getCorrespondenceStatus(CorrespondenceStatusResultV3 correspondenceStatusResultV3) {
@@ -158,7 +155,7 @@ public class Sdist007Service {
 				.map(statusV2 -> statusV2.getStatusChanges().getStatusChangeV2())
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
-				.map(statusChangeV2 -> statusChangeV2.getStatusType())
+				.map(StatusChangeV2::getStatusType)
 				.toList();
 	}
 

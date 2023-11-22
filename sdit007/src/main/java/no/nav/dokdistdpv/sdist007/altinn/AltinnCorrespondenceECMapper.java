@@ -14,6 +14,7 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse.Mottak
 
 import static java.util.Objects.isNull;
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.MESSAGE_BODY;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_EDITION_CODE;
@@ -106,10 +107,11 @@ public class AltinnCorrespondenceECMapper {
 	}
 
 	private String mapNotificationType(DistribusjonsTypeKode distribusjonsType) {
-		return switch (distribusjonsType) {
-			case ANNET -> NOTIFICATION_UTEN_REVARSEL;
-			default -> NOTIFICATION_MED_REVARSEL;
-		};
+		if (ANNET.equals(distribusjonsType)) {
+			return NOTIFICATION_UTEN_REVARSEL;
+		} else {
+			return NOTIFICATION_MED_REVARSEL;
+		}
 	}
 
 	private String mapTokenValue(DistribusjonsTypeKode distribusjonsType, Mottaker mottaker) {

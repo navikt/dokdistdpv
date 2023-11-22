@@ -115,7 +115,6 @@ public class Sdist007IT {
 		stubPatchOppdaterDistribusjonsinfo();
 		stubPutOppdaterAvstemForsendelser();
 
-		ListStubMappingsResult listStubMappingsResult = WireMock.listAllStubMappings();
 		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
@@ -128,7 +127,7 @@ public class Sdist007IT {
 	}
 
 	@Test
-	public void shouldLogAndReturnNullWhenUlestJournalposterFromJoarkIsEmpty() throws IOException {
+	public void shouldLogAndReturnNullWhenUlestJournalposterFromJoarkIsEmpty() {
 		when(lederElection.isLeader()).thenReturn(true);
 		stubGetFinnUlesteForsendelser(NOT_FOUND, JOURNALPOSTLISTE);
 
@@ -152,7 +151,6 @@ public class Sdist007IT {
 		stubPatchOppdaterDistribusjonsinfo();
 		stubPutOppdaterAvstemForsendelser();
 
-		ListStubMappingsResult listStubMappingsResult = WireMock.listAllStubMappings();
 		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));

@@ -1,6 +1,5 @@
 package no.nav.dokdistdpv.sdist007;
 
-import com.google.common.collect.Lists;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistdpv.consumer.rdist001.OppdaterForsendelserAvstemtInfo.Forsendelse;
@@ -26,11 +25,11 @@ public class OppdaterAvstemtInfo {
 	@Handler
 	public void oppdaterForsendelserAvstemtInfo(List<Forsendelse> ulestForsendelser) {
 
-		partition(ulestForsendelser, MAX_FORSENDELSER_PER_REQUEST).forEach(forsendelser -> {
-			administrerForsendelseConsumer.oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo.builder()
-					.forsendelser(forsendelser)
-					.avstemtReferanse(AVSTEM_REFERANSE)
-					.build());
-		});
+		partition(ulestForsendelser, MAX_FORSENDELSER_PER_REQUEST).forEach(forsendelser ->
+				administrerForsendelseConsumer.oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo.builder()
+						.forsendelser(forsendelser)
+						.avstemtReferanse(AVSTEM_REFERANSE)
+						.build())
+		);
 	}
 }
