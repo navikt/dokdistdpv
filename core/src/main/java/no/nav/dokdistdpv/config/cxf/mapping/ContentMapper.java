@@ -11,13 +11,12 @@ import java.util.List;
 
 import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.UNSPECIFIED;
 import static no.altinn.correspondenceagencyexternalaec.UserTypeRestriction.DEFAULT;
-import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
+import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
+import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
 
 public class ContentMapper {
-
-	public static final String MESSAGE_TITLE_VEDTAK = "Vedtak fra NAV";
-	public static final String MESSAGE_TITLE_VIKTIG = "Viktig brev fra NAV";
-	public static final String MESSAGE_TITLE_ANNET = "Melding fra NAV";
 
 	public static ExternalContentV2 mapContent(
 			HentForsendelseResponse forsendelse,

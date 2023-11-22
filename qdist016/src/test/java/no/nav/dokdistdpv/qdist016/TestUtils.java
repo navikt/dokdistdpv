@@ -15,7 +15,7 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktK
 
 public class TestUtils {
 
-	public static final String FORSENDELSE_ID = "1234567";
+	public static final Long FORSENDELSE_ID = 1234567L;
 	public static final String BESTILLINGS_ID = randomUUID().toString();
 	public static final String KONVERSASJON_ID = "54ebcff5-784e-4503-821b-fadc42361879";
 	public static final String FORSENDELSESTATUS = "KLAR_FOR_DIST";
@@ -39,15 +39,12 @@ public class TestUtils {
 
 	public static HentForsendelseResponse createHentForsendelseResponse(String konversasjonId, HentForsendelseResponse.ArkivInformasjon arkivInformasjon) {
 		return new HentForsendelseResponse(
+				FORSENDELSE_ID,
 				BESTILLINGS_ID,
 				konversasjonId,
-				BESTILLENDE_FAGSYSTEM,
-				MODUS,
 				FORSENDELSESTATUS,
 				TEMA,
 				FORSENDELSETITTEL,
-				BATCH_ID,
-				DOKUMENT_PROD_APP,
 				createMottaker(),
 				arkivInformasjon,
 				createPostadresse(),
@@ -121,7 +118,7 @@ public class TestUtils {
 
 	public static DistribuerTilKanal createDistribuerTilKanal() {
 		DistribuerTilKanal distribuerTilKanal = new DistribuerTilKanal();
-		distribuerTilKanal.setForsendelseId(FORSENDELSE_ID);
+		distribuerTilKanal.setForsendelseId(FORSENDELSE_ID.toString());
 		return distribuerTilKanal;
 	}
 }
