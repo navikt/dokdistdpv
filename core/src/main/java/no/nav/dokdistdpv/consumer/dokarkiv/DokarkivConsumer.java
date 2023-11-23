@@ -32,6 +32,7 @@ public class DokarkivConsumer {
 	private static final LocalDateTime EKSPEDERT_TIL = EKSPEDERT_FRA.plusDays(TIL_ANTALL_DAGER);
 
 	private static final String FINN_ULESTJOURNALPOST_API_PATH = "/internal/sikkerhetsnivaa/finnUlesteJournalposter/";
+	private final String JOURNALPOST_API_URL = "/journalpostapi/v1/journalpost";
 	private final WebClient webClient;
 
 	public DokarkivConsumer(WebClient webClient, AzureToken azureToken, DokdistdpvProperties dokdistdpvProperties) {
@@ -67,7 +68,7 @@ public class DokarkivConsumer {
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
-						.path("/{journalpostId}/oppdaterDistribusjonsinfo")
+						.path(JOURNALPOST_API_URL + "/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
 				.bodyValue(oppdaterDistribusjonsinfoRequest)
 				.retrieve()

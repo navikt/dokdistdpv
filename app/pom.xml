@@ -17,15 +17,19 @@
 			<groupId>no.nav.dokdistdpv</groupId>
 			<artifactId>qdist016</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.dokdistdpv</groupId>
+			<artifactId>sdist007</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<finalName>app</finalName>
 					<excludes>
 						<exclude>
 							<groupId>org.springframework.boot</groupId>
