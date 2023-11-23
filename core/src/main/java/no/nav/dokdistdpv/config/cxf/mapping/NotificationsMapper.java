@@ -12,14 +12,14 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnConstant.BREVET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.FROM_ADDRESS;
-import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MELDINGEN;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAKET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VIKTIG_BREV;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.BREVET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.FROM_ADDRESS;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDINGEN;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAKET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VIKTIG_BREV;
 
 public class NotificationsMapper {
 	public static final String NOTIFICATION_TEXT_FORMAT = "%s %s har mottatt %s «%s» fra NAV i Altinn. " +

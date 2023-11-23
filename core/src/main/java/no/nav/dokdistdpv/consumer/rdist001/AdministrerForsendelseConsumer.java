@@ -15,6 +15,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -92,7 +93,10 @@ public class AdministrerForsendelseConsumer {
 						.build())
 				.retrieve()
 				.bodyToMono(HentForsendelserResponse.class)
-				.doOnError(this::handleError)
+				.onErrorResume(Throwable.class, err -> {
+					log.warn("hentForsendelser feilet med feilmelding={}", err.getMessage());
+					return Mono.empty();
+				})
 				.block();
 	}
 

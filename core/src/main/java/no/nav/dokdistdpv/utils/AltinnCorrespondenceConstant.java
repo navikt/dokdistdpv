@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.utils;
 
-public class AltinnConstant {
+public class AltinnCorrespondenceConstant {
 	public static final String LANGUAGE_CODE_BOKMAAL = "1044";
 	public static final String FROM_ADDRESS = "ikke-besvar-denne@nav.no";
 	public static final String NOTIFIKASJON_UTEN_REVARSEL = "VarselDPVUtenRevarsel";

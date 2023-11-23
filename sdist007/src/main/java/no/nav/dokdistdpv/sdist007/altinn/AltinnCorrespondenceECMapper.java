@@ -20,19 +20,19 @@ import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_EDITION_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.TOKEN_NUM;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.TOKEN_VALUE;
-import static no.nav.dokdistdpv.utils.AltinnConstant.BREVET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.FROM_ADDRESS;
-import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MELDING;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MELDINGEN;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAK;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAKET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VIKTIG_BREV;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.BREVET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.FROM_ADDRESS;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDING;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDINGEN;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VIKTIG;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAK;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAKET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VIKTIG_BREV;
 
 public class AltinnCorrespondenceECMapper {
 

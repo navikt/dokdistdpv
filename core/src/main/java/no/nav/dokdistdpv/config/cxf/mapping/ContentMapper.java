@@ -11,10 +11,10 @@ import java.util.List;
 
 import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.UNSPECIFIED;
 import static no.altinn.correspondenceagencyexternalaec.UserTypeRestriction.DEFAULT;
-import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VIKTIG;
 
 public class ContentMapper {
 

@@ -124,7 +124,7 @@ public class Sdist007IT {
 	}
 
 	@Test
-	public void shouldLogAndReturnNullWhenUlesteJournalposterFromJoarkIsEmpty() {
+	public void shouldLogAndReturnNullWhenUlesteJournalposterResponseIsEmpty() {
 		stubGetFinnUlesteForsendelser(OK, EMPTY_JOURNALPOSTLISTE);
 
 		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {

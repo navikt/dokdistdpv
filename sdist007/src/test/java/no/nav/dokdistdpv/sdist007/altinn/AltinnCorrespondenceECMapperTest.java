@@ -26,16 +26,16 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.V
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_EDITION_CODE;
-import static no.nav.dokdistdpv.utils.AltinnConstant.BREVET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.FROM_ADDRESS;
-import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MELDINGEN;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
-import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAKET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.BREVET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.FROM_ADDRESS;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDINGEN;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VIKTIG;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAKET;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AltinnCorrespondenceECMapperTest {
@@ -66,7 +66,12 @@ class AltinnCorrespondenceECMapperTest {
 	public static final String MOTTAKERTYPE_PERSON = "PERSON";
 
 	public static final String JOURNALPOST_ID = "123456789";
-	private static final String DEl_TEXT_TOKEN = " er sendt som taushetsbelagt post fra NAV.";
+
+	private static final String NOTIFICATION_SUB_STRING = " er sendt som taushetsbelagt post fra NAV.";
+
+	private static final String VIKTIG_NOTIFICATION = BREVET + NOTIFICATION_SUB_STRING;
+	private static final String VEDTAK_NOTIFICATION = VEDTAKET + NOTIFICATION_SUB_STRING;
+	private static final String ANNET_NOTIFICATION = MELDINGEN + NOTIFICATION_SUB_STRING;
 
 	@ParameterizedTest
 	@MethodSource("provideMessageNotifikasjonInput")
@@ -79,7 +84,6 @@ class AltinnCorrespondenceECMapperTest {
 		assertThat(insertCorrespondenceV2.getReportee()).isEqualTo(MOTTAKER_ID);
 
 		assertContent(expectedMessageTitle, expectedMessageBody, expectedNotificationType, expectedTextToken, insertCorrespondenceV2);
-
 	}
 
 	private void assertContent(String expectedMessageTitle,
@@ -110,9 +114,9 @@ class AltinnCorrespondenceECMapperTest {
 
 	private static Stream<Arguments> provideMessageNotifikasjonInput() throws IOException {
 		return Stream.of(
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, BREVET + DEl_TEXT_TOKEN),
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAKET + DEl_TEXT_TOKEN),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, MELDINGEN + DEl_TEXT_TOKEN)
+				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VIKTIG_NOTIFICATION),
+				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAK_NOTIFICATION),
+				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, ANNET_NOTIFICATION)
 		);
 	}
 
