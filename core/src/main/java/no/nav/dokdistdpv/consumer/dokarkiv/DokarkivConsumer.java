@@ -6,13 +6,14 @@ import no.nav.dokdistdpv.exception.DokarkivTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,12 +27,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class DokarkivConsumer {
 
-	private static final int FRA_ANTALL_DAGER_TILBAKE = 6;
-	private static final LocalDateTime EKSPEDERT_FRA = now().minusDays(FRA_ANTALL_DAGER_TILBAKE);
-	private static final int TIL_ANTALL_DAGER = 3;
-	private static final LocalDateTime EKSPEDERT_TIL = EKSPEDERT_FRA.plusDays(TIL_ANTALL_DAGER);
+	private static final int ANTALL_DAGER_TILBAKE = 6;
+	private static final LocalDateTime EKSPEDERT_FRA = now().minusDays(ANTALL_DAGER_TILBAKE);
+	private static final int ANTALL_DAGER_FREM = 3;
+	private static final LocalDateTime EKSPEDERT_TIL = EKSPEDERT_FRA.plusDays(ANTALL_DAGER_FREM);
 
-	private static final String FINN_ULESTJOURNALPOST_API_PATH = "/internal/sikkerhetsnivaa/finnUlesteJournalposter/";
+	private static final String FINN_ULESTE_JOURNALPOST_PATH = "/internal/sikkerhetsnivaa/finnUlesteJournalposter/";
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1/journalpost";
 	private final WebClient webClient;
 
@@ -44,27 +45,27 @@ public class DokarkivConsumer {
 	}
 
 	@Retryable(retryFor = DokarkivTechnicalException.class)
-	public List<String> finnUlestJournalposter() {
-		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
+	public List<String> finnUlesteJournalposter() {
+		log.info(format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				DPVT, EKSPEDERT_FRA, EKSPEDERT_TIL));
 
-		String[] journalposter = webClient.get()
-				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTJOURNALPOST_API_PATH + DPVT + "/" + EKSPEDERT_FRA + "/" + EKSPEDERT_TIL)
+		List<String> journalposter = webClient.get()
+				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + EKSPEDERT_FRA + "/" + EKSPEDERT_TIL)
 						.build())
 				.retrieve()
-				.bodyToMono(String[].class)
-				.doOnError(this::handleError)
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+				.onErrorResume(Throwable.class, err -> {
+					log.warn("finnUlesteJournalposter feilet med feilmelding={}", err.getMessage());
+					return Mono.empty();
+				})
 				.block();
 
-		if (journalposter != null && journalposter.length > 0) {
-			return Arrays.stream(journalposter).toList();
-		}
-		return Collections.emptyList();
+		return journalposter.isEmpty() ? Collections.emptyList() : journalposter;
 	}
 
 	@Retryable(retryFor = DokarkivTechnicalException.class)
 	public void oppdaterDistribusjonsinfo(String journalpostId, OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest) {
-		log.info("oppdaterDistribusjonsinfo mottatt kall til å oppdatere datoLest for journalpostId={}", journalpostId);
+		log.info("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere datoLest for journalpostId={}", journalpostId);
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
@@ -72,21 +73,8 @@ public class DokarkivConsumer {
 						.build(journalpostId))
 				.bodyValue(oppdaterDistribusjonsinfoRequest)
 				.retrieve()
-				.bodyToMono(String.class)
-				.doOnError(this::handleError)
+				.toBodilessEntity()
+				.doOnError(Throwable.class, err -> log.warn("Kall mot Journalpost-API feilet med feilmelding={}", err.getMessage()))
 				.block();
-	}
-
-	private void handleError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new DokarkivFunctionalException(
-					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
-					error) {
-			};
-		} else {
-			throw new DokarkivTechnicalException(
-					format("Kall mot Journalpost-API feilet med feilmelding=%s", error.getMessage()),
-					error);
-		}
 	}
 }

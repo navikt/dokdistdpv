@@ -31,8 +31,8 @@ import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_UTEN_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -124,10 +124,10 @@ class AltinnForsendelseMapperTest {
 
 	private static Stream<Arguments> provideMessageTitleMessageBodyAndNotificationTypeForDistribusjonstype() {
 		return Stream.of(
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, MESSAGE_BODY_VEDTAK, NOTIFICATION_MED_REVARSEL, NOTIFICATION_TEXT_VEDTAK),
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFICATION_MED_REVARSEL, NOTIFICATION_TEXT_VIKTIG),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, MESSAGE_BODY_ANNET, NOTIFICATION_UTEN_REVARSEL, NOTIFICATION_TEXT_ANNET),
-				Arguments.of(null, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFICATION_MED_REVARSEL, NOTIFICATION_TEXT_VIKTIG)
+				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, MESSAGE_BODY_VEDTAK, NOTIFIKASJON_MED_REVARSEL, NOTIFICATION_TEXT_VEDTAK),
+				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFIKASJON_MED_REVARSEL, NOTIFICATION_TEXT_VIKTIG),
+				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, MESSAGE_BODY_ANNET, NOTIFIKASJON_UTEN_REVARSEL, NOTIFICATION_TEXT_ANNET),
+				Arguments.of(null, MESSAGE_TITLE_VIKTIG, MESSAGE_BODY_VIKTIG, NOTIFIKASJON_MED_REVARSEL, NOTIFICATION_TEXT_VIKTIG)
 		);
 	}
 

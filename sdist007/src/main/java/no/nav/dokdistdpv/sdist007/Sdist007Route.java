@@ -2,8 +2,6 @@ package no.nav.dokdistdpv.sdist007;
 
 import no.nav.dokdistdpv.consumer.leaderelection.LeaderElectionConsumer;
 import no.nav.dokdistdpv.exception.AltinnException;
-import no.nav.dokdistdpv.exception.DokdistdpvFunctionalException;
-import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.utils.MDCSetProcessor;
 import org.apache.camel.ExchangePattern;
@@ -43,16 +41,6 @@ public class Sdist007Route extends RouteBuilder {
 				.logExhaustedMessageBody(false)
 				.logStackTrace(true)
 				.loggingLevel(ERROR));
-
-		onException(DokdistdpvTechnicalException.class)
-				.handled(true)
-				.useOriginalMessage()
-				.log(ERROR, log, "${exception}; " + getJournalpostId());
-
-		onException(DokdistdpvFunctionalException.class, IllegalArgumentException.class)
-				.handled(true)
-				.useOriginalMessage()
-				.log(WARN, log, "${exception}; " + getJournalpostId());
 
 		onException(AltinnException.class)
 				.handled(true)

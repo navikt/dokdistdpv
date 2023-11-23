@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.consumer.leaderelection;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,11 @@ public class LeaderElectionConsumer {
 			String response = webClient.get()
 					.uri("http://" + electorPath)
 					.retrieve()
-					.bodyToMono(String.class)
+					.bodyToMono(JsonNode.class)
+					.map(jsonNode -> jsonNode.get("name").asText())
 					.block();
-			String leader = mapper.readTree(response).get("name").asText();
 			String hostname = InetAddress.getLocalHost().getHostName();
-			return hostname.equals(leader);
+			return hostname.equals(response);
 		} catch (Exception e) {
 			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
 			return true;

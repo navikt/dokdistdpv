@@ -14,7 +14,7 @@ import static com.google.common.collect.Lists.partition;
 public class OppdaterAvstemtInfo {
 
 	public static final int MAX_FORSENDELSER_PER_REQUEST = 500;
-	public static final String AVSTEM_REFERANSE = "sdist007";
+	public static final String AVSTEMT_REFERANSE = "sdist007";
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 
@@ -23,12 +23,12 @@ public class OppdaterAvstemtInfo {
 	}
 
 	@Handler
-	public void oppdaterForsendelserAvstemtInfo(List<Forsendelse> ulestForsendelser) {
+	public void oppdaterForsendelserAvstemtInfo(List<Forsendelse> ulesteForsendelser) {
 
-		partition(ulestForsendelser, MAX_FORSENDELSER_PER_REQUEST).forEach(forsendelser ->
+		partition(ulesteForsendelser, MAX_FORSENDELSER_PER_REQUEST).forEach(forsendelser ->
 				administrerForsendelseConsumer.oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo.builder()
 						.forsendelser(forsendelser)
-						.avstemtReferanse(AVSTEM_REFERANSE)
+						.avstemtReferanse(AVSTEMT_REFERANSE)
 						.build())
 		);
 	}

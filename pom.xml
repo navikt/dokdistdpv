@@ -20,7 +20,7 @@
 		<module>core</module>
 		<module>qdist016</module>
 		<module>altinn-schemas</module>
-		<module>sdit007</module>
+		<module>sdist007</module>
 	</modules>
 
 	<properties>

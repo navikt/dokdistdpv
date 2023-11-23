@@ -1,12 +1,9 @@
 package no.nav.dokdistdpv.sdist007.itest;
 
-import com.github.tomakehurst.wiremock.admin.model.ListStubMappingsResult;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistdpv.consumer.leaderelection.LeaderElectionConsumer;
 import no.nav.dokdistdpv.sdist007.itest.config.ApplicationTestConfig;
-import org.apache.http.HttpHeaders;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -41,12 +37,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
@@ -62,6 +58,8 @@ public class Sdist007IT {
 	private static final String JOURNALPOSTID1 = "123456789";
 	private static final String JOURNALPOSTID2 = "999654321";
 	private static final String JOURNALPOSTLISTE = "[" + JOURNALPOSTID1 + "," + JOURNALPOSTID2 + "]";
+	private static final String EMPTY_JOURNALPOSTLISTE = "[]";
+
 
 	public static final String DOKDISTADMIN_URL = "/rest/administrerforsendelse/";
 	private static final String HENTFORSENDELSER_URL = DOKDISTADMIN_URL + "hentForsendelser.*";
@@ -75,18 +73,18 @@ public class Sdist007IT {
 	@Autowired
 	private LeaderElectionConsumer lederElection;
 
-
 	@BeforeEach
 	public void setupBefore() {
 		System.setProperty("ELECTOR_PATH", lederHost);
 		lederElection = mock(LeaderElectionConsumer.class);
+		when(lederElection.isLeader()).thenReturn(true);
+		WireMock.removeAllMappings();
 		WireMock.reset();
 		stubAzure();
 	}
 
 	@Test
-	public void shouldUpdateDatoLestInDokarkivWhenWhenCorrespondenceStatusContainsReadOrConfirmed() throws IOException {
-		when(lederElection.isLeader()).thenReturn(true);
+	public void shouldUpdateDatoLestInDokarkivWhenCorrespondenceStatusContainsReadOrConfirmed() throws IOException {
 		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
 		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
 		stubAltinnCorrespondence("altinn/altinn_response.xml");
@@ -94,20 +92,19 @@ public class Sdist007IT {
 		stubInsertCorrespondence("altinn/insert_correspondence_response.xml");
 		stubPutOppdaterAvstemForsendelser();
 
-		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
-			verify(3, postRequestedFor(urlEqualTo("/azure_token")));
+			verify(4, postRequestedFor(urlEqualTo("/azure_token")));
 
-			verify(1, postRequestedFor(urlEqualTo("/altinn")));
-			verify(1, patchRequestedFor(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
+			verify(2, postRequestedFor(urlEqualTo("/altinn")));
+			verify(2, patchRequestedFor(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
 			verify(0, putRequestedFor(urlEqualTo(OPPDATER_AVSTEMFORSENDELSE_URL)));
 		});
 	}
 
 	@Test
-	public void shouldSendNotificationToAltinnWhenCorrespondenceStatusNotContainsReadOrConfirmed() throws IOException {
-		when(lederElection.isLeader()).thenReturn(true);
+	public void shouldSendNotificationToAltinnWhenCorrespondenceStatusDoesNotContainsReadOrConfirmed() throws IOException {
 		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
 		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
 		stubAltinnCorrespondence("altinn/altinn_without_read_confirmed_response.xml");
@@ -115,7 +112,7 @@ public class Sdist007IT {
 		stubPatchOppdaterDistribusjonsinfo();
 		stubPutOppdaterAvstemForsendelser();
 
-		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
 			verify(3, postRequestedFor(urlEqualTo("/azure_token")));
@@ -127,11 +124,10 @@ public class Sdist007IT {
 	}
 
 	@Test
-	public void shouldLogAndReturnNullWhenUlestJournalposterFromJoarkIsEmpty() {
-		when(lederElection.isLeader()).thenReturn(true);
-		stubGetFinnUlesteForsendelser(NOT_FOUND, JOURNALPOSTLISTE);
+	public void shouldLogAndReturnNullWhenUlesteJournalposterFromJoarkIsEmpty() {
+		stubGetFinnUlesteForsendelser(OK, EMPTY_JOURNALPOSTLISTE);
 
-		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(0), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
 			verify(1, postRequestedFor(urlEqualTo("/azure_token")));
@@ -144,14 +140,11 @@ public class Sdist007IT {
 
 	@Test
 	public void shouldLogAndReturnNullWhenCorrespondenceStatusResultThrowsException() throws IOException {
-		when(lederElection.isLeader()).thenReturn(true);
 		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
 		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
 		stubAltinnCorrespondence("altinn/correspondence_status_error_response.xml", INTERNAL_SERVER_ERROR);
-		stubPatchOppdaterDistribusjonsinfo();
-		stubPutOppdaterAvstemForsendelser();
 
-		Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 			verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
 			verify(2, postRequestedFor(urlEqualTo("/azure_token")));
@@ -167,10 +160,10 @@ public class Sdist007IT {
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withStatus(OK.value())));
 	}
+
 	private void stubPatchOppdaterDistribusjonsinfo() {
 		stubFor(patch(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL))
 				.withRequestBody(containing("\"settStatusEkspedert\":false"))
-				.withRequestBody(containing("\"datoLest\":"+ LocalDateTime.now()))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withStatus(OK.value())));
@@ -190,14 +183,14 @@ public class Sdist007IT {
 		stubFor(post(urlEqualTo("/altinn"))
 				.withRequestBody(matchingXPath("//ServiceCode/text()", equalTo(SERVICE_CODE)))
 				.willReturn(aResponse()
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_XML_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_XML_VALUE)
 						.withBodyFile(bodyFile)));
 	}
 
 	private void stubAltinnCorrespondence(String bodyFile, HttpStatus status) {
 		stubFor(post(urlEqualTo("/altinn"))
 				.willReturn(aResponse()
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_XML_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_XML_VALUE)
 						.withStatus(status.value())
 						.withBodyFile(bodyFile)));
 	}
@@ -206,14 +199,15 @@ public class Sdist007IT {
 		stubFor(post(urlEqualTo("/altinn"))
 				.withRequestBody(matchingXPath("//LanguageCode/text()", equalTo("1044")))
 				.willReturn(aResponse()
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_XML_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_XML_VALUE)
 						.withBodyFile(bodyFile)));
 	}
+
 	private void stubAzure() {
 		stubFor(post("/azure_token")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response.json")));
 	}
 

@@ -23,21 +23,22 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
+import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_EDITION_CODE;
+import static no.nav.dokdistdpv.utils.AltinnConstant.BREVET;
 import static no.nav.dokdistdpv.utils.AltinnConstant.FROM_ADDRESS;
 import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.MELDINGEN;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_ANNET;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VEDTAK;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MESSAGE_TITLE_VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_MED_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAKET;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AltinnCorrespondenceECMapperTest {
-
-
-	private final AltinnCorrespondenceECMapper mapper = new AltinnCorrespondenceECMapper();
 
 	public static final Long FORSENDELSE_ID = 111111111L;
 	public static final String BESTILLINGS_ID = "bestillingsId";
@@ -65,13 +66,13 @@ class AltinnCorrespondenceECMapperTest {
 	public static final String MOTTAKERTYPE_PERSON = "PERSON";
 
 	public static final String JOURNALPOST_ID = "123456789";
-	private static final String DEl_TEXT_TOKEN = "er sendt som taushetsbelagt post fra NAV.";
+	private static final String DEl_TEXT_TOKEN = " er sendt som taushetsbelagt post fra NAV.";
 
 	@ParameterizedTest
 	@MethodSource("provideMessageNotifikasjonInput")
 	public void shouldMapForsendelseToAltinnCorrespondence(DistribusjonsTypeKode distribusjonsType, String expectedMessageTitle,
 														   String expectedMessageBody, String expectedNotificationType, String expectedTextToken) {
-		InsertCorrespondenceV2 insertCorrespondenceV2 = mapper.mapToCorrespondence(createHentForsendelseResponse(distribusjonsType));
+		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(createHentForsendelseResponse(distribusjonsType));
 
 		assertThat(insertCorrespondenceV2.getServiceCode()).isEqualTo(SERVICE_CODE);
 		assertThat(insertCorrespondenceV2.getServiceEdition()).isEqualTo(SERVICE_EDITION_CODE);
@@ -92,8 +93,7 @@ class AltinnCorrespondenceECMapperTest {
 		assertThat(content.getMessageTitle()).isEqualTo(expectedMessageTitle);
 		assertThat(content.getMessageBody()).contains(expectedMessageBody);
 
-		result.getNotifications().getNotification().stream()
-				.filter(Objects::nonNull)
+		result.getNotifications().getNotification()
 				.forEach(notification -> {
 					assertThat(notification.getLanguageCode()).isEqualTo(LANGUAGE_CODE_BOKMAAL);
 					assertThat(notification.getFromAddress()).isEqualTo(FROM_ADDRESS);
@@ -110,9 +110,9 @@ class AltinnCorrespondenceECMapperTest {
 
 	private static Stream<Arguments> provideMessageNotifikasjonInput() throws IOException {
 		return Stream.of(
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFICATION_MED_REVARSEL, "Brevet " + DEl_TEXT_TOKEN),
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFICATION_MED_REVARSEL, "Vedtaket " + DEl_TEXT_TOKEN),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFICATION_UTEN_REVARSEL, "Meldingen " + DEl_TEXT_TOKEN)
+				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, BREVET + DEl_TEXT_TOKEN),
+				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAKET + DEl_TEXT_TOKEN),
+				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, MELDINGEN + DEl_TEXT_TOKEN)
 		);
 	}
 
@@ -152,5 +152,4 @@ class AltinnCorrespondenceECMapperTest {
 			throw new IOException(format("Kunne ikke åpne classpath-ressurs %s", classpathResource), e);
 		}
 	}
-
 }

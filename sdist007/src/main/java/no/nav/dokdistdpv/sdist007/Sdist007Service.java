@@ -13,7 +13,6 @@ import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.OppdaterForsendelserAvstemtInfo.Forsendelse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelserResponse;
-import no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.springframework.stereotype.Component;
@@ -26,8 +25,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.google.common.collect.Lists.partition;
+import static java.util.Objects.nonNull;
 import static no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusTypeV2.CONFIRMED;
 import static no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusTypeV2.READ;
+import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.mapToCorrespondence;
 
 @Slf4j
 @Component
@@ -39,20 +40,18 @@ public class Sdist007Service {
 	private final DokarkivConsumer dokarkivConsumer;
 
 	private final AltinnClient altinnClient;
-	private final AltinnCorrespondenceECMapper altinnCorrespondenceECMapper;
 
 	public Sdist007Service(AdministrerForsendelseConsumer administrerForsendelseConsumer,
 						   DokarkivConsumer dokarkivConsumer, AltinnClient altinnClient) {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.altinnClient = altinnClient;
-		this.altinnCorrespondenceECMapper = new AltinnCorrespondenceECMapper();
 	}
 
 	@Handler
-	public List<Forsendelse> processUlestJournalpost(Exchange exchange) {
+	public List<Forsendelse> behandlUlesteJournalposter(Exchange exchange) {
 
-		List<String> journalposter = dokarkivConsumer.finnUlestJournalposter();
+		List<String> journalposter = dokarkivConsumer.finnUlesteJournalposter();
 
 		if (journalposter.isEmpty()) {
 			log.info("Sdist007 fant ingen uleste journalposter i Joark.");
@@ -61,7 +60,7 @@ public class Sdist007Service {
 
 		log.info("Sdist007 fant antall={} uleste journalposter i Joark", journalposter.size());
 
-		List<Forsendelse> ulestForsendelse = hentUlestForsendelser(journalposter).stream()
+		List<Forsendelse> ulesteForsendelse = hentUlesteForsendelser(journalposter).stream()
 				.map(HentForsendelserResponse::forsendelseListe)
 				.flatMap(Collection::stream)
 				.map(hentForsendelseResponse -> {
@@ -70,17 +69,16 @@ public class Sdist007Service {
 
 					Optional<Long> forsendelseId = oppdaterDistribusjonOrSendNotificationToAltinn(hentForsendelseResponse);
 
-					return forsendelseId.isPresent() ? Forsendelse.builder()
-							.forsendelseId(forsendelseId.get()).
-							build() : null;
+					return forsendelseId.map(id -> Forsendelse.builder().forsendelseId(id).build())
+							.orElse(null);
 				})
 				.filter(Objects::nonNull)
 				.toList();
 
-		return ulestForsendelse == null || ulestForsendelse.isEmpty() ? null : ulestForsendelse;
+		return ulesteForsendelse.isEmpty() ? null : ulesteForsendelse;
 	}
 
-	private List<HentForsendelserResponse> hentUlestForsendelser(List<String> ulesteJournalposter) {
+	private List<HentForsendelserResponse> hentUlesteForsendelser(List<String> ulesteJournalposter) {
 		return partition(ulesteJournalposter, MAX_JOURNALPOSTS_PER_REQUEST).stream()
 				.map(administrerForsendelseConsumer::hentForsendelser)
 				.toList();
@@ -88,8 +86,6 @@ public class Sdist007Service {
 
 	public Optional<Long> oppdaterDistribusjonOrSendNotificationToAltinn(HentForsendelseResponse hentForsendelseResponse) {
 		String journalpostId = hentForsendelseResponse.arkivInformasjon().arkivId();
-
-		log.info("Mottatt kall til å hente correspondenceStatus fra altinn for konversasjonId={}, journalpostId={}", hentForsendelseResponse.konversasjonId(), journalpostId);
 
 		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinnClient.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),
 				hentForsendelseResponse.konversasjonId());
@@ -102,15 +98,14 @@ public class Sdist007Service {
 		log.info("Hentet correspondenceStatus for journalpostId={} med correspondenceStatus={}", journalpostId, getCorrespondenceStatus(correspondenceStatusResultV3.get()));
 
 		if (isCorrespondenceResultContainsReadOrConfirmedStatus(correspondenceStatusResultV3.get())) {
-
-			/**
-			 * 3.3 	Hvis det finnes StatusType = ("Read" eller "Confirmed") og oppdaterer dato_lest på tilhørende journalpost til StatusDate
-			 */
-			dokarkivConsumer.oppdaterDistribusjonsinfo(journalpostId,
-					OppdaterDistribusjonsinfoRequest.builder()
-							.settStatusEkspedert(false)
-							.datoLest(getLatestReadOrConfirmedStatusDate(correspondenceStatusResultV3.get()))
-							.build());
+			OffsetDateTime statusDate = getLatestReadOrConfirmedStatusDate(correspondenceStatusResultV3.get());
+			if (nonNull(statusDate)) {
+				dokarkivConsumer.oppdaterDistribusjonsinfo(journalpostId,
+						OppdaterDistribusjonsinfoRequest.builder()
+								.settStatusEkspedert(false)
+								.datoLest(statusDate)
+								.build());
+			}
 			return Optional.empty();
 
 		} else {
@@ -122,12 +117,10 @@ public class Sdist007Service {
 		}
 	}
 
-	private ReceiptExternal sendNotification(HentForsendelseResponse hentForsendelseResponse) {
-		InsertCorrespondenceV2 insertCorrespondenceV2 = altinnCorrespondenceECMapper.mapToCorrespondence(hentForsendelseResponse);
+	private void sendNotification(HentForsendelseResponse hentForsendelseResponse) {
+		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(hentForsendelseResponse);
 		ReceiptExternal receiptExternal = altinnClient.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
-		log.info("Sendt notifikasjon for journalpostId={} med receiptId={} og receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(), receiptExternal.getReceiptId(), receiptExternal.getReceiptStatusCode());
-
-		return receiptExternal;
+		log.info("Har sendt notifikasjon til Altinn for journalpostId={} med receiptId={} og receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(), receiptExternal.getReceiptId(), receiptExternal.getReceiptStatusCode());
 	}
 
 	private boolean isCorrespondenceResultContainsReadOrConfirmedStatus(CorrespondenceStatusResultV3 correspondenceStatusResultV3) {
@@ -146,7 +139,8 @@ public class Sdist007Service {
 				.filter(statusV2 -> isStatusReadOrConfirmed(statusV2.getStatusType()))
 				.map(StatusChangeV2::getStatusDate)
 				.max(XMLGregorianCalendar::compare);
-		return statusDate.isPresent() ? convertToOffsetDateTime(statusDate.get()) : null;
+		return statusDate.map(date -> convertToOffsetDateTime(date))
+				.orElse(null);
 	}
 
 	private List<CorrespondenceStatusTypeV2> getCorrespondenceStatus(CorrespondenceStatusResultV3 correspondenceStatusResultV3) {

@@ -16,8 +16,8 @@ import static no.nav.dokdistdpv.utils.AltinnConstant.BREVET;
 import static no.nav.dokdistdpv.utils.AltinnConstant.FROM_ADDRESS;
 import static no.nav.dokdistdpv.utils.AltinnConstant.LANGUAGE_CODE_BOKMAAL;
 import static no.nav.dokdistdpv.utils.AltinnConstant.MELDINGEN;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_UTEN_REVARSEL;
-import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFICATION_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_UTEN_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnConstant.NOTIFIKASJON_MED_REVARSEL;
 import static no.nav.dokdistdpv.utils.AltinnConstant.VEDTAKET;
 import static no.nav.dokdistdpv.utils.AltinnConstant.VIKTIG_BREV;
 
@@ -63,9 +63,9 @@ public class NotificationsMapper {
 
 	private static String mapNotificationType(DistribusjonsTypeKode distribusjonsTypeKode) {
 		if (ANNET.equals(distribusjonsTypeKode)) {
-			return NOTIFICATION_UTEN_REVARSEL;
+			return NOTIFIKASJON_UTEN_REVARSEL;
 		} else {
-			return NOTIFICATION_MED_REVARSEL;
+			return NOTIFIKASJON_MED_REVARSEL;
 		}
 	}
 

@@ -1,6 +1,7 @@
 package no.nav.dokdistdpv.config.cxf;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.correspondenceagencyexternalaec.AltinnFault;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusFilterV3;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusResultV3;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
@@ -46,12 +47,13 @@ public class AltinnClient {
 			return receipt;
 
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
-			logError(e);
+			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", getErrorMsg(e.getFaultInfo()), getErrorGuid(e.getFaultInfo()));
 			throw new AltinnException(e.getMessage(), e.getCause());
 		}
 	}
 
 	public Optional<CorrespondenceStatusResultV3> hentCorrespondenceStatusResult(String mottakerId, String konversasjonId) {
+		log.info("hentCorrespondenceStatusResult har mottatt kall til å hente correspondenceStatus fra altinn for konversasjonId={}", konversasjonId);
 
 		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(mottakerId, konversasjonId,
 				altinnProperties.serviceCode(),
@@ -60,21 +62,16 @@ public class AltinnClient {
 			CorrespondenceStatusResultV3 correspondenceStatusDetailsECV3 = iCorrespondenceAgencyExternalEC2.getCorrespondenceStatusDetailsECV3(altinnProperties.username(), altinnProperties.password(), correspondenceStatusFilterV3);
 			return Optional.ofNullable(correspondenceStatusDetailsECV3);
 		} catch (ICorrespondenceAgencyExternalEC2GetCorrespondenceStatusDetailsECV3AltinnFaultFaultFaultMessage err) {
-			logError(err);
+			log.warn("Feilet til å hente CorrespondenceStatus fra Altinn med feilmelding={} og guid={}", getErrorMsg(err.getFaultInfo()), getErrorGuid(err.getFaultInfo()));
 			return Optional.empty();
 		}
 	}
 
-	private static void logError(Exception e) {
-		if (e instanceof ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage err) {
-			var errorMsg = err.getFaultInfo().getAltinnErrorMessage() != null ? err.getFaultInfo().getAltinnErrorMessage() : "Ukjent feil";
-			var errorGuid = err.getFaultInfo().getUserGuid() != null ? err.getFaultInfo().getErrorGuid() : "Ukjent GUID";
-			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", errorMsg, errorGuid);
-		}
-		if (e instanceof ICorrespondenceAgencyExternalEC2GetCorrespondenceStatusDetailsECV3AltinnFaultFaultFaultMessage err) {
-			var errorMsg = err.getFaultInfo().getAltinnErrorMessage() != null ? err.getFaultInfo().getAltinnErrorMessage() : "Ukjent feil";
-			var errorGuid = err.getFaultInfo().getUserGuid() != null ? err.getFaultInfo().getErrorGuid() : "Ukjent GUID";
-			log.warn("Feilet til å hente CorrespondenceStatus fra Altinn med feilmelding={} og guid={}", errorMsg, errorGuid);
-		}
+	private static String getErrorGuid(AltinnFault fault) {
+		return fault.getUserGuid() != null ? fault.getErrorGuid() : "Ukjent GUID";
+	}
+
+	private static String getErrorMsg(AltinnFault fault) {
+		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : "Ukjent feil";
 	}
 }
