@@ -27,16 +27,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class DokarkivConsumer {
 
-	private static final int ANTALL_DAGER_TILBAKE = 6;
-	private static final LocalDateTime EKSPEDERT_FRA = now().minusDays(ANTALL_DAGER_TILBAKE);
-	private static final int ANTALL_DAGER_FREM = 3;
-	private static final LocalDateTime EKSPEDERT_TIL = EKSPEDERT_FRA.plusDays(ANTALL_DAGER_FREM);
-
 	private static final String FINN_ULESTE_JOURNALPOST_PATH = "/internal/sikkerhetsnivaa/finnUlesteJournalposter/";
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1/journalpost";
 	private final WebClient webClient;
+	private final DokdistdpvProperties properties;
 
 	public DokarkivConsumer(WebClient webClient, AzureToken azureToken, DokdistdpvProperties dokdistdpvProperties) {
+		this.properties = dokdistdpvProperties;
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokarkiv().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -46,6 +43,10 @@ public class DokarkivConsumer {
 
 	@Retryable(retryFor = DokarkivTechnicalException.class)
 	public List<String> finnUlesteJournalposter() {
+
+		final LocalDateTime EKSPEDERT_FRA = now().minusDays(properties.getSdist007().getFraAntallEkspedertDagerTilbake());
+		final LocalDateTime EKSPEDERT_TIL = now().minusDays(properties.getSdist007().getTilAntallEkspedertDagerTilbake());
+
 		log.info(format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				DPVT, EKSPEDERT_FRA, EKSPEDERT_TIL));
 

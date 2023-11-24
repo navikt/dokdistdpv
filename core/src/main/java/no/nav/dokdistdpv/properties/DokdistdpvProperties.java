@@ -2,6 +2,7 @@ package no.nav.dokdistdpv.properties;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,12 @@ public class DokdistdpvProperties {
 	@Validated
 	public static class Sdist007 {
 		private boolean autostartup;
+		@NotEmpty
 		private String cronScheduler;
+		@PositiveOrZero
+		private int fraAntallEkspedertDagerTilbake;
+		@PositiveOrZero
+		private int tilAntallEkspedertDagerTilbake;
 	}
 
 	@Data
