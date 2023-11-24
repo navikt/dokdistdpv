@@ -90,7 +90,6 @@ public class Sdist007Service {
 		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinnClient.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),
 				hentForsendelseResponse.konversasjonId());
 
-
 		if (correspondenceStatusResultV3.isEmpty()) {
 			return Optional.empty();
 		}
@@ -120,7 +119,7 @@ public class Sdist007Service {
 	private void sendNotification(HentForsendelseResponse hentForsendelseResponse) {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(hentForsendelseResponse);
 		ReceiptExternal receiptExternal = altinnClient.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
-		log.info("Har sendt notifikasjon til Altinn for journalpostId={} med receiptId={} og receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(), receiptExternal.getReceiptId(), receiptExternal.getReceiptStatusCode());
+		log.info("Har sendt notifikasjon til Altinn for journalpostId={} med receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(), receiptExternal.getReceiptStatusCode());
 	}
 
 	private boolean isCorrespondenceResultContainsReadOrConfirmedStatus(CorrespondenceStatusResultV3 correspondenceStatusResultV3) {

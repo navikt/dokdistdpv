@@ -67,11 +67,11 @@ class AltinnCorrespondenceECMapperTest {
 
 	public static final String JOURNALPOST_ID = "123456789";
 
-	private static final String NOTIFICATION_SUB_STRING = " er sendt som taushetsbelagt post fra NAV.";
+	private static final String NOTIFIKASJON_SUB_STRING = "%s er sendt som taushetsbelagt post fra NAV.";
 
-	private static final String VIKTIG_NOTIFICATION = BREVET + NOTIFICATION_SUB_STRING;
-	private static final String VEDTAK_NOTIFICATION = VEDTAKET + NOTIFICATION_SUB_STRING;
-	private static final String ANNET_NOTIFICATION = MELDINGEN + NOTIFICATION_SUB_STRING;
+	private static final String VIKTIG_NOTIFIKASJON = format(NOTIFIKASJON_SUB_STRING, BREVET);
+	private static final String VEDTAK_NOTIFIKASJON = format(NOTIFIKASJON_SUB_STRING, VEDTAKET);
+	private static final String ANNET_NOTIFIKASJON = format(NOTIFIKASJON_SUB_STRING, MELDINGEN);
 
 	@ParameterizedTest
 	@MethodSource("provideMessageNotifikasjonInput")
@@ -114,9 +114,9 @@ class AltinnCorrespondenceECMapperTest {
 
 	private static Stream<Arguments> provideMessageNotifikasjonInput() throws IOException {
 		return Stream.of(
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VIKTIG_NOTIFICATION),
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAK_NOTIFICATION),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, ANNET_NOTIFICATION)
+				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VIKTIG_NOTIFIKASJON),
+				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAK_NOTIFIKASJON),
+				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, ANNET_NOTIFIKASJON)
 		);
 	}
 
