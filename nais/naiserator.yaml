@@ -102,3 +102,4 @@ spec:
       enabled: true
   secureLogs:
     enabled: true
+  leaderElection: true

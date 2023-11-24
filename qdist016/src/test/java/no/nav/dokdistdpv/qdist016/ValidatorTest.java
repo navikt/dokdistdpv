@@ -31,20 +31,9 @@ class ValidatorTest {
 	}
 
 	private HentForsendelseResponse createHentForsendelseResponse(String status) {
-		return new HentForsendelseResponse(
-				null,
-				null,
-				null,
-				status,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null
-		);
+		return HentForsendelseResponse.builder()
+				.forsendelseStatus(status)
+				.build();
 	}
 
 }
