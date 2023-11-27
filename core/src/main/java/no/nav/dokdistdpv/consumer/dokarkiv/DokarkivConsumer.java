@@ -1,7 +1,6 @@
 package no.nav.dokdistdpv.consumer.dokarkiv;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistdpv.exception.DokarkivFunctionalException;
 import no.nav.dokdistdpv.exception.DokarkivTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
@@ -10,7 +9,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -54,7 +52,8 @@ public class DokarkivConsumer {
 				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + EKSPEDERT_FRA + "/" + EKSPEDERT_TIL)
 						.build())
 				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+				})
 				.onErrorResume(Throwable.class, err -> {
 					log.warn("finnUlesteJournalposter feilet med feilmelding={}", err.getMessage());
 					return Mono.empty();
@@ -75,7 +74,7 @@ public class DokarkivConsumer {
 				.bodyValue(oppdaterDistribusjonsinfoRequest)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(Throwable.class, err -> log.warn("Kall mot Journalpost-API feilet med feilmelding={}", err.getMessage()))
+				.doOnError(Throwable.class, err -> log.warn("Kall mot dokarkiv oppdaterDistribusjonsinfo feilet med feilmelding={}", err.getMessage()))
 				.block();
 	}
 }

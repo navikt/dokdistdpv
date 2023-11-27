@@ -108,9 +108,6 @@ public class Sdist007Service {
 			return Optional.empty();
 
 		} else {
-			/**
-			 * 3.2 	Hvis det finnes ikke StatusType = ("Read" eller "Confirmed"), sender notifikasjonen til Altinn
-			 */
 			sendNotification(hentForsendelseResponse);
 			return Optional.of(hentForsendelseResponse.forsendelseId());
 		}
@@ -138,7 +135,7 @@ public class Sdist007Service {
 				.filter(statusV2 -> isStatusReadOrConfirmed(statusV2.getStatusType()))
 				.map(StatusChangeV2::getStatusDate)
 				.max(XMLGregorianCalendar::compare);
-		return statusDate.map(date -> convertToOffsetDateTime(date))
+		return statusDate.map(this::convertToOffsetDateTime)
 				.orElse(null);
 	}
 
@@ -155,7 +152,6 @@ public class Sdist007Service {
 	private boolean isStatusReadOrConfirmed(CorrespondenceStatusTypeV2 correspondenceStatusTypeV2) {
 		return READ.equals(correspondenceStatusTypeV2) || CONFIRMED.equals(correspondenceStatusTypeV2);
 	}
-
 
 	private OffsetDateTime convertToOffsetDateTime(XMLGregorianCalendar xmlGregorianCalendar) {
 		return xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
