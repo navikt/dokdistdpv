@@ -30,7 +30,7 @@ public class AltinnMessage {
 			            tildeler du roller og rettigheter i Altinn</a>.
 			    </li>
 			    <li>Gå gjennom uåpnet taushetsbelagt post.</li>
-			    <li>Sørg for å ha oppdaterte <a href="https://www.altinn.no/hjelp/profil/kontaktinformasjon/">varslingsadresser</a>.
+			    <li>Sørg for å ha oppdaterte <a href="https://info.altinn.no/hjelp/profil/kontaktinformasjon-og-varslinger/">varslingsadresser</a>.
 			    </li>
 			    <li>Etabler rutiner for å sjekke mottatt taushetsbelagt post og behandling av denne.</li>
 			</ol>

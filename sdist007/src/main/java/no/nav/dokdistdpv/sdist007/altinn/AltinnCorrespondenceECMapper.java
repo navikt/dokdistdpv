@@ -25,9 +25,6 @@ import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.FROM_ADDRESS;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDING;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MELDINGEN;
-import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
-import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
-import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VIKTIG;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_MED_REVARSEL;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAK;
@@ -35,6 +32,10 @@ import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VEDTAKET;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VIKTIG_BREV;
 
 public class AltinnCorrespondenceECMapper {
+
+	public static final String PAAMINNELSE_MESSAGE_TITLE_VEDTAK = "Påminnelse om vedtak fra NAV";
+	public static final String PAAMINNELSE_MESSAGE_TITLE_VIKTIG = "Påminnelse om viktig brev fra NAV";
+	public static final String PAAMINNELSE_MESSAGE_TITLE_ANNET = "Påminnelse om melding fra NAV";
 
 	public static InsertCorrespondenceV2 mapToCorrespondence(HentForsendelseResponse hentForsendelseResponse) {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = new InsertCorrespondenceV2();
@@ -97,12 +98,12 @@ public class AltinnCorrespondenceECMapper {
 
 	private static String getMessageTitle(DistribusjonsTypeKode distribusjonsType) {
 		if (isNull(distribusjonsType)) {
-			return MESSAGE_TITLE_VIKTIG;
+			return PAAMINNELSE_MESSAGE_TITLE_VIKTIG;
 		}
 		return switch (distribusjonsType) {
-			case VEDTAK -> MESSAGE_TITLE_VEDTAK;
-			case VIKTIG -> MESSAGE_TITLE_VIKTIG;
-			case ANNET -> MESSAGE_TITLE_ANNET;
+			case VEDTAK -> PAAMINNELSE_MESSAGE_TITLE_VEDTAK;
+			case VIKTIG -> PAAMINNELSE_MESSAGE_TITLE_VIKTIG;
+			case ANNET -> PAAMINNELSE_MESSAGE_TITLE_ANNET;
 		};
 	}
 

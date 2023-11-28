@@ -23,6 +23,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
+import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.PAAMINNELSE_MESSAGE_TITLE_ANNET;
+import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.PAAMINNELSE_MESSAGE_TITLE_VEDTAK;
+import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.PAAMINNELSE_MESSAGE_TITLE_VIKTIG;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_CODE;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnMessage.SERVICE_EDITION_CODE;
@@ -114,9 +117,9 @@ class AltinnCorrespondenceECMapperTest {
 
 	private static Stream<Arguments> provideMessageNotifikasjonInput() throws IOException {
 		return Stream.of(
-				Arguments.of(VIKTIG, MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VIKTIG_NOTIFIKASJON),
-				Arguments.of(VEDTAK, MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAK_NOTIFIKASJON),
-				Arguments.of(ANNET, MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, ANNET_NOTIFIKASJON)
+				Arguments.of(VIKTIG, PAAMINNELSE_MESSAGE_TITLE_VIKTIG, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VIKTIG_NOTIFIKASJON),
+				Arguments.of(VEDTAK, PAAMINNELSE_MESSAGE_TITLE_VEDTAK, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_MED_REVARSEL, VEDTAK_NOTIFIKASJON),
+				Arguments.of(ANNET, PAAMINNELSE_MESSAGE_TITLE_ANNET, classpathToString("__files/altinn/altinn_messagebody.html"), NOTIFIKASJON_UTEN_REVARSEL, ANNET_NOTIFIKASJON)
 		);
 	}
 
