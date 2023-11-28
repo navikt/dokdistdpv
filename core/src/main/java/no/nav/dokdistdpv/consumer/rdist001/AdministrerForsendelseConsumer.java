@@ -102,7 +102,7 @@ public class AdministrerForsendelseConsumer {
 
 	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
-		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser fra rdist001 med avstemtReferanse={}",
+		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser med avstemtReferanse={}",
 				oppdaterForsendelserAvstemtInfo.getForsendelser().size(), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
 		webClient.put()
 				.uri("/avstemforsendelser")

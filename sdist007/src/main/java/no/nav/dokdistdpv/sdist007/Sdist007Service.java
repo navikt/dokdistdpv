@@ -49,7 +49,7 @@ public class Sdist007Service {
 	}
 
 	@Handler
-	public List<Forsendelse> behandlUlesteJournalposter(Exchange exchange) {
+	public List<Forsendelse> behandleUlesteJournalposter(Exchange exchange) {
 
 		List<String> journalposter = dokarkivConsumer.finnUlesteJournalposter();
 
@@ -115,8 +115,9 @@ public class Sdist007Service {
 
 	private void sendNotification(HentForsendelseResponse hentForsendelseResponse) {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(hentForsendelseResponse);
-		ReceiptExternal receiptExternal = altinnClient.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
-		log.info("Har sendt notifikasjon til Altinn for journalpostId={} med receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(), receiptExternal.getReceiptStatusCode());
+		ReceiptExternal receipt = altinnClient.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
+		log.info("journalpostId={} har ikke lest og har sendt påminnelse til Altinn med receiptId={}, receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(),
+				receipt.getReceiptId() == null ? receipt.getParentReceiptId() : receipt.getReceiptId(), receipt.getReceiptStatusCode());
 	}
 
 	private boolean isCorrespondenceResultContainsReadOrConfirmedStatus(CorrespondenceStatusResultV3 correspondenceStatusResultV3) {
