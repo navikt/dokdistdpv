@@ -33,9 +33,9 @@ import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VIKTIG_BREV;
 
 public class AltinnCorrespondenceECMapper {
 
-	public static final String PAAMINNELSE_MESSAGE_TITLE_VEDTAK = "Påminnelse om vedtak fra NAV";
-	public static final String PAAMINNELSE_MESSAGE_TITLE_VIKTIG = "Påminnelse om viktig brev fra NAV";
-	public static final String PAAMINNELSE_MESSAGE_TITLE_ANNET = "Påminnelse om melding fra NAV";
+	public static final String PAAMINNELSE_MESSAGE_TITLE_VEDTAK = "Påminnelse - Vedtak fra NAV";
+	public static final String PAAMINNELSE_MESSAGE_TITLE_VIKTIG = "Påminnelse - Viktig brev fra NAV";
+	public static final String PAAMINNELSE_MESSAGE_TITLE_ANNET = "Påminnelse - Melding fra NAV";
 
 	public static InsertCorrespondenceV2 mapToCorrespondence(HentForsendelseResponse hentForsendelseResponse) {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = new InsertCorrespondenceV2();
