@@ -1,12 +1,14 @@
 package no.nav.dokdistdpv.qdist016;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptStatusEnum;
 import no.nav.dokdistdpv.config.cxf.AltinnClient;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
 import no.nav.dokdistdpv.exception.AltinnException;
+import no.nav.dokdistdpv.properties.AltinnProperties;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 import org.apache.camel.Handler;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import static java.lang.Long.valueOf;
 import static java.util.UUID.randomUUID;
+import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -28,14 +31,17 @@ public class Qdist016Service {
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokumentService dokumentService;
 	private final AltinnClient altinnClient;
+	private final AltinnProperties altinnProperties;
 
 	public Qdist016Service(AdministrerForsendelseConsumer administrerForsendelseConsumer,
 						   DokumentService dokumentService,
-						   AltinnClient altinnClient
+						   AltinnClient altinnClient,
+						   AltinnProperties altinnProperties
 	) {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 		this.dokumentService = dokumentService;
 		this.altinnClient = altinnClient;
+		this.altinnProperties = altinnProperties;
 	}
 
 	@Handler
@@ -48,10 +54,14 @@ public class Qdist016Service {
 		var konversasjonId = genererKonversasjonId(forsendelseId, forsendelse);
 		var dokumenter = dokumentService.hentDokumenter(forsendelse);
 
+		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter,
+				altinnProperties.serviceCode(),
+				altinnProperties.serviceEditionCode());
+
 		log.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
 		secureLog.info("Distribuerer forsendelse med konversasjonId={} til Altinn", konversasjonId);
 
-		var receipt = altinnClient.insertCorrespondence(konversasjonId, forsendelse, dokumenter);
+		var receipt = altinnClient.insertCorrespondence(konversasjonId, insertCorrespondenceV2);
 
 		if (receipt.getReceiptStatusCode() == ReceiptStatusEnum.OK) {
 			log.info("qdist016 Forsendelse distribuert til Altinn med status={} og statusCode={}",

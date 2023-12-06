@@ -1,22 +1,24 @@
 package no.nav.dokdistdpv.config.cxf;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.correspondenceagencyexternalaec.AltinnFault;
+import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusFilterV3;
+import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusResultV3;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
+import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2GetCorrespondenceStatusDetailsECV3AltinnFaultFaultFaultMessage;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
-import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
-import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 
-import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
+import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapCorrespondenceStatusFilter;
 
-@Component
 @Slf4j
+@Component
 public class AltinnClient {
 
 	private final AltinnProperties altinnProperties;
@@ -30,12 +32,8 @@ public class AltinnClient {
 
 	public ReceiptExternal insertCorrespondence(
 			String konversasjonId,
-			HentForsendelseResponse forsendelse,
-			List<AltinnDokument> dokumenter
+			InsertCorrespondenceV2 insertCorrespondenceV2
 	) {
-
-		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(forsendelse, dokumenter, altinnProperties.serviceCode(),
-				altinnProperties.serviceEditionCode());
 
 		try {
 			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
@@ -49,10 +47,31 @@ public class AltinnClient {
 			return receipt;
 
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
-			var errorMsg = e.getFaultInfo().getAltinnErrorMessage() != null ? e.getFaultInfo().getAltinnErrorMessage() : "Ukjent feil";
-			var errorGuid = e.getFaultInfo().getUserGuid() != null ? e.getFaultInfo().getErrorGuid() : "Ukjent GUID";
-			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", errorMsg, errorGuid);
+			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", getErrorMsg(e.getFaultInfo()), getErrorGuid(e.getFaultInfo()));
 			throw new AltinnException(e.getMessage(), e.getCause());
 		}
+	}
+
+	public Optional<CorrespondenceStatusResultV3> hentCorrespondenceStatusResult(String mottakerId, String konversasjonId) {
+		log.info("hentCorrespondenceStatusResult har mottatt kall til å hente correspondenceStatus fra altinn for konversasjonId={}", konversasjonId);
+
+		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(mottakerId, konversasjonId,
+				altinnProperties.serviceCode(),
+				altinnProperties.serviceEditionCode());
+		try {
+			CorrespondenceStatusResultV3 correspondenceStatusDetailsECV3 = iCorrespondenceAgencyExternalEC2.getCorrespondenceStatusDetailsECV3(altinnProperties.username(), altinnProperties.password(), correspondenceStatusFilterV3);
+			return Optional.ofNullable(correspondenceStatusDetailsECV3);
+		} catch (ICorrespondenceAgencyExternalEC2GetCorrespondenceStatusDetailsECV3AltinnFaultFaultFaultMessage err) {
+			log.warn("Feilet til å hente CorrespondenceStatus fra Altinn med feilmelding={} og guid={}", getErrorMsg(err.getFaultInfo()), getErrorGuid(err.getFaultInfo()));
+			return Optional.empty();
+		}
+	}
+
+	private static String getErrorGuid(AltinnFault fault) {
+		return fault.getUserGuid() != null ? fault.getErrorGuid() : "Ukjent GUID";
+	}
+
+	private static String getErrorMsg(AltinnFault fault) {
+		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : "Ukjent feil";
 	}
 }
