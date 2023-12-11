@@ -89,7 +89,7 @@ public class AdministrerForsendelseConsumer {
 						.queryParam("dokumentstatus", EKSPEDERT)
 						.queryParam("distribusjonkanal", DPVT)
 						.queryParam("inkluderAvstemte", false)
-						.queryParam("journalpostliste", journalpostliste)
+						.queryParam("journalpostliste", String.join(",", journalpostliste))
 						.build())
 				.retrieve()
 				.bodyToMono(HentForsendelserResponse.class)

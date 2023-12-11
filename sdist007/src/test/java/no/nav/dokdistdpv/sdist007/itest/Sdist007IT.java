@@ -85,8 +85,8 @@ public class Sdist007IT {
 
 	@Test
 	public void shouldUpdateDatoLestInDokarkivWhenCorrespondenceStatusContainsReadOrConfirmed() throws IOException {
-		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
-		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
+		stubGetFinnUlesteForsendelser(JOURNALPOSTLISTE);
+		stubGetHentForsendelser();
 		stubAltinnCorrespondence("altinn/altinn_response.xml");
 		stubPatchOppdaterDistribusjonsinfo();
 		stubInsertCorrespondence("altinn/insert_correspondence_response.xml");
@@ -105,8 +105,8 @@ public class Sdist007IT {
 
 	@Test
 	public void shouldSendNotificationToAltinnWhenCorrespondenceStatusDoesNotContainsReadOrConfirmed() throws IOException {
-		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
-		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
+		stubGetFinnUlesteForsendelser(JOURNALPOSTLISTE);
+		stubGetHentForsendelser();
 		stubAltinnCorrespondence("altinn/altinn_without_read_confirmed_response.xml");
 		stubInsertCorrespondence("altinn/insert_correspondence_response.xml");
 		stubPatchOppdaterDistribusjonsinfo();
@@ -125,7 +125,7 @@ public class Sdist007IT {
 
 	@Test
 	public void shouldLogAndReturnNullWhenUlesteJournalposterResponseIsEmpty() {
-		stubGetFinnUlesteForsendelser(OK, EMPTY_JOURNALPOSTLISTE);
+		stubGetFinnUlesteForsendelser(EMPTY_JOURNALPOSTLISTE);
 
 		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
@@ -140,8 +140,8 @@ public class Sdist007IT {
 
 	@Test
 	public void shouldLogAndReturnNullWhenCorrespondenceStatusResultThrowsException() throws IOException {
-		stubGetFinnUlesteForsendelser(OK, JOURNALPOSTLISTE);
-		stubGetHentForsendelser("__files/rdist001/hentforsendelser_happy.json");
+		stubGetFinnUlesteForsendelser(JOURNALPOSTLISTE);
+		stubGetHentForsendelser();
 		stubAltinnCorrespondence("altinn/correspondence_status_error_response.xml", INTERNAL_SERVER_ERROR);
 
 		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
@@ -169,14 +169,12 @@ public class Sdist007IT {
 						.withStatus(OK.value())));
 	}
 
-	private void stubGetHentForsendelser(String responsebody) throws IOException {
+	private void stubGetHentForsendelser() throws IOException {
 		stubFor(get(urlPathMatching(HENTFORSENDELSER_URL))
-				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID1))
-				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID2))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(classpathToString(responsebody))));
+						.withBody(classpathToString("__files/rdist001/hentforsendelser_happy.json"))));
 	}
 
 	private void stubAltinnCorrespondence(String bodyFile) {
@@ -211,10 +209,10 @@ public class Sdist007IT {
 						.withBodyFile("azure/token_response.json")));
 	}
 
-	private void stubGetFinnUlesteForsendelser(HttpStatus status, String journalpostListe) {
+	private void stubGetFinnUlesteForsendelser(String journalpostListe) {
 		stubFor(get(urlPathMatching(FINNULESTEFORSENDELSER_URL))
 				.willReturn(aResponse()
-						.withStatus(status.value())
+						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(journalpostListe)));
 	}
