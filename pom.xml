@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.1</version>
+		<version>3.2.1</version>
 	</parent>
 
 	<groupId>no.nav.dokdistdpv</groupId>
@@ -26,22 +26,22 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<camel.version>4.0.0</camel.version>
+		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+		<camel.version>4.3.0</camel.version>
 
-		<google-cloud.version>26.16.0</google-cloud.version>
-		<tink.version>1.9.0</tink.version>
-		<tink-gcpkms.version>1.8.0</tink-gcpkms.version>
-		<ibm.mq.client.version>9.3.3.0</ibm.mq.client.version>
+		<google-cloud.version>26.29.0</google-cloud.version>
+		<tink.version>1.12.0</tink.version>
+		<tink-gcpkms.version>1.9.0</tink-gcpkms.version>
+		<ibm.mq.client.version>9.3.4.1</ibm.mq.client.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
 		<httpclient.version>4.5.14</httpclient.version>
 
-		<cxf.version>4.0.2</cxf.version>
+		<cxf.version>4.0.3</cxf.version>
 
-		<melding-virksomhet-dokdistfordeling.version>6-4049b35</melding-virksomhet-dokdistfordeling.version>
+		<melding-virksomhet-dokdistfordeling.version>7-18c61bf</melding-virksomhet-dokdistfordeling.version>
 
 		<!-- Test -->
-		<spring-cloud-contract-wiremock.version>4.0.3</spring-cloud-contract-wiremock.version>
+		<spring-cloud-contract-wiremock.version>4.1.0</spring-cloud-contract-wiremock.version>
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
