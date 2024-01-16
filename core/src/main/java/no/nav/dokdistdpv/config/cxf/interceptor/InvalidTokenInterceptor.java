@@ -11,20 +11,22 @@ import org.apache.cxf.ws.security.tokenstore.TokenStoreException;
 import javax.xml.namespace.QName;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.apache.cxf.phase.Phase.UNMARSHAL;
 import static org.apache.cxf.ws.security.SecurityConstants.TOKEN;
 import static org.apache.cxf.ws.security.SecurityConstants.TOKEN_ID;
 import static org.apache.cxf.ws.security.tokenstore.TokenStoreUtils.getTokenStore;
 
 /**
- * Interceptor for å håndtere feil med context token.
+ * Interceptor for å håndtere feil med token mot Altinn.
  */
 @Slf4j
-public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<Message> {
+public class InvalidTokenInterceptor extends AbstractPhaseInterceptor<Message> {
 
 	private static final String ERROR_CODE_BAD_CONTEXT_TOKEN = "BadContextToken";
+	private static final String ERROR_CODE_INVALID_SECURITY = "InvalidSecurity";
 
-	public BadContextTokenInFaultInterceptor() {
+	public InvalidTokenInterceptor() {
 		super(UNMARSHAL);
 		getAfter().add(Soap12FaultInInterceptor.class.getName());
 	}
@@ -32,6 +34,7 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
 	@Override
 	public void handleMessage(Message message) {
 		Exception exception = message.getContent(Exception.class);
+
 		if (exception instanceof SoapFault soapFault) {
 			var statusCode = soapFault.getStatusCode();
 			var errorMessage = soapFault.getMessage();
@@ -41,24 +44,32 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
 
 			if (subCodes == null) {
 				message.setContent(Exception.class, soapFault);
-				log.error("SOAP kall feilet med subCodes=null. status={}, errorMessage={} errorDetail={}", statusCode, errorMessage, errorDetail, soapFault);
+				log.error("SOAP-kall feilet med subCodes=null. status={}, errorMessage={} og errorDetail={}", statusCode, errorMessage, errorDetail, soapFault);
 				return;
 			}
 
-			for (QName subCode : subCodes) {
-				if (subCode.getLocalPart().equalsIgnoreCase(ERROR_CODE_BAD_CONTEXT_TOKEN)) {
-					String tokenId = (String) message.getContextualProperty(TOKEN_ID);
-					try {
-						removeTokenFromMessageAndTokenStore(message, tokenId);
-					} catch (TokenStoreException e) {
-						log.error("Klarte ikke åpne TokenStore", e);
-					}
-					CookieStore.setCookie(null);
-					soapFault.setMessage("Token " + tokenId + " er fjernet fra TokenStore, nytt token vil bli utstedt ved neste kall. soapFault.message=" + errorMessage);
-					message.setContent(Exception.class, soapFault);
+			var shouldRemoveInvalidToken = subCodes.stream()
+					.anyMatch(InvalidTokenInterceptor::isBadContextTokenOrInvalidSecurity);
+
+			if (shouldRemoveInvalidToken) {
+				String tokenId = (String) message.getContextualProperty(TOKEN_ID);
+
+				try {
+					removeTokenFromMessageAndTokenStore(message, tokenId);
+				} catch (TokenStoreException e) {
+					log.error("Klarte ikke åpne TokenStore", e);
 				}
+
+				CookieStore.setCookie(null);
+				soapFault.setMessage(format("Token=%s er fjernet fra TokenStore. Nytt token vil bli utstedt ved neste kall. soapFault.message=%s", tokenId, errorMessage));
+				message.setContent(Exception.class, soapFault);
 			}
 		}
+	}
+
+	private static boolean isBadContextTokenOrInvalidSecurity(QName subCode) {
+		return subCode.getLocalPart().equalsIgnoreCase(ERROR_CODE_BAD_CONTEXT_TOKEN)
+			   || subCode.getLocalPart().equalsIgnoreCase(ERROR_CODE_INVALID_SECURITY);
 	}
 
 	private void removeTokenFromMessageAndTokenStore(Message message, String tokenId) throws TokenStoreException {
@@ -67,6 +78,7 @@ public class BadContextTokenInFaultInterceptor extends AbstractPhaseInterceptor<
 		message.getExchange().remove(TOKEN_ID);
 		message.getExchange().remove(TOKEN);
 		getTokenStore(message).remove(tokenId);
+
 		log.info("Fjernet tokenId={} fra message og TokenStore", tokenId);
 	}
 }
