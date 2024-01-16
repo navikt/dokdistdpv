@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.config.cxf;
 
-import no.nav.dokdistdpv.config.cxf.interceptor.BadContextTokenInFaultInterceptor;
+import no.nav.dokdistdpv.config.cxf.interceptor.InvalidTokenInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
 import no.nav.dokdistdpv.config.cxf.interceptor.HeaderInterceptor;
@@ -22,16 +22,18 @@ public class BusConfig {
 	@Bean
 	public Bus springBus(DokdistdpvProperties dokdistdpvProperties) {
 		SpringBus bus = new SpringBus();
+
 		bus.getInInterceptors().add(new CookiesInInterceptor());
 		bus.getOutInterceptors().add(new CookiesOutInterceptor());
 		bus.getOutInterceptors().add(new HeaderInterceptor());
 
-		bus.getInFaultInterceptors().add(new BadContextTokenInFaultInterceptor());
+		bus.getInFaultInterceptors().add(new InvalidTokenInterceptor());
 
 		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
 			bus.getInInterceptors().add(new LoggingInInterceptor());
 			bus.getOutInterceptors().add(new LoggingOutInterceptor());
 		}
+
 		return bus;
 	}
 }
