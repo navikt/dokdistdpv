@@ -34,7 +34,7 @@ import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.map
 @Component
 public class Sdist007Service {
 
-	public static final int MAX_JOURNALPOSTS_PER_REQUEST = 500;
+	public static final int MAX_JOURNALPOSTS_PER_REQUEST = 100;
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokarkivConsumer dokarkivConsumer;

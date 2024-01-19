@@ -94,7 +94,7 @@ public class AdministrerForsendelseConsumer {
 				.retrieve()
 				.bodyToMono(HentForsendelserResponse.class)
 				.onErrorResume(Throwable.class, err -> {
-					log.warn("hentForsendelser feilet med feilmelding={}", err.getMessage());
+					log.warn("hentForsendelser feilet med feilmelding={}", err.getMessage(), err);
 					return Mono.empty();
 				})
 				.block();
