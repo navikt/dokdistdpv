@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.Map;
 
+import static java.lang.String.format;
 import static no.nav.dokdistdpv.config.LokalCacheConfig.AZURE_TOKEN_CACHE;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class AzureToken {
         this.azureClient = azureClient;
     }
 
-    @Retryable(include = DokdistdpvFunctionalException.class, backoff = @Backoff(delay = 2000))
+    @Retryable(retryFor = DokdistdpvFunctionalException.class, backoff = @Backoff(delay = 2000))
     @Cacheable(AZURE_TOKEN_CACHE)
     public String accessToken(String scope) {
 		return fetchAccessToken(scope);
@@ -61,20 +62,20 @@ public class AzureToken {
             Map<String, Object> tokenData = objectMapper.readValue(responseJson, Map.class);
             return (String) tokenData.get("access_token");
         } catch (JsonProcessingException | ClassCastException e) {
-            throw new AzureTokenException(String.format("Klarte ikke parse token fra Azure. Feilmelding=%s", e.getMessage()), e);
+            throw new AzureTokenException(format("Klarte ikke parse token fra Azure. Feilmelding=%s", e.getMessage()), e);
         }
     }
 
     private void handleError(Throwable error) {
         if(error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
             throw new AzureTokenException(
-                    String.format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s",
-                            response.getRawStatusCode(),
+                    format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s",
+                            response.getStatusCode(),
                             response.getMessage()),
                     error);
         } else {
             throw new AzureTokenException(
-                    String.format("Kall mot Azure feilet med feilmelding=%s", error.getMessage()),
+                    format("Kall mot Azure feilet med feilmelding=%s", error.getMessage()),
                     error);
         }
     }
