@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.config.cxf;
 
+import jakarta.xml.ws.soap.SOAPFaultException;
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.AltinnFault;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusFilterV3;
@@ -11,6 +12,8 @@ import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.properties.AltinnProperties;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -30,21 +33,18 @@ public class AltinnClient {
 		this.iCorrespondenceAgencyExternalEC2 = iCorrespondenceAgencyExternalEC2;
 	}
 
+	@Retryable(retryFor = SOAPFaultException.class, backoff = @Backoff(delay = 1000))
 	public ReceiptExternal insertCorrespondence(
 			String konversasjonId,
 			InsertCorrespondenceV2 insertCorrespondenceV2
 	) {
-
 		try {
-			var receipt = iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
+			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
 					altinnProperties.username(),
 					altinnProperties.password(),
 					altinnProperties.userCode(),
 					konversasjonId,
 					insertCorrespondenceV2);
-
-
-			return receipt;
 
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
 			log.warn("Error ved distribusjon til Altinn med feilmelding={} og guid={}", getErrorMsg(e.getFaultInfo()), getErrorGuid(e.getFaultInfo()));
@@ -74,4 +74,5 @@ public class AltinnClient {
 	private static String getErrorMsg(AltinnFault fault) {
 		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : "Ukjent feil";
 	}
+
 }

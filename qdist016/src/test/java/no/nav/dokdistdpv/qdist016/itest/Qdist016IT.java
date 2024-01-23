@@ -1,6 +1,5 @@
 package no.nav.dokdistdpv.qdist016.itest;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import jakarta.jms.Queue;
 import jakarta.jms.TextMessage;
 import jakarta.xml.bind.JAXBElement;
@@ -15,10 +14,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import wiremock.org.apache.commons.io.IOUtils;
@@ -55,6 +54,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 @EnableAutoConfiguration
 @SpringBootTest(
@@ -64,19 +64,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
 public class Qdist016IT {
-	private static final String FORSENDELSE_ID = "256569";
 
-	public static final String DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK = "dokumentObjektReferanseHoveddok";
-	public static final String DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1 = "dokumentObjektReferanseVedlegg1";
-	public static final String DOKUMENT_OBJEKT_REFERANSE_VEDLEGG2 = "dokumentObjektReferanseVedlegg2";
-	public static final String HOVEDDOK_TEST_CONTENT = "HOVEDDOK_TEST_CONTENT";
-	public static final String VEDLEGG1_TEST_CONTENT = "VEDLEGG1_TEST_CONTENT";
-	public static final String VEDLEGG2_TEST_CONTENT = "VEDLEGG2_TEST_CONTENT";
+	private static final String FORSENDELSE_ID = "256569";
+	private static final String DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK = "dokumentObjektReferanseHoveddok";
+	private static final String DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1 = "dokumentObjektReferanseVedlegg1";
+	private static final String DOKUMENT_OBJEKT_REFERANSE_VEDLEGG2 = "dokumentObjektReferanseVedlegg2";
+	private static final String HOVEDDOK_TEST_CONTENT = "HOVEDDOK_TEST_CONTENT";
+	private static final String VEDLEGG1_TEST_CONTENT = "VEDLEGG1_TEST_CONTENT";
+	private static final String VEDLEGG2_TEST_CONTENT = "VEDLEGG2_TEST_CONTENT";
+
 	private static final String HENTFORSENDELSE_URL = "/rest/v1/administrerforsendelse/" + FORSENDELSE_ID;
 	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
+	private static final String QDIST016_MELDING = "__files/qdist016-happy.xml";
 
-
-	@Autowired
+	@MockBean
 	private EncryptedBucketStorage encryptedBucketStorage;
 
 	@Autowired
@@ -93,8 +94,6 @@ public class Qdist016IT {
 
 	@BeforeEach
 	public void setupBefore() {
-		WireMock.reset();
-		Mockito.reset(encryptedBucketStorage);
 		stubAzure();
 	}
 
@@ -107,7 +106,7 @@ public class Qdist016IT {
 		stubSafPostJournalpost();
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
@@ -120,14 +119,13 @@ public class Qdist016IT {
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG2), anyString());
 		});
-
 	}
 
 	@Test
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnAdministrerForsendelseServerError() {
 		stubDokdistGetForsendelse(INTERNAL_SERVER_ERROR);
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
@@ -136,7 +134,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToFunksjonellFeilQueueOnAdministrerForsendelseClientError() {
 		stubDokdistGetForsendelse(NOT_FOUND);
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -146,7 +144,7 @@ public class Qdist016IT {
 	public void shouldFailToFunksjonellFeilQueueOnForsendelseWithStatusNotKlarForDist() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-oversendt.json");
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -159,7 +157,7 @@ public class Qdist016IT {
 
 		stubDownloadObjectHoveddokumentNotFound();
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
@@ -172,7 +170,7 @@ public class Qdist016IT {
 
 		stubDownloadObjectVedleggNotFound();
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
@@ -186,7 +184,7 @@ public class Qdist016IT {
 
 		stubSafPostJournalpostNotFound();
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -200,7 +198,7 @@ public class Qdist016IT {
 
 		stubSafPostJournalpostServerError();
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
@@ -215,7 +213,7 @@ public class Qdist016IT {
 
 		stubAltinnInsertCorrespondence("altinn/altinnErrorResponse.xml");
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -230,7 +228,7 @@ public class Qdist016IT {
 
 		stubAltinnInsertCorrespondence("altinn/altinnResponseRejected.xml");
 
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -245,7 +243,7 @@ public class Qdist016IT {
 		stubDownloadObject();
 		stubSafPostJournalpost();
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
@@ -260,7 +258,7 @@ public class Qdist016IT {
 		stubDownloadObject();
 		stubSafPostJournalpost();
 		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
-		sendStringMessage(qdist016, classpathToString("__files/qdist016-happy.xml"), MDCOperations.getCallId());
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
 	}
@@ -269,7 +267,7 @@ public class Qdist016IT {
 	private void assertMessageOnQueue(Queue queue) {
 		String message = receive(queue);
 		assertNotNull(message);
-		assertEquals(message, classpathToString("__files/qdist016-happy.xml"));
+		assertEquals(message, classpathToString(QDIST016_MELDING));
 	}
 
 	private void stubDownloadObject() {
@@ -340,7 +338,7 @@ public class Qdist016IT {
 	private void stubAltinnInsertCorrespondence(String bodyFile) {
 		stubFor(post(urlEqualTo("/altinn"))
 				.willReturn(aResponse()
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_XML_VALUE)
 						.withBodyFile(bodyFile)));
 	}
 
