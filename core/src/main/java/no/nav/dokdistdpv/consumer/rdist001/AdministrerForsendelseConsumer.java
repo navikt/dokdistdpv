@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
+import java.time.Duration;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -91,6 +93,10 @@ public class AdministrerForsendelseConsumer {
 						.queryParam("inkluderAvstemte", false)
 						.queryParam("journalpostliste", String.join(",", journalpostliste))
 						.build())
+				.httpRequest(clientHttpRequest -> {
+					HttpClientRequest nativeRequest = clientHttpRequest.getNativeRequest();
+					nativeRequest.responseTimeout(Duration.ofSeconds(180));
+				})
 				.retrieve()
 				.bodyToMono(HentForsendelserResponse.class)
 				.onErrorResume(Throwable.class, err -> {
