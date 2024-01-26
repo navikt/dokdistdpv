@@ -46,7 +46,7 @@ public class ContentMapper {
 			BinaryAttachmentV2 attachment = new BinaryAttachmentV2();
 			attachment.setDestinationType(DEFAULT);
 			attachment.setFunctionType(UNSPECIFIED);
-			attachment.setFileName(mapFileName(forsendelsedokument, dokument.tittel()));
+			attachment.setFileName(mapFileName(forsendelsedokument.arkivDokumentInfoId(), dokument.tittel()));
 			attachment.setName(dokument.tittel());
 			attachment.setEncrypted(false);
 			attachment.setData(dokument.pdf());
@@ -59,8 +59,8 @@ public class ContentMapper {
 		return attachments;
 	}
 
-	private static String mapFileName(HentForsendelseResponse.Dokument dokument, String dokumenttittel) {
-		return dokument.arkivDokumentInfoId() + dokumenttittel + ".pdf";
+	static String mapFileName(String arkivDokumentInfoId, String dokumenttittel) {
+		return arkivDokumentInfoId + dokumenttittel.replaceAll("[\\\\/:*?\"<>|]", "") + ".pdf";
 	}
 
 	public static String mapMessageTitle(DistribusjonsTypeKode distribusjonstype) {
