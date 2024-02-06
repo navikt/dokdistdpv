@@ -9,6 +9,7 @@ import no.altinn.correspondenceagencyexternalaec.ReceiverEndPoint;
 import no.altinn.correspondenceagencyexternalaec.TextToken;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,7 +23,6 @@ import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.U
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
 import static no.altinn.correspondenceagencyexternalaec.UserTypeRestriction.DEFAULT;
 import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
-import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.NOTIFICATION_TEXT_FORMAT;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
@@ -31,8 +31,8 @@ import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VIKTIG;
-import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_MED_REVARSEL;
+import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.NOTIFIKASJON_UTEN_REVARSEL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -47,9 +47,16 @@ class AltinnForsendelseMapperTest {
 	private static final String SERVICE_EDITION_CODE = "1";
 	private static final String REPORTEE = "986228608";
 	private static final String REPORTEE_NAME = "YARA INTERNATIONAL ASA";
-	private static final String NOTIFICATION_TEXT_VEDTAK = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "vedtaket", FORSENDELSE_TITTEL, "vedtaket", REPORTEE_NAME);
-	private static final String NOTIFICATION_TEXT_VIKTIG = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "viktig brev", FORSENDELSE_TITTEL, "brevet", REPORTEE_NAME);
-	private static final String NOTIFICATION_TEXT_ANNET = NOTIFICATION_TEXT_FORMAT.formatted(REPORTEE, REPORTEE_NAME, "meldingen", FORSENDELSE_TITTEL, "meldingen", REPORTEE_NAME);
+	private static final String NOTIFICATION_TEXT_VEDTAK = """
+			986228608 YARA INTERNATIONAL ASA har mottatt vedtaket «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til vedtaket må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			""";
+	private static final String NOTIFICATION_TEXT_VIKTIG = """
+			986228608 YARA INTERNATIONAL ASA har mottatt viktig brev «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til brevet må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			""";
+
+	private static final String NOTIFICATION_TEXT_ANNET = """
+			986228608 YARA INTERNATIONAL ASA har mottatt meldingen «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til meldingen må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			""";
 
 	@ParameterizedTest
 	@MethodSource("provideMessageTitleMessageBodyAndNotificationTypeForDistribusjonstype")
@@ -92,7 +99,7 @@ class AltinnForsendelseMapperTest {
 
 		TextToken textToken = notification.getTextTokens().getTextToken().get(0);
 		assertEquals(1, textToken.getTokenNum());
-		assertEquals(expectedNotificationTextContent, textToken.getTokenValue());
+		Assertions.assertThat(textToken.getTokenValue()).isEqualToIgnoringWhitespace(expectedNotificationTextContent);
 	}
 
 	private void assertContent(
