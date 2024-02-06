@@ -23,7 +23,7 @@ import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.VIKTIG_BREV;
 
 public class NotificationsMapper {
 	public static final String NOTIFICATION_TEXT_FORMAT = "%s %s har mottatt %s «%s» fra NAV i Altinn. " +
-			"For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» eller rollen «Taushetsbelagt post» i Altinn. " +
+			"For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. " +
 			"Les mer om tildeling av tilganger og roller på Altinn.";
 
 	public static NotificationBEList mapNotifications(HentForsendelseResponse forsendelse) {
