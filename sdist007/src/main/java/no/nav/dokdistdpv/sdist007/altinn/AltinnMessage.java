@@ -6,7 +6,10 @@ public class AltinnMessage {
 	public static final String SERVICE_EDITION_CODE = "10";
 	public static final Integer TOKEN_NUM = 1;
 
-	public static final String TOKEN_VALUE = "%s %s har mottatt påminnelse om %s fra NAV i Altinn. %s er sendt som taushetsbelagt post fra NAV. For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» eller rollen «Taushetsbelagt post» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.\n";
+	public static final String TOKEN_VALUE = """
+			%s %s har mottatt påminnelse om %s fra NAV i Altinn. %s er sendt som taushetsbelagt post fra NAV. For å få tilgang til %s må noen i %s få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			""";
+
 	public static final String MESSAGE_BODY = """
 			<html>
 			<head>
@@ -17,14 +20,13 @@ public class AltinnMessage {
 			    kontrollerer at disse meldingene er korrekt håndtert i din virksomhet.</p>
 			<p>Når din virksomhet mottar taushetsbelagt post fra NAV, bør dere sikre at kun personer i virksomheten som har
 			    tjenstlig behov får tilgang til innholdet i meldingen.</p>
-			<p>Vær oppmerksom på at disse meldingene ikke er tilgjengelige og synlige før dere har tildelt rollen "Taushetsbelagt
-			    post" eller tilgang til tjenesten "Taushetsbelagt post fra NAV" til noen i deres virksomhet. Det er virksomheten
+			<p>Vær oppmerksom på at disse meldingene ikke er tilgjengelige og synlige før dere har tildelt tilgang til tjenesten "Taushetsbelagt post fra NAV" til noen i deres virksomhet. Det er virksomheten
 			    selv som avgjør hvem i virksomheten som skal ha tilgang til denne typen post. Denne/disse personene blir
 			    virksomhetens “postfordeler” for denne typen meldinger. Postfordeler kan åpne meldinger med taushetsbelagt innhold
 			    uten å lese vedlegg, og fordele denne videre til vedkommende i virksomheten som skal ha tilgang til denne.</p>
 			<p>Slik kan dette følges opp</p>
 			<ol type="1">
-			    <li>Tildel rollen "Taushetsbelagt post" eller tilgang til tjenesten "Taushetsbelagt post fra NAV" til en eller flere
+			    <li>Tildel tilgang til tjenesten "Taushetsbelagt post fra NAV" til en eller flere
 			        personer i virksomheten. Mer informasjon om dette finner du her: <a
 			                href="https://altinn.github.io/docs/utviklingsguider/digital-post-til-virksomheter/overorndet-funksjonalitet/del-tilgang-til-melding/">Slik
 			            tildeler du roller og rettigheter i Altinn</a>.
