@@ -19,6 +19,9 @@ import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
+import static java.lang.String.valueOf;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.apache.cxf.message.Message.RECEIVE_TIMEOUT;
 import static org.apache.cxf.rt.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILED_RENEW;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
@@ -59,6 +62,7 @@ public class AltinnClientConfig {
 		client.getRequestContext().put(CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
 		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
+		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(3)));
 		return client;
 	}
 
