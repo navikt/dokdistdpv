@@ -52,6 +52,7 @@ public class AltinnClient {
 		}
 	}
 
+	@Retryable(retryFor = SOAPFaultException.class, backoff = @Backoff(delay = 1000))
 	public Optional<CorrespondenceStatusResultV3> hentCorrespondenceStatusResult(String mottakerId, String konversasjonId) {
 		log.info("hentCorrespondenceStatusResult har mottatt kall til å hente correspondenceStatus fra altinn for konversasjonId={}", konversasjonId);
 
