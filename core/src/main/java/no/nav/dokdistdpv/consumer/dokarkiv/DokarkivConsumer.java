@@ -10,12 +10,14 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 import static java.lang.String.format;
+import static java.time.Duration.ofSeconds;
 import static java.time.LocalDateTime.now;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonKanal.DPVT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -51,6 +53,10 @@ public class DokarkivConsumer {
 		List<String> journalposter = webClient.get()
 				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + EKSPEDERT_FRA + "/" + EKSPEDERT_TIL)
 						.build())
+				.httpRequest(httpRequest -> {
+					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
+					reactorRequest.responseTimeout(ofSeconds(90));
+				})
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
 				})
