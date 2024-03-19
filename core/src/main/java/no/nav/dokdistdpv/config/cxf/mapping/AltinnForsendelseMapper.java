@@ -27,7 +27,7 @@ public class AltinnForsendelseMapper {
 		insertCorrespondenceV2.setReportee(forsendelse.mottaker().mottakerId());
 		insertCorrespondenceV2.setContent(mapContent(forsendelse, dokumenter));
 		insertCorrespondenceV2.setNotifications(mapNotifications(forsendelse));
-
+		insertCorrespondenceV2.setAllowForwarding(false);
 		return insertCorrespondenceV2;
 	}
 

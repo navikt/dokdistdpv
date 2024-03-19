@@ -95,7 +95,7 @@ class AltinnCorrespondenceECMapperTest {
 		ExternalContentV2 content = result.getContent();
 		assertThat(content.getLanguageCode()).isEqualTo(LANGUAGE_CODE_BOKMAAL);
 		assertThat(content.getMessageTitle()).isEqualTo(expectedMessageTitle);
-		assertThat(content.getMessageBody()).contains(expectedMessageBody);
+		assertThat(content.getMessageBody()).isEqualToIgnoringNewLines(expectedMessageBody);
 
 		result.getNotifications().getNotification()
 				.forEach(notification -> {
