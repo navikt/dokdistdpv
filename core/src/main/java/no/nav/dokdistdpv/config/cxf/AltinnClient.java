@@ -38,21 +38,17 @@ public class AltinnClient {
 	}
 
 	@Retryable(retryFor = SOAPFaultException.class, backoff = @Backoff(delay = 1000))
-	public ReceiptExternal insertCorrespondence(
-			String konversasjonId,
-			InsertCorrespondenceV2 insertCorrespondenceV2
-	) {
-		try {
-			log.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
-			secureLog.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
+	public ReceiptExternal insertCorrespondence(String konversasjonId, InsertCorrespondenceV2 insertCorrespondenceV2) {
+		log.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
+		secureLog.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
 
+		try {
 			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
 					altinnProperties.username(),
 					altinnProperties.password(),
 					altinnProperties.userCode(),
 					konversasjonId,
 					insertCorrespondenceV2);
-
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
 			log.warn("Distribusjon til Altinn feilet med feilmelding={} og guid={}", getErrorMsg(e.getFaultInfo()), getErrorGuid(e.getFaultInfo()));
 			throw new AltinnException(e.getMessage(), e.getCause());
@@ -67,11 +63,19 @@ public class AltinnClient {
 		log.info("Skal hente status for forsendelse med konversasjonId={} fra Altinn", konversasjonId);
 		secureLog.info("Skal hente status for forsendelse med konversasjonId={} fra Altinn", konversasjonId);
 
-		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(mottakerId, konversasjonId,
+		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(
+				mottakerId,
+				konversasjonId,
 				altinnProperties.serviceCode(),
-				altinnProperties.serviceEditionCode());
+				altinnProperties.serviceEditionCode()
+		);
+
 		try {
-			CorrespondenceStatusResultV3 correspondenceStatusDetailsECV3 = iCorrespondenceAgencyExternalEC2.getCorrespondenceStatusDetailsECV3(altinnProperties.username(), altinnProperties.password(), correspondenceStatusFilterV3);
+			CorrespondenceStatusResultV3 correspondenceStatusDetailsECV3 = iCorrespondenceAgencyExternalEC2.getCorrespondenceStatusDetailsECV3(
+					altinnProperties.username(),
+					altinnProperties.password(),
+					correspondenceStatusFilterV3);
+
 			return Optional.ofNullable(correspondenceStatusDetailsECV3);
 		} catch (ICorrespondenceAgencyExternalEC2GetCorrespondenceStatusDetailsECV3AltinnFaultFaultFaultMessage err) {
 			log.warn("Henting av status for forsendelse med konversasjonId={} fra Altinn feilet med feilmelding={} og guid={}", konversasjonId, getErrorMsg(err.getFaultInfo()), getErrorGuid(err.getFaultInfo()));
