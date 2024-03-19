@@ -75,6 +75,7 @@ class AltinnForsendelseMapperTest {
 		assertEquals(SERVICE_CODE, result.getServiceCode());
 		assertEquals(SERVICE_EDITION_CODE, result.getServiceEdition());
 		assertEquals(REPORTEE, result.getReportee());
+		assertFalse(result.isAllowForwarding());
 
 		assertContent(expectedMessageTitle, expectedMessageBody, forsendelse, dokumenter, result);
 		assertNotifications(expectedNotificationType, expectedNotificationTextContent, result);
