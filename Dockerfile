@@ -1,10 +1,10 @@
-FROM eclipse-temurin:21-jre as builder
-WORKDIR build
+FROM eclipse-temurin:21-jre AS builder
+WORKDIR /build
 COPY app/target/app.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM ghcr.io/navikt/baseimages/temurin:21-appdynamics
-WORKDIR app
+WORKDIR /app
 COPY --from=builder build/dependencies/ ./
 COPY --from=builder build/snapshot-dependencies/ ./
 COPY --from=builder build/spring-boot-loader/ ./
