@@ -55,7 +55,7 @@ public class SafGraphQLConsumer {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new SafGraphQLFunctionalException(
 					String.format("Kall mot SAF (GraphQL) feilet med status=%s, feilmelding=%s",
-							response.getRawStatusCode(),
+							response.getStatusCode(),
 							response.getMessage()),
 					error);
 		} else {

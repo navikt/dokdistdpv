@@ -56,6 +56,7 @@ public class InvalidTokenInterceptor extends AbstractPhaseInterceptor<Message> {
 
 				try {
 					removeTokenFromMessageAndTokenStore(message, tokenId);
+					log.info("Fjernet token fra message og TokenStore");
 				} catch (TokenStoreException e) {
 					log.error("Klarte ikke åpne TokenStore", e);
 				}
@@ -78,7 +79,5 @@ public class InvalidTokenInterceptor extends AbstractPhaseInterceptor<Message> {
 		message.getExchange().remove(TOKEN_ID);
 		message.getExchange().remove(TOKEN);
 		getTokenStore(message).remove(tokenId);
-
-		log.info("Fjernet tokenId={} fra message og TokenStore", tokenId);
 	}
 }

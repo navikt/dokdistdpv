@@ -45,8 +45,7 @@ public class Sdist007Route extends RouteBuilder {
 		onException(AltinnException.class)
 				.handled(true)
 				.useOriginalMessage()
-				.log(WARN, log, format("Feilet med feilmelding: ${exception.message};", getJournalpostId()));
-
+				.log(WARN, log, format("%s feilet med feilmelding: ${exception.message};", getJournalpostId()));
 
 		from("cron:sdist007?schedule=" + dokdistdpvProperties.getSdist007().getCronScheduler())
 			.autoStartup(dokdistdpvProperties.getSdist007().isAutostartup())
@@ -61,11 +60,9 @@ public class Sdist007Route extends RouteBuilder {
 					.bean(oppdaterAvstemtInfo)
 				.endChoice()
 			.end();
-
 	}
 
 	private static String getJournalpostId() {
 		return format("journalpostId=${exchangeProperty.%s}", PROPERTY_JOURNALPOST_ID);
 	}
-
 }
