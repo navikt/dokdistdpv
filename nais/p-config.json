@@ -32,6 +32,7 @@
   "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
   "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate",
   "APP_NAME": "dokdistdpv",
+  "ENVIRONMENT": "p",
   "MIN_REPLICAS": "2",
   "MAX_REPLICAS": "4",
   "INGRESSES": [

@@ -32,6 +32,7 @@
   "DOKDISTDPV_VAULT": "/kv/preprod/fss/dokdistdpv-q1/teamdokumenthandtering",
   "DOKDISTDPV_CERT": "/kv/preprod/fss/dokdistdpv-q1/certificate",
   "APP_NAME": "dokdistdpv-q1",
+  "ENVIRONMENT": "q1",
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "2",
   "INGRESSES": [

@@ -51,6 +51,8 @@ spec:
       value: {{ SAF_SCOPE }}
     - name: ADMINISTRERFORSENDELSE_BASE_URL
       value: {{ ADMINISTRERFORSENDELSE_BASE_URL }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -92,6 +94,12 @@ spec:
         mountPath: "/secrets/virksomhetssertifikat"
       - kvPath: {{ DOKDISTDPV_CERT }}
         mountPath: /var/run/secrets/nais.io/certificate
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "elastic-apm"
   azure:
     application:
       enabled: true
