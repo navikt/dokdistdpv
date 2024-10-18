@@ -7,8 +7,6 @@ metadata:
     team: teamdokumenthandtering
 spec:
   env:
-    - name: APPD_NAME
-      value: {{ APPD_NAME }}
     - name: DOKDISTDPV_JMS_BROKER_HOSTNAME
       value: {{ DOKDISTDPV_JMS_BROKER_HOSTNAME }}
     - name: DOKDISTDPV_JMS_BROKER_NAME
@@ -92,8 +90,6 @@ spec:
         mountPath: "/var/run/secrets/nais.io/vault"
       - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
         mountPath: "/secrets/virksomhetssertifikat"
-      - kvPath: {{ APPDYNAMICS }}
-        mountPath: /var/run/secrets/nais.io/appdynamics
       - kvPath: {{ DOKDISTDPV_CERT }}
         mountPath: /var/run/secrets/nais.io/certificate
   azure:

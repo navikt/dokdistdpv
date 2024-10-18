@@ -31,9 +31,7 @@
 
   "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
   "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate",
-  "APPDYNAMICS": "/apikey/appdynamics/prod",
   "APP_NAME": "dokdistdpv",
-  "APPD_NAME": "dokdistdpv",
   "MIN_REPLICAS": "2",
   "MAX_REPLICAS": "4",
   "INGRESSES": [
