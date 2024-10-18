@@ -92,8 +92,6 @@ spec:
         mountPath: "/var/run/secrets/nais.io/vault"
       - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
         mountPath: "/secrets/virksomhetssertifikat"
-      - kvPath: {{ DOKDISTDPV_CERT }}
-        mountPath: /var/run/secrets/nais.io/certificate
   observability:
     autoInstrumentation:
       enabled: true
