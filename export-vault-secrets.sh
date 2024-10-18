@@ -11,16 +11,6 @@ then
     export dokdistdpv_serviceuser_password=$(cat /secrets/serviceuser/srvdokdistdpv/password)
 fi
 
-echo "Exporting appdynamics environment variables"
-if test -f /var/run/secrets/nais.io/appdynamics/appdynamics.env;
-then
-    export $(cat /var/run/secrets/nais.io/appdynamics/appdynamics.env)
-    export APPDYNAMICS_AGENT_BASE_DIR=/tmp/appdynamics
-    echo "Appdynamics environment variables exported"
-else
-    echo "No such file or directory found at /var/run/secrets/nais.io/appdynamics/appdynamics.env"
-fi
-
 export new_credentials_2023_path=/secrets/virksomhetssertifikat/credentials_2023.json
 export old_credentials_path=/secrets/virksomhetssertifikat/credentials.json
 

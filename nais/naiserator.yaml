@@ -7,8 +7,6 @@ metadata:
     team: teamdokumenthandtering
 spec:
   env:
-    - name: APPD_NAME
-      value: {{ APPD_NAME }}
     - name: DOKDISTDPV_JMS_BROKER_HOSTNAME
       value: {{ DOKDISTDPV_JMS_BROKER_HOSTNAME }}
     - name: DOKDISTDPV_JMS_BROKER_NAME
@@ -53,6 +51,8 @@ spec:
       value: {{ SAF_SCOPE }}
     - name: ADMINISTRERFORSENDELSE_BASE_URL
       value: {{ ADMINISTRERFORSENDELSE_BASE_URL }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -92,10 +92,14 @@ spec:
         mountPath: "/var/run/secrets/nais.io/vault"
       - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
         mountPath: "/secrets/virksomhetssertifikat"
-      - kvPath: {{ APPDYNAMICS }}
-        mountPath: /var/run/secrets/nais.io/appdynamics
       - kvPath: {{ DOKDISTDPV_CERT }}
         mountPath: /var/run/secrets/nais.io/certificate
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "elastic-apm"
   azure:
     application:
       enabled: true
