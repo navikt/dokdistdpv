@@ -1,6 +1,12 @@
 {
+  "APP_NAME": "dokdistdpv",
+  "ENVIRONMENT": "p",
+  "MIN_REPLICAS": "2",
+  "MAX_REPLICAS": "4",
+  "INGRESSES": [
+    "https://dokdistdpv.intern.nav.no"
+  ],
   "SERVICE_USER": "/serviceuser/data/prod/srvdokdistdpv",
-
   "DOKDISTDPV_JMS_BROKER_HOSTNAME": "mpls01.adeo.no",
   "DOKDISTDPV_JMS_BROKER_NAME": "MPLS01",
   "DOKDISTDPV_JMS_BROKER_PORT": "1414",
@@ -13,29 +19,17 @@
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
-
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-prod-a63b",
   "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-prod",
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring",
   "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric",
-
   "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/sdp",
   "ALTINN_ENDPOINT": "https://www.altinn.no/ServiceEngineExternal/CorrespondenceAgencyExternalEC2.svc",
   "ALTINN_SERVICE_CODE": "5828",
   "ALTINN_SERVICE_EDITION_CODE": "1",
-
   "ADMINISTRERFORSENDELSE_BASE_URL": "https://app.adeo.no/dokdist",
-
   "SAF_BASE_URL": "https://saf.intern.nav.no/graphql",
   "SAF_SCOPE": "api://prod-fss.teamdokumenthandtering.saf/.default",
-
   "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
-  "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate",
-  "APP_NAME": "dokdistdpv",
-  "ENVIRONMENT": "p",
-  "MIN_REPLICAS": "2",
-  "MAX_REPLICAS": "4",
-  "INGRESSES": [
-    "https://dokdistdpv.intern.nav.no"
-  ]
+  "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate"
 }
