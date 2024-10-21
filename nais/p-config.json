@@ -30,6 +30,5 @@
   "ADMINISTRERFORSENDELSE_BASE_URL": "https://app.adeo.no/dokdist",
   "SAF_BASE_URL": "https://saf.intern.nav.no/graphql",
   "SAF_SCOPE": "api://prod-fss.teamdokumenthandtering.saf/.default",
-  "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering",
-  "DOKDISTDPV_CERT": "/kv/prod/fss/dokdistdpv/certificate"
+  "DOKDISTDPV_VAULT": "/kv/prod/fss/dokdistdpv/teamdokumenthandtering"
 }
