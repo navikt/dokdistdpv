@@ -48,14 +48,14 @@ class AltinnForsendelseMapperTest {
 	private static final String REPORTEE = "986228608";
 	private static final String REPORTEE_NAME = "YARA INTERNATIONAL ASA";
 	private static final String NOTIFICATION_TEXT_VEDTAK = """
-			986228608 YARA INTERNATIONAL ASA har mottatt vedtaket «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til vedtaket må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			986228608 YARA INTERNATIONAL ASA har mottatt vedtaket «Oppfølging av ansatt» fra Nav i Altinn. For å få tilgang til vedtaket må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra Nav» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
 			""";
 	private static final String NOTIFICATION_TEXT_VIKTIG = """
-			986228608 YARA INTERNATIONAL ASA har mottatt viktig brev «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til brevet må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			986228608 YARA INTERNATIONAL ASA har mottatt viktig brev «Oppfølging av ansatt» fra Nav i Altinn. For å få tilgang til brevet må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra Nav» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
 			""";
 
 	private static final String NOTIFICATION_TEXT_ANNET = """
-			986228608 YARA INTERNATIONAL ASA har mottatt meldingen «Oppfølging av ansatt» fra NAV i Altinn. For å få tilgang til meldingen må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra NAV» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
+			986228608 YARA INTERNATIONAL ASA har mottatt meldingen «Oppfølging av ansatt» fra Nav i Altinn. For å få tilgang til meldingen må noen i YARA INTERNATIONAL ASA få tilgang til tjenesten «Taushetsbelagt post fra Nav» i Altinn. Les mer om tildeling av tilganger og roller på Altinn.
 			""";
 
 	@ParameterizedTest

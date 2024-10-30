@@ -22,7 +22,7 @@ class ContentMapperTest {
 	private static Stream<Arguments> provideFilenameTitles() {
 		return Stream.of(
 				Arguments.of("Søknad om foreldrepenger", "1000Søknad om foreldrepenger.pdf"),
-				Arguments.of("Samtale med NAV - 26.01.2024", "1000Samtale med NAV - 26.01.2024.pdf"),
+				Arguments.of("Samtale med Nav - 26.01.2024", "1000Samtale med Nav - 26.01.2024.pdf"),
 				Arguments.of("Innvilget <15 pst. erstatning", "1000Innvilget 15 pst. erstatning.pdf"),
 				Arguments.of("XX                 Overs.brev", "1000XX                 Overs.brev.pdf"),
 				Arguments.of("Søknad om hjelpemiddel / ortopedisk middel", "1000Søknad om hjelpemiddel  ortopedisk middel.pdf"),

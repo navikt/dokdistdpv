@@ -6,9 +6,9 @@ public class AltinnCorrespondenceConstant {
 	public static final String NOTIFIKASJON_UTEN_REVARSEL = "VarselDPVUtenRevarsel";
 	public static final String NOTIFIKASJON_MED_REVARSEL = "VarselDPVMedRevarsel";
 
-	public static final String MESSAGE_TITLE_VEDTAK = "Vedtak fra NAV";
-	public static final String MESSAGE_TITLE_VIKTIG = "Viktig brev fra NAV";
-	public static final String MESSAGE_TITLE_ANNET = "Melding fra NAV";
+	public static final String MESSAGE_TITLE_VEDTAK = "Vedtak fra Nav";
+	public static final String MESSAGE_TITLE_VIKTIG = "Viktig brev fra Nav";
+	public static final String MESSAGE_TITLE_ANNET = "Melding fra Nav";
 
 	public static final String VEDTAK = "vedtak";
 	public static final String VEDTAKET = "Vedtaket";
