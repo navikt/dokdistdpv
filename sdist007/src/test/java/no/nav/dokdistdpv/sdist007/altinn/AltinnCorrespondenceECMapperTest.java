@@ -67,7 +67,7 @@ class AltinnCorrespondenceECMapperTest {
 
 	public static final String JOURNALPOST_ID = "123456789";
 
-	private static final String NOTIFIKASJON_SUB_STRING = "%s er sendt som taushetsbelagt post fra NAV.";
+	private static final String NOTIFIKASJON_SUB_STRING = "%s er sendt som taushetsbelagt post fra Nav.";
 
 	private static final String VIKTIG_NOTIFIKASJON = format(NOTIFIKASJON_SUB_STRING, BREVET);
 	private static final String VEDTAK_NOTIFIKASJON = format(NOTIFIKASJON_SUB_STRING, VEDTAKET);
