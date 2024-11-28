@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
@@ -44,16 +44,16 @@ class Qdist016ServiceTest {
 	@Autowired
 	private Qdist016Service service;
 
-	@MockBean
+	@MockitoBean
 	private AltinnProperties altinnProperties;
 
-	@MockBean
+	@MockitoBean
 	private AdministrerForsendelseConsumer administrerForsendelseConsumer;
 
-	@MockBean
+	@MockitoBean
 	private DokumentService dokumentService;
 
-	@MockBean
+	@MockitoBean
 	private AltinnClient altinnClient;
 
 	@Test
