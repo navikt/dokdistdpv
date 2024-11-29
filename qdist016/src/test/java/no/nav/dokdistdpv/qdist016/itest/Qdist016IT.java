@@ -14,12 +14,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import wiremock.org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class Qdist016IT {
 	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
 	private static final String QDIST016_MELDING = "__files/qdist016-happy.xml";
 
-	@MockBean
+	@MockitoBean
 	private EncryptedBucketStorage encryptedBucketStorage;
 
 	@Autowired
