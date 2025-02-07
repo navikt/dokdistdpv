@@ -49,8 +49,6 @@ spec:
       value: {{ SAF_BASE_URL }}
     - name: SAF_SCOPE
       value: {{ SAF_SCOPE }}
-    - name: ADMINISTRERFORSENDELSE_BASE_URL
-      value: {{ ADMINISTRERFORSENDELSE_BASE_URL }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
