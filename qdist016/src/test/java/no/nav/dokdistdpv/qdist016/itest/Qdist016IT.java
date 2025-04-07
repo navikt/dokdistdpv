@@ -233,6 +233,21 @@ public class Qdist016IT {
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
 	}
 
+	@Test
+	@SneakyThrows
+	public void shouldFailToTekniskFeilQueueOnAltinnNonFunctionalErrorResponse() {
+		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
+		stubPutOppdaterForsendelse(OK.value());
+		stubDownloadObject();
+		stubSafPostJournalpost();
+
+		stubAltinnInsertCorrespondence("altinn/altinnErrorResponse_nonfunctional.xml");
+
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
+
+		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
+	}
+
 	@SneakyThrows
 	@Test
 	public void shouldFailToFunksjonellQueueOnPutForsendelseNotFound() {

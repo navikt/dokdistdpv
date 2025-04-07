@@ -11,6 +11,7 @@ import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.exception.AltinnException;
+import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,18 @@ public class AltinnClient {
 					konversasjonId,
 					insertCorrespondenceV2);
 		} catch (ICorrespondenceAgencyExternalEC2InsertCorrespondenceECAltinnFaultFaultFaultMessage e) {
-			log.warn("Distribusjon til Altinn feilet med feilmelding={} og guid={}", getErrorMsg(e.getFaultInfo()), getErrorGuid(e.getFaultInfo()));
-			throw new AltinnException(e.getMessage(), e.getCause());
+			AltinnFault faultInfo = e.getFaultInfo();
+			// https://altinn.github.io/docs/api/tjenesteeiere/soap/feilhandtering/
+			int errorId = getErrorId(faultInfo);
+			String errorMsg = getErrorMsg(faultInfo);
+			String errorGuid = getErrorGuid(faultInfo);
+			if(errorMsg.contains("non-functional error")) {
+				log.error("Distribusjon til Altinn feilet teknisk med errorId={}, feilmelding={}, guid={}", errorId, errorMsg, errorGuid);
+				throw new DokdistdpvTechnicalException(e.getMessage(), e);
+			} else {
+				log.warn("Distribusjon til Altinn feilet funksjonelt med errorId={}, feilmelding={}, guid={}", errorId, errorMsg, errorGuid);
+				throw new AltinnException(e.getMessage(), e.getCause());
+			}
 		} catch (SOAPFaultException e) {
 			log.warn("Distribusjon til Altinn feilet med feilmelding={} ", e.getMessage(), e);
 			throw e;
@@ -92,6 +103,10 @@ public class AltinnClient {
 
 	private static String getErrorMsg(AltinnFault fault) {
 		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : "Ukjent feil";
+	}
+
+	private static int getErrorId(AltinnFault fault) {
+		return fault.getErrorID() != null ? fault.getErrorID() : -42;
 	}
 
 }
