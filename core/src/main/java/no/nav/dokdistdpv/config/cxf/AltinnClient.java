@@ -28,6 +28,8 @@ import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapCo
 public class AltinnClient {
 
 	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
+	private static final int ALTINN_ERRORID_NULL = -999;
+	private static final String ALTINN_ERROR_MESSAGE_NULL = "AltinnErrorMessage var ikke satt på responsen";
 
 	private final AltinnProperties altinnProperties;
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
@@ -102,11 +104,11 @@ public class AltinnClient {
 	}
 
 	private static String getErrorMsg(AltinnFault fault) {
-		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : "Ukjent feil";
+		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : ALTINN_ERROR_MESSAGE_NULL;
 	}
 
 	private static int getErrorId(AltinnFault fault) {
-		return fault.getErrorID() != null ? fault.getErrorID() : -42;
+		return fault.getErrorID() != null ? fault.getErrorID() : ALTINN_ERRORID_NULL;
 	}
 
 }
