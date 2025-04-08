@@ -6,6 +6,7 @@
 			<faultstring>An error has occured</faultstring>
 			<detail>
 				<AltinnFault xmlns="http://www.altinn.no/services/common/fault/2009/10">
+					<AltinnErrorMessage>No information available</AltinnErrorMessage>
 					<AltinnExtendedErrorMessage>No information available</AltinnExtendedErrorMessage>
 					<AltinnLocalizedErrorMessage>More information about the error here</AltinnLocalizedErrorMessage>
 					<ErrorGuid>ed4c23c0-7de6-4343-a442-89bd3a6f38d8</ErrorGuid>
