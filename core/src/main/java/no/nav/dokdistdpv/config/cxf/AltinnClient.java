@@ -57,7 +57,7 @@ public class AltinnClient {
 			int errorId = getErrorId(faultInfo);
 			String errorMsg = getErrorMsg(faultInfo);
 			String errorGuid = getErrorGuid(faultInfo);
-			if(errorMsg.contains("non-functional error")) {
+			if (errorMsg.contains("non-functional error")) {
 				log.error("Distribusjon til Altinn feilet teknisk med errorId={}, feilmelding={}, guid={}", errorId, errorMsg, errorGuid);
 				throw new DokdistdpvTechnicalException(e.getMessage(), e);
 			} else {
@@ -103,7 +103,10 @@ public class AltinnClient {
 	}
 
 	private static String getErrorMsg(AltinnFault fault) {
-		return fault.getAltinnErrorMessage() != null ? fault.getAltinnErrorMessage() : FALLBACK_ALTINN_ERROR_MESSAGE;
+		return fault.getAltinnErrorMessage() != null ?
+				"error[%s], extendedError[%s], localizedError[%s]"
+						.formatted(fault.getAltinnErrorMessage(), fault.getAltinnExtendedErrorMessage(), fault.getAltinnLocalizedErrorMessage()) :
+				FALLBACK_ALTINN_ERROR_MESSAGE;
 	}
 
 	private static int getErrorId(AltinnFault fault) {
