@@ -4,18 +4,14 @@ import jakarta.xml.ws.BindingProvider;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
 import no.nav.dokdistdpv.properties.AltinnProperties;
-import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.properties.KeyStoreProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.ext.logging.LoggingInInterceptor;
-import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
-import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
@@ -32,28 +28,17 @@ public class AltinnClientConfig {
 	@Bean
 	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
 																			 Bus bus,
-																			 DokdistdpvProperties dokdistdpvProperties,
 																			 KeyStoreProperties keyStoreProperties) {
 		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
 		ICorrespondenceAgencyExternalEC2 port = service.getCustomBindingICorrespondenceAgencyExternalEC2();
 		BindingProvider bindingProvider = (BindingProvider) port;
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProperties.endpoint());
 
-		Client client = getClient(port, keyStoreProperties);
-
-		if (dokdistdpvProperties.getQdist016().isAltinnlogg()) {
-			client.getInInterceptors().add(new LoggingInInterceptor());
-			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-			outInterceptor.setSensitiveElementNames(Set.of("ns2:systemPassword"));
-			outInterceptor.setPrettyLogging(true);
-			outInterceptor.setLimit(1024 * 1024 * 100);
-			client.getOutInterceptors().add(outInterceptor);
-			client.getInFaultInterceptors().add(new LoggingInInterceptor());
-		}
+		configureClient(port, keyStoreProperties);
 		return port;
 	}
 
-	public Client getClient(ICorrespondenceAgencyExternalEC2 port, KeyStoreProperties keyStoreProperties) {
+	public void configureClient(ICorrespondenceAgencyExternalEC2 port, KeyStoreProperties keyStoreProperties) {
 		Client client = ClientProxy.getClient(port);
 		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
 		client.getRequestContext().put("security.must-understand", true);
@@ -63,7 +48,6 @@ public class AltinnClientConfig {
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
 		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
 		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(3)));
-		return client;
 	}
 
 	private Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {

@@ -1,12 +1,14 @@
 package no.nav.dokdistdpv.cloudstorage;
 
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager;
 import com.google.crypto.tink.integration.gcpkms.GcpKmsClient;
@@ -37,11 +39,11 @@ public class GoogleCloudStorageConfiguration {
 		GcpKmsClient.register(Optional.of(kekUri), Optional.empty());
 		KeyTemplate keyTemplate = KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, KeyTemplates.get(KEYTEMPLATE));
 		KeysetHandle handle = KeysetHandle.generateNew(keyTemplate);
-		Aead aead = handle.getPrimitive(Aead.class);
+		Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
 		Storage storage = StorageOptions.newBuilder()
 				.setProjectId(dokdistmellomlagerProperties.getProjectid())
-				.setTransportOptions(StorageOptions.getDefaultHttpTransportOptions().toBuilder()
+				.setTransportOptions(HttpStorageOptions.defaults().getDefaultTransportOptions().toBuilder()
 						.setConnectTimeout((int) SECONDS.toMillis(5))
 						.setReadTimeout((int) SECONDS.toMillis(20))
 						.setHttpTransportFactory(ApacheHttpTransport::new)

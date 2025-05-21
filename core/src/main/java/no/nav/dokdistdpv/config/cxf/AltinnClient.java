@@ -13,8 +13,6 @@ import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.AltinnProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +24,6 @@ import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapCo
 @Component
 public class AltinnClient {
 
-	private static final Logger secureLog = LoggerFactory.getLogger("secureLog");
 	private static final int FALLBACK_ERROR_ID = -999;
 	private static final String FALLBACK_ALTINN_ERROR_MESSAGE = "AltinnErrorMessage var ikke satt på responsen";
 
@@ -42,7 +39,6 @@ public class AltinnClient {
 	@Retryable(retryFor = {SOAPFaultException.class, DokdistdpvTechnicalException.class})
 	public ReceiptExternal insertCorrespondence(String konversasjonId, InsertCorrespondenceV2 insertCorrespondenceV2) {
 		log.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
-		secureLog.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
 
 		try {
 			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
@@ -73,7 +69,6 @@ public class AltinnClient {
 	@Retryable(retryFor = SOAPFaultException.class)
 	public Optional<CorrespondenceStatusResultV3> hentCorrespondenceStatusResult(String mottakerId, String konversasjonId) {
 		log.info("Skal hente status for forsendelse med konversasjonId={} fra Altinn", konversasjonId);
-		secureLog.info("Skal hente status for forsendelse med konversasjonId={} fra Altinn", konversasjonId);
 
 		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(
 				mottakerId,
