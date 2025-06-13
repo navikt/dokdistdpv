@@ -19,6 +19,7 @@ import java.util.List;
 import static java.lang.String.format;
 import static java.time.Duration.ofSeconds;
 import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonKanal.DPVT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,10 +31,12 @@ public class DokarkivConsumer {
 	private static final String FINN_ULESTE_JOURNALPOST_PATH = "/internal/sikkerhetsnivaa/finnUlesteJournalposter/";
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1/journalpost";
 	private final WebClient webClient;
-	private final DokdistdpvProperties properties;
+	private final int fraAntallEkspedertDagerTilbake;
+	private final int tilAntallEkspedertDagerTilbake;
 
 	public DokarkivConsumer(WebClient webClient, AzureToken azureToken, DokdistdpvProperties dokdistdpvProperties) {
-		this.properties = dokdistdpvProperties;
+		this.fraAntallEkspedertDagerTilbake = dokdistdpvProperties.getSdist007().getFraAntallEkspedertDagerTilbake();
+		this.tilAntallEkspedertDagerTilbake = dokdistdpvProperties.getSdist007().getTilAntallEkspedertDagerTilbake();
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokarkiv().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -43,15 +46,15 @@ public class DokarkivConsumer {
 
 	@Retryable(retryFor = DokarkivTechnicalException.class)
 	public List<String> finnUlesteJournalposter() {
+		LocalDateTime now = now().truncatedTo(SECONDS);
+		LocalDateTime ekspedertFra = now.minusDays(fraAntallEkspedertDagerTilbake);
+		LocalDateTime ekspedertTil = now.minusDays(tilAntallEkspedertDagerTilbake);
 
-		final LocalDateTime EKSPEDERT_FRA = now().minusDays(properties.getSdist007().getFraAntallEkspedertDagerTilbake());
-		final LocalDateTime EKSPEDERT_TIL = now().minusDays(properties.getSdist007().getTilAntallEkspedertDagerTilbake());
-
-		log.info(format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
-				DPVT, EKSPEDERT_FRA, EKSPEDERT_TIL));
+		log.info(format("finnUlesteJournalposter kalt med kanal=%s, ekspedertFra=%s, ekspedertTil=%s.",
+				DPVT, ekspedertFra, ekspedertTil));
 
 		List<String> journalposter = webClient.get()
-				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + EKSPEDERT_FRA + "/" + EKSPEDERT_TIL)
+				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + ekspedertFra + "/" + ekspedertTil)
 						.build())
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
