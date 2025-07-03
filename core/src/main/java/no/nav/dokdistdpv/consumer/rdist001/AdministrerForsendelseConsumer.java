@@ -11,8 +11,10 @@ import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import no.nav.dokdistdpv.utils.NavHeadersFilter;
+import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -39,13 +41,17 @@ public class AdministrerForsendelseConsumer {
 
 	public AdministrerForsendelseConsumer(WebClient webClient,
 										  DokdistdpvProperties dokdistdpvProperties,
-										  AzureToken azureToken) {
+										  AzureToken azureToken, HttpCodecsProperties codecsProperties) {
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken,
 						dokdistdpvProperties.getEndpoints().getDokdistadmin().getScope()))
 				.filter(new NavHeadersFilter())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.exchangeStrategies(ExchangeStrategies.builder()
+						.codecs(configurer ->
+								configurer.defaultCodecs().maxInMemorySize((int) codecsProperties.getMaxInMemorySize().toBytes()))
+						.build())
 				.build();
 	}
 
