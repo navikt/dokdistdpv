@@ -47,7 +47,7 @@ public class AltinnClientConfig {
 		client.getRequestContext().put(CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
 		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
-		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(3)));
+		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(8)));
 	}
 
 	private Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {
