@@ -11,40 +11,23 @@ then
     export dokdistdpv_serviceuser_password=$(cat /secrets/serviceuser/srvdokdistdpv/password)
 fi
 
-export new_credentials_2023_path=/secrets/virksomhetssertifikat/credentials_2023.json
-export old_credentials_path=/secrets/virksomhetssertifikat/credentials.json
-
-if test -f $new_credentials_2023_path
+if test -f "$NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS"
 then
     echo "Setting virksomhetssertifikat_alias"
-    export virksomhetssertifikat_alias="$(cat $new_credentials_2023_path | jq -r '.alias')"
+    export virksomhetssertifikat_alias="$(cat $NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS | jq -r '.alias')"
     echo "Setting virksomhetssertifikat_password"
-    export virksomhetssertifikat_password="$(cat $new_credentials_2023_path | jq -r '.password')"
+    export virksomhetssertifikat_password="$(cat $NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS | jq -r '.password')"
     echo "Setting virksomhetssertifikat_type"
-    export virksomhetssertifikat_type="$(cat $new_credentials_2023_path | jq -r '.type')"
-else
-    echo "Setting virksomhetssertifikat_alias"
-    export virksomhetssertifikat_alias="$(cat $old_credentials_path | jq -r '.alias')"
-    echo "Setting virksomhetssertifikat_password"
-    export virksomhetssertifikat_password="$(cat $old_credentials_path | jq -r '.password')"
-    echo "Setting virksomhetssertifikat_type"
-    export virksomhetssertifikat_type="$(cat $old_credentials_path | jq -r '.type')"
-
+    export virksomhetssertifikat_type="$(cat $NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS | jq -r '.type')"
 fi
 
-if test -f /secrets/virksomhetssertifikat/274258896775237957919470-2023-10-11.p12.b64
+if test -f "$NAV_VIRKSOMHETSSERTIFIKAT_KEY"
 then
-    echo "Setting virksomhetssertifikat_path"
-    export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12"
-
     echo "Converting certificate from base64"
-    base64 --decode /secrets/virksomhetssertifikat/274258896775237957919470-2023-10-11.p12.b64 > /secrets/virksomhetssertifikat/key.p12
-else
-    echo "Setting virksomhetssertifikat_path"
-    export virksomhetssertifikat_path="file:///secrets/virksomhetssertifikat/key.p12"
+    base64 --decode $NAV_VIRKSOMHETSSERTIFIKAT_KEY > ${NAV_VIRKSOMHETSSERTIFIKAT_KEY%.b64}
 
-    echo "Converting certificate from base64"
-    base64 --decode /secrets/virksomhetssertifikat/key.p12.b64 > /secrets/virksomhetssertifikat/key.p12
+    echo "Setting virksomhetssertifikat_path"
+    export virksomhetssertifikat_path="file://${NAV_VIRKSOMHETSSERTIFIKAT_KEY%.b64}"
 fi
 
 if test -f /var/run/secrets/nais.io/vault/gcloud_serviceaccount
