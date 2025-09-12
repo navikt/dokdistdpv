@@ -27,6 +27,7 @@ public class LokalCacheConfig {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(List.of(new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
 				.expireAfterWrite(55, MINUTES)
+				.recordStats()
 				.build())));
 		return manager;
 	}
