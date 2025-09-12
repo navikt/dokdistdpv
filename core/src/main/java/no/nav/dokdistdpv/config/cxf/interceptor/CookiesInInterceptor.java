@@ -25,7 +25,7 @@ public class CookiesInInterceptor extends AbstractPhaseInterceptor<Message> {
 		Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
 		List<Cookie> cookies = headers.get("Set-Cookie");
 		if (cookies != null) {
-			CookieStore.setCookie(cookies.get(0));
+			CookieStore.setCookie(cookies.getFirst());
 		}
 	}
 

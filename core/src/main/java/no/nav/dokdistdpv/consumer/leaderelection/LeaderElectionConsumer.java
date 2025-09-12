@@ -1,7 +1,6 @@
 package no.nav.dokdistdpv.consumer.leaderelection;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,11 +16,9 @@ public class LeaderElectionConsumer {
 	private static final String ELECTOR_PATH = "ELECTOR_PATH";
 
 	private final WebClient webClient;
-	private final ObjectMapper mapper;
 
-	public LeaderElectionConsumer(WebClient webClient, ObjectMapper mapper) {
+	public LeaderElectionConsumer(WebClient webClient) {
 		this.webClient = webClient;
-		this.mapper = mapper;
 	}
 
 	public boolean isLeader() {
@@ -41,7 +38,7 @@ public class LeaderElectionConsumer {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			return hostname.equals(response);
 		} catch (Exception e) {
-			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
+			log.warn("Kunne ikke bestemme lederpod. Feilmelding: {}", e.getMessage(), e);
 			return true;
 		}
 	}

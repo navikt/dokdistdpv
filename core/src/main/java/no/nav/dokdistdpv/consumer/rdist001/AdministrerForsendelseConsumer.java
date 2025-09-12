@@ -140,7 +140,7 @@ public class AdministrerForsendelseConsumer {
 	}
 
 	private void handleError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
 			throw new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
 							response.getStatusCode(),

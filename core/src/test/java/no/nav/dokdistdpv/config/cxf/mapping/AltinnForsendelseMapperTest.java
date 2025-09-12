@@ -88,17 +88,17 @@ class AltinnForsendelseMapperTest {
 	) {
 		NotificationBEList notificationList = result.getNotifications();
 		assertEquals(1, notificationList.getNotification().size());
-		Notification notification = notificationList.getNotification().get(0);
+		Notification notification = notificationList.getNotification().getFirst();
 		assertEquals(FROM_ADDRESS, notification.getFromAddress());
 		assertEquals(LANGUAGE_CODE_BOKMAAL, notification.getLanguageCode());
 		assertEquals(expectedNotificationType, notification.getNotificationType());
 
 		assertEquals(1, notification.getReceiverEndPoints().getReceiverEndPoint().size());
-		ReceiverEndPoint receiverEndPoint = notification.getReceiverEndPoints().getReceiverEndPoint().get(0);
+		ReceiverEndPoint receiverEndPoint = notification.getReceiverEndPoints().getReceiverEndPoint().getFirst();
 		assertEquals(EMAIL_PREFERRED, receiverEndPoint.getTransportType());
 		assertNull(receiverEndPoint.getReceiverAddress());
 
-		TextToken textToken = notification.getTextTokens().getTextToken().get(0);
+		TextToken textToken = notification.getTextTokens().getTextToken().getFirst();
 		assertEquals(1, textToken.getTokenNum());
 		Assertions.assertThat(textToken.getTokenValue()).isEqualToIgnoringWhitespace(expectedNotificationTextContent);
 	}

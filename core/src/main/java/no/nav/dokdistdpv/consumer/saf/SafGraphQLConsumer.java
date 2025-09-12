@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 
 @Component
@@ -52,15 +53,15 @@ public class SafGraphQLConsumer {
 	}
 
 	private void handleError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
 			throw new SafGraphQLFunctionalException(
-					String.format("Kall mot SAF (GraphQL) feilet med status=%s, feilmelding=%s",
+					format("Kall mot SAF (GraphQL) feilet med status=%s, feilmelding=%s",
 							response.getStatusCode(),
 							response.getMessage()),
 					error);
 		} else {
 			throw new SafGraphQLTechnicalException(
-					String.format("Kall mot SAF (GraphQL) feilet med feilmelding=%s", error.getMessage()),
+					format("Kall mot SAF (GraphQL) feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}
