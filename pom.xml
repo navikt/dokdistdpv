@@ -34,7 +34,6 @@
 		<com.ibm.mq.jakarta.client.version>9.4.1.1</com.ibm.mq.jakarta.client.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
 		<httpclient.version>4.5.14</httpclient.version>
-
 		<cxf.version>4.1.0</cxf.version>
 
 		<melding-virksomhet-dokdistfordeling.version>7-18c61bf</melding-virksomhet-dokdistfordeling.version>
