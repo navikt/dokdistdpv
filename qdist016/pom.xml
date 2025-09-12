@@ -19,14 +19,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core-model</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-spring-boot-starter</artifactId>
 		</dependency>
@@ -38,7 +30,7 @@
 		<!-- dokdistfordeling -->
 		<dependency>
 			<groupId>no.nav.meldinger.virksomhet</groupId>
-			<artifactId>melding-virksomhet-dokdistfordeling</artifactId>
+			<artifactId>dok-melding-virksomhet-dokdistfordeling</artifactId>
 		</dependency>
 
 		<!-- Test -->
@@ -50,11 +42,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.awaitility</groupId>
-			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

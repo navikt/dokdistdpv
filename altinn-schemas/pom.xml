@@ -24,7 +24,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
+				<version>${cxf-bom.version}</version>
 				<executions>
 					<execution>
 						<id>wsdl2java-generate</id>
