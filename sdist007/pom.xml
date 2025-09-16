@@ -14,6 +14,7 @@
 			<groupId>no.nav.dokdistdpv</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-spring-boot-starter</artifactId>
@@ -24,11 +25,6 @@
 		</dependency>
 
 		<!-- Test -->
-		<dependency>
-			<groupId>org.awaitility</groupId>
-			<artifactId>awaitility</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

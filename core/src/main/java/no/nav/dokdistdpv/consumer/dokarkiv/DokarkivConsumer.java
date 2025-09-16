@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.String.format;
 import static java.time.Duration.ofSeconds;
 import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -50,8 +49,7 @@ public class DokarkivConsumer {
 		LocalDateTime ekspedertFra = now.minusDays(fraAntallEkspedertDagerTilbake);
 		LocalDateTime ekspedertTil = now.minusDays(tilAntallEkspedertDagerTilbake);
 
-		log.info(format("finnUlesteJournalposter kalt med kanal=%s, ekspedertFra=%s, ekspedertTil=%s.",
-				DPVT, ekspedertFra, ekspedertTil));
+		log.info("finnUlesteJournalposter kalt med kanal={}, ekspedertFra={}, ekspedertTil={}.", DPVT, ekspedertFra, ekspedertTil);
 
 		List<String> journalposter = webClient.get()
 				.uri(uriBuilder -> uriBuilder.path(FINN_ULESTE_JOURNALPOST_PATH + DPVT + "/" + ekspedertFra + "/" + ekspedertTil)

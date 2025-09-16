@@ -17,7 +17,7 @@ public class JournalpostValidator {
 							journalpostid));
 		}
 
-		if (journalpostQueryResponse.getErrors().size() > 0) {
+		if (!journalpostQueryResponse.getErrors().isEmpty()) {
 			throw new SafGraphQLFunctionalException(
 					format("Kall mot SAF (GraphQL) feilet for journalpostId=%s, med feilmelding(er)=%s",
 							journalpostid,
