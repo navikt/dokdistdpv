@@ -21,15 +21,6 @@ then
     export virksomhetssertifikat_type="$(cat $NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS | jq -r '.type')"
 fi
 
-if test -f "$NAV_VIRKSOMHETSSERTIFIKAT_KEY"
-then
-    echo "Converting certificate from base64"
-    base64 --decode $NAV_VIRKSOMHETSSERTIFIKAT_KEY > ${NAV_VIRKSOMHETSSERTIFIKAT_KEY%.b64}
-
-    echo "Setting virksomhetssertifikat_path"
-    export virksomhetssertifikat_path="file://${NAV_VIRKSOMHETSSERTIFIKAT_KEY%.b64}"
-fi
-
 if test -f /var/run/secrets/nais.io/vault/gcloud_serviceaccount
 then
     echo "Setting GOOGLE_APPLICATION_CREDENTIALS"
