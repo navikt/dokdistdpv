@@ -3,8 +3,9 @@ package no.nav.dokdistdpv.config.cxf;
 import jakarta.xml.ws.BindingProvider;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
 import no.altinn.correspondenceagencyexternalaec.ICorrespondenceAgencyExternalEC2;
+import no.nav.dokdistdpv.certificate.KeyStoreCredentials;
+import no.nav.dokdistdpv.certificate.KeyStoreProperties;
 import no.nav.dokdistdpv.properties.AltinnProperties;
-import no.nav.dokdistdpv.properties.KeyStoreProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -28,19 +29,22 @@ public class AltinnClientConfig {
 	@Bean
 	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,
 																			 Bus bus,
-																			 KeyStoreProperties keyStoreProperties) {
+																			 KeyStoreProperties keyStoreProperties,
+																			 KeyStoreCredentials keyStoreCredentials) {
 		CorrespondenceAgencyExternalEC2SF service = new CorrespondenceAgencyExternalEC2SF();
 		ICorrespondenceAgencyExternalEC2 port = service.getCustomBindingICorrespondenceAgencyExternalEC2();
 		BindingProvider bindingProvider = (BindingProvider) port;
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProperties.endpoint());
 
-		configureClient(port, keyStoreProperties);
+		configureClient(port, keyStoreProperties, keyStoreCredentials);
 		return port;
 	}
 
-	public void configureClient(ICorrespondenceAgencyExternalEC2 port, KeyStoreProperties keyStoreProperties) {
+	private static void configureClient(ICorrespondenceAgencyExternalEC2 port,
+								KeyStoreProperties keyStoreProperties,
+								KeyStoreCredentials keyStoreCredentials) {
 		Client client = ClientProxy.getClient(port);
-		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties));
+		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties, keyStoreCredentials));
 		client.getRequestContext().put("security.must-understand", true);
 		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
 		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
@@ -50,14 +54,14 @@ public class AltinnClientConfig {
 		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(8)));
 	}
 
-	private Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties) {
+	private static Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties, KeyStoreCredentials keyStoreCredentials) {
 		final Properties properties = new Properties();
 		properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
 		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyStoreProperties.path());
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", keyStoreProperties.password());
+		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", keyStoreCredentials.password());
 		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "pkcs12");
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", keyStoreProperties.password());
-		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.alias", keyStoreProperties.alias());
+		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", keyStoreCredentials.password());
+		properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.alias", keyStoreCredentials.alias());
 		return properties;
 	}
 
