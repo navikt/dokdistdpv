@@ -1,12 +1,12 @@
 package no.nav.dokdistdpv.qdist016.itest;
 
+import no.nav.dokdistdpv.certificate.KeyStoreProperties;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.config.AzureConfig;
 import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.config.cxf.AltinnClient;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
-import no.nav.dokdistdpv.properties.KeyStoreProperties;
 import no.nav.dokdistdpv.properties.ServiceuserProperties;
 import no.nav.dokdistdpv.qdist016.Qdist016Route;
 import no.nav.dokdistdpv.qdist016.Qdist016Service;

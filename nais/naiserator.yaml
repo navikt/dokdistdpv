@@ -6,7 +6,22 @@ metadata:
   labels:
     team: teamdokumenthandtering
 spec:
+  filesFrom:
+    - secret: {{ DOKDISTDPV_SECRETS }}
+      mountPath: /var/run/secrets/nais_secrets
+  envFrom:
+    - secret: {{ DOKDISTDPV_SECRETS }}
+    - secret: altinn2-taushetsbelagt-post
   env:
+    - name: JAVA_TRUSTSTORE_OPTIONS
+      value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=75
+              -Djavax.net.ssl.keyStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.keyStorePassword=$(NAV_TRUSTSTORE_PASSWORD)
+              -Djavax.net.ssl.keyStoreType=jks
+              $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDISTDPV_JMS_BROKER_HOSTNAME
       value: {{ DOKDISTDPV_JMS_BROKER_HOSTNAME }}
     - name: DOKDISTDPV_JMS_BROKER_NAME
@@ -55,6 +70,8 @@ spec:
       value: {{ SAF_SCOPE }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "deployment.environment.name={{ ENVIRONMENT }}"
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: "/var/run/secrets/nais_secrets/gcloud_serviceaccount.json"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -88,10 +105,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SERVICE_USER }}
-        mountPath: "/secrets/serviceuser/srvdokdistdpv"
-      - kvPath: {{ DOKDISTDPV_VAULT }}
-        mountPath: "/var/run/secrets/nais.io/vault"
       - kvPath: {{ NAV_VIRKSOMHETSSERTIFIKAT_VAULT }}
         mountPath: "/secrets/virksomhetssertifikat"
   observability:

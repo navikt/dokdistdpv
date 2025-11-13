@@ -40,7 +40,7 @@ public class ApplicationStartingEventListener implements ApplicationListener<App
 			throw new IllegalArgumentException("Klarte ikke skrive fil", e);
 		}
 
-		System.setProperty("virksomhetssertifikat.path", "file://" + base64DecodedPath.toAbsolutePath());
+		System.setProperty("nav.virksomhetssertifikat.path", "file://" + base64DecodedPath.toAbsolutePath());
 		log.info("Dekodet base64 sertifikatfil og satt virksomhetssertifikat.path");
 	}
 }
