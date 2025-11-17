@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.qdist016;
 
-import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
+import no.nav.dokdistdpv.consumer.altinn2.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonstidspunktKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;

@@ -1,9 +1,9 @@
-package no.nav.dokdistdpv.config.cxf;
+package no.nav.dokdistdpv.config.altinn2;
 
-import no.nav.dokdistdpv.config.cxf.interceptor.CookiesInInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.CookiesOutInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.HeaderInterceptor;
-import no.nav.dokdistdpv.config.cxf.interceptor.InvalidTokenInterceptor;
+import no.nav.dokdistdpv.config.altinn2.interceptor.CookiesInInterceptor;
+import no.nav.dokdistdpv.config.altinn2.interceptor.CookiesOutInterceptor;
+import no.nav.dokdistdpv.config.altinn2.interceptor.HeaderInterceptor;
+import no.nav.dokdistdpv.config.altinn2.interceptor.InvalidTokenInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf;
+package no.nav.dokdistdpv.config.altinn2;
 
 import jakarta.xml.ws.BindingProvider;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceAgencyExternalEC2SF;
@@ -24,7 +24,7 @@ import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILE
 import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
 
 @Configuration
-public class AltinnClientConfig {
+public class Altinn2ClientConfig {
 
 	@Bean
 	public ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2(AltinnProperties altinnProperties,

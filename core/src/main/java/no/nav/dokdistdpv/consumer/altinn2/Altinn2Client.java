@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf;
+package no.nav.dokdistdpv.consumer.altinn2;
 
 import jakarta.xml.ws.soap.SOAPFaultException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapCorrespondenceStatusFilter;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.Altinn2ForsendelseMapper.mapCorrespondenceStatusFilter;
 
 @Slf4j
 @Component
-public class AltinnClient {
+public class Altinn2Client {
 
 	private static final int FALLBACK_ERROR_ID = -999;
 	private static final String FALLBACK_ALTINN_ERROR_MESSAGE = "AltinnErrorMessage var ikke satt på responsen";
@@ -30,8 +30,8 @@ public class AltinnClient {
 	private final AltinnProperties altinnProperties;
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
-	protected AltinnClient(AltinnProperties altinnProperties,
-						   ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2) {
+	protected Altinn2Client(AltinnProperties altinnProperties,
+							ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2) {
 		this.altinnProperties = altinnProperties;
 		this.iCorrespondenceAgencyExternalEC2 = iCorrespondenceAgencyExternalEC2;
 	}

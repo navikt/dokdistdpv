@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf.mapping;
+package no.nav.dokdistdpv.consumer.altinn2.mapping;
 
 import no.altinn.correspondenceagencyexternalaec.BinaryAttachmentV2;
 import no.altinn.correspondenceagencyexternalaec.ExternalContentV2;
@@ -22,7 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.UNSPECIFIED;
 import static no.altinn.correspondenceagencyexternalaec.TransportType.EMAIL_PREFERRED;
 import static no.altinn.correspondenceagencyexternalaec.UserTypeRestriction.DEFAULT;
-import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.Altinn2ForsendelseMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class AltinnForsendelseMapperTest {
+class Altinn2ForsendelseMapperTest {
 
 	private final static String FORSENDELSE_TITTEL = "Oppfølging av ansatt";
 	private static final String MESSAGE_BODY_ANNET = format("Du har fått en melding som gjelder %s.", FORSENDELSE_TITTEL);

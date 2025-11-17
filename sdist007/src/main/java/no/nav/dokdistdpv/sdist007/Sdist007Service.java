@@ -6,7 +6,7 @@ import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusTypeV2;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.altinn.correspondenceagencyexternalaec.StatusChangeV2;
-import no.nav.dokdistdpv.config.cxf.AltinnClient;
+import no.nav.dokdistdpv.consumer.altinn2.Altinn2Client;
 import no.nav.dokdistdpv.consumer.dokarkiv.DokarkivConsumer;
 import no.nav.dokdistdpv.consumer.dokarkiv.OppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
@@ -39,13 +39,13 @@ public class Sdist007Service {
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokarkivConsumer dokarkivConsumer;
 
-	private final AltinnClient altinnClient;
+	private final Altinn2Client altinn2Client;
 
 	public Sdist007Service(AdministrerForsendelseConsumer administrerForsendelseConsumer,
-						   DokarkivConsumer dokarkivConsumer, AltinnClient altinnClient) {
+						   DokarkivConsumer dokarkivConsumer, Altinn2Client altinn2Client) {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 		this.dokarkivConsumer = dokarkivConsumer;
-		this.altinnClient = altinnClient;
+		this.altinn2Client = altinn2Client;
 	}
 
 	@Handler
@@ -87,7 +87,7 @@ public class Sdist007Service {
 	public Optional<Long> oppdaterDistribusjonOrSendNotificationToAltinn(HentForsendelseResponse hentForsendelseResponse) {
 		String journalpostId = hentForsendelseResponse.arkivInformasjon().arkivId();
 
-		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinnClient.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),
+		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinn2Client.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),
 				hentForsendelseResponse.konversasjonId());
 
 		if (correspondenceStatusResultV3.isEmpty()) {
@@ -115,7 +115,7 @@ public class Sdist007Service {
 
 	private void sendNotification(HentForsendelseResponse hentForsendelseResponse) {
 		InsertCorrespondenceV2 insertCorrespondenceV2 = mapToCorrespondence(hentForsendelseResponse);
-		ReceiptExternal receipt = altinnClient.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
+		ReceiptExternal receipt = altinn2Client.insertCorrespondence(hentForsendelseResponse.konversasjonId(), insertCorrespondenceV2);
 		log.info("journalpostId={} har ikke lest og har sendt påminnelse til Altinn med receiptId={}, receiptStatusCode={}", hentForsendelseResponse.arkivInformasjon().arkivId(),
 				receipt.getReceiptId() == null ? receipt.getParentReceiptId() : receipt.getReceiptId(), receipt.getReceiptStatusCode());
 	}

@@ -2,7 +2,7 @@ package no.nav.dokdistdpv.qdist016;
 
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
-import no.nav.dokdistdpv.config.cxf.AltinnClient;
+import no.nav.dokdistdpv.consumer.altinn2.Altinn2Client;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import static java.lang.Long.valueOf;
 import static java.util.UUID.randomUUID;
 import static no.altinn.correspondenceagencyexternalaec.ReceiptStatusEnum.OK;
-import static no.nav.dokdistdpv.config.cxf.mapping.AltinnForsendelseMapper.mapToCorrespondence;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.Altinn2ForsendelseMapper.mapToCorrespondence;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -27,17 +27,17 @@ public class Qdist016Service {
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokumentService dokumentService;
-	private final AltinnClient altinnClient;
+	private final Altinn2Client altinn2Client;
 	private final AltinnProperties altinnProperties;
 
 	public Qdist016Service(AdministrerForsendelseConsumer administrerForsendelseConsumer,
 						   DokumentService dokumentService,
-						   AltinnClient altinnClient,
+						   Altinn2Client altinn2Client,
 						   AltinnProperties altinnProperties
 	) {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 		this.dokumentService = dokumentService;
-		this.altinnClient = altinnClient;
+		this.altinn2Client = altinn2Client;
 		this.altinnProperties = altinnProperties;
 	}
 
@@ -55,7 +55,7 @@ public class Qdist016Service {
 				altinnProperties.serviceCode(),
 				altinnProperties.serviceEditionCode());
 
-		var receipt = altinnClient.insertCorrespondence(konversasjonId, insertCorrespondenceV2);
+		var receipt = altinn2Client.insertCorrespondence(konversasjonId, insertCorrespondenceV2);
 
 		if (receipt.getReceiptStatusCode() == OK) {
 			log.info("qdist016 Forsendelse distribuert til Altinn med status={} og statusCode={}", receipt.getReceiptTypeName(), receipt.getReceiptStatusCode());

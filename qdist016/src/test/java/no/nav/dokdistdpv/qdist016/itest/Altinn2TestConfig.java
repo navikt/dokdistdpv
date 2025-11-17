@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Profile;
 
 @Profile("itest")
 @Configuration
-public class AltinnTestConfig {
+public class Altinn2TestConfig {
 
 	private final ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2;
 
-	public AltinnTestConfig(ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2) {
+	public Altinn2TestConfig(ICorrespondenceAgencyExternalEC2 iCorrespondenceAgencyExternalEC2) {
 		this.iCorrespondenceAgencyExternalEC2 = iCorrespondenceAgencyExternalEC2;
 	}
 

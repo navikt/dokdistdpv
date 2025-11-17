@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf.mapping;
+package no.nav.dokdistdpv.consumer.altinn2.mapping;
 
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusFilterV3;
@@ -8,11 +8,11 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
-import static no.nav.dokdistdpv.config.cxf.mapping.ContentMapper.mapContent;
-import static no.nav.dokdistdpv.config.cxf.mapping.NotificationsMapper.mapNotifications;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.ContentMapper.mapContent;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.NotificationsMapper.mapNotifications;
 
 @Slf4j
-public class AltinnForsendelseMapper {
+public class Altinn2ForsendelseMapper {
 
 	public static InsertCorrespondenceV2 mapToCorrespondence(
 			HentForsendelseResponse forsendelse,

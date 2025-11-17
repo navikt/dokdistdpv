@@ -1,7 +1,7 @@
-package no.nav.dokdistdpv.config.cxf.interceptor;
+package no.nav.dokdistdpv.config.altinn2.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistdpv.config.cxf.cookies.CookieStore;
+import no.nav.dokdistdpv.config.altinn2.cookies.CookieStore;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.binding.soap.interceptor.Soap12FaultInInterceptor;
 import org.apache.cxf.message.Message;
