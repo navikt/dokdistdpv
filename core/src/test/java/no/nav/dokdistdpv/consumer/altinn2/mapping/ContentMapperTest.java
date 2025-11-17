@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf.mapping;
+package no.nav.dokdistdpv.consumer.altinn2.mapping;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static no.nav.dokdistdpv.config.cxf.mapping.ContentMapper.mapFilename;
+import static no.nav.dokdistdpv.consumer.altinn2.mapping.ContentMapper.mapFilename;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ContentMapperTest {

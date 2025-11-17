@@ -1,7 +1,7 @@
-package no.nav.dokdistdpv.config.cxf.interceptor;
+package no.nav.dokdistdpv.config.altinn2.interceptor;
 
 
-import no.nav.dokdistdpv.config.cxf.cookies.CookieStore;
+import no.nav.dokdistdpv.config.altinn2.cookies.CookieStore;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;

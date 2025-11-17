@@ -1,7 +1,7 @@
 package no.nav.dokdistdpv.qdist016;
 
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
-import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
+import no.nav.dokdistdpv.consumer.altinn2.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.saf.SafGraphQLConsumer;
 import no.nav.dokdistdpv.exception.KunneIkkeFinneDokumentException;

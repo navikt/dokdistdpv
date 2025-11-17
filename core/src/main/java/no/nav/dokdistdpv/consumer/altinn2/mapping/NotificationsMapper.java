@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf.mapping;
+package no.nav.dokdistdpv.consumer.altinn2.mapping;
 
 import no.altinn.correspondenceagencyexternalaec.Notification;
 import no.altinn.correspondenceagencyexternalaec.NotificationBEList;

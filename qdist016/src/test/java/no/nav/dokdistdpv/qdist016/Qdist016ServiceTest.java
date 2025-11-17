@@ -3,8 +3,8 @@ package no.nav.dokdistdpv.qdist016;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
 import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.altinn.correspondenceagencyexternalaec.ReceiptStatusEnum;
-import no.nav.dokdistdpv.config.cxf.AltinnClient;
-import no.nav.dokdistdpv.config.cxf.mapping.AltinnDokument;
+import no.nav.dokdistdpv.consumer.altinn2.Altinn2Client;
+import no.nav.dokdistdpv.consumer.altinn2.mapping.AltinnDokument;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
@@ -54,7 +54,7 @@ class Qdist016ServiceTest {
 	private DokumentService dokumentService;
 
 	@MockitoBean
-	private AltinnClient altinnClient;
+	private Altinn2Client altinn2Client;
 
 	@Test
 	void distribuerForsendelseTilDPV() {
@@ -64,7 +64,7 @@ class Qdist016ServiceTest {
 		when(administrerForsendelseConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
 		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
 		doNothing().when(administrerForsendelseConsumer).oppdaterForsendelse(any(OppdaterForsendelseRequest.class));
-		when(altinnClient.insertCorrespondence(
+		when(altinn2Client.insertCorrespondence(
 				anyString(),
 				any(InsertCorrespondenceV2.class))).thenReturn(receiptExternalOk);
 
@@ -80,7 +80,7 @@ class Qdist016ServiceTest {
 		when(administrerForsendelseConsumer.hentForsendelse(any())).thenReturn(HENT_FORSENDELSE_RESPONSE);
 		when(dokumentService.hentDokumenter(any())).thenReturn(ALTINN_DOKUMENTER);
 		doNothing().when(administrerForsendelseConsumer).oppdaterForsendelse(any(OppdaterForsendelseRequest.class));
-		when(altinnClient.insertCorrespondence(
+		when(altinn2Client.insertCorrespondence(
 				anyString(),
 				any())).thenReturn(receiptExternalNotOk);
 

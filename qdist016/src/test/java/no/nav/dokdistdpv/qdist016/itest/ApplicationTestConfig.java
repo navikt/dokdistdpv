@@ -4,7 +4,7 @@ import no.nav.dokdistdpv.certificate.KeyStoreProperties;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.config.AzureConfig;
 import no.nav.dokdistdpv.config.SafGraphQLConfig;
-import no.nav.dokdistdpv.config.cxf.AltinnClient;
+import no.nav.dokdistdpv.consumer.altinn2.Altinn2Client;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.properties.ServiceuserProperties;
@@ -30,12 +30,12 @@ import static org.mockito.Mockito.mock;
 		KeyStoreProperties.class
 })
 @Import({
-		AltinnClient.class,
+		Altinn2Client.class,
 		Qdist016Route.class,
 		Qdist016Service.class,
 		JmsItestConfig.class,
 		LocalTestCacheConfig.class,
-		AltinnTestConfig.class
+		Altinn2TestConfig.class
 })
 @ComponentScan(basePackages = "no.nav.dokdistdpv")
 public class ApplicationTestConfig {

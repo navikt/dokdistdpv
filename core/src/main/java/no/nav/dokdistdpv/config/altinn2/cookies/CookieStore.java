@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.config.cxf.cookies;
+package no.nav.dokdistdpv.config.altinn2.cookies;
 
 /**
  * Lagrer en <i>Cookie</i> i trådens minne.
