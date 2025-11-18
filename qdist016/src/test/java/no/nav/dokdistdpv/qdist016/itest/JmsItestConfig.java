@@ -3,13 +3,14 @@ package no.nav.dokdistdpv.qdist016.itest;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
+import no.nav.dokdistdpv.properties.JmsQueueProperties;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 
 
@@ -18,29 +19,30 @@ import org.springframework.context.annotation.Profile;
 public class JmsItestConfig {
 
 	@Bean
-	public Queue qdist016(@Value("${dokdistdpi_qdist016_dist_til_dpv.queuename}") String qdist016QueueName) {
-		return new ActiveMQQueue(qdist016QueueName);
+	public Queue qdist016(JmsQueueProperties jmsQueueProperties) {
+		return new ActiveMQQueue(jmsQueueProperties.getQueues().getQdist016());
 	}
 
 	@Bean
-	public Queue qdist016FunksjonellFeil(@Value("${dokdistdpi_qdist016_funk_feil.queuename}") String qdist016FunksjonellFeilQueueName) {
-		return new ActiveMQQueue(qdist016FunksjonellFeilQueueName);
+	public Queue qdist016FunksjonellFeil(JmsQueueProperties jmsQueueProperties) {
+		return new ActiveMQQueue(jmsQueueProperties.getQueues().getQdist016FunksjonellFeil());
 	}
 
 	@Bean
-	public Queue qdist016TekniskFeil(@Value("${dokdistdpi_qdist016_boq.queuename}") String qdist016TekniskFeilQueueName) {
-		return new ActiveMQQueue(qdist016TekniskFeilQueueName);
+	public Queue qdist016TekniskFeil(JmsQueueProperties jmsQueueProperties) {
+		return new ActiveMQQueue(jmsQueueProperties.getQueues().getQdist016TekniskFeil());
 	}
 
 	@Bean(initMethod = "start", destroyMethod = "stop")
-	public EmbeddedActiveMQ activeMQServer() {
+	public EmbeddedActiveMQ embeddedActiveMQ() {
 		EmbeddedActiveMQ embeddedActiveMQ = new EmbeddedActiveMQ();
 		embeddedActiveMQ.setConfigResourcePath("artemis-server.xml");
 		return embeddedActiveMQ;
 	}
 
 	@Bean
-	public ConnectionFactory activemqConnectionFactory(EmbeddedActiveMQ embeddedActiveMQ) {
+	@DependsOn("embeddedActiveMQ")
+	public ConnectionFactory activemqConnectionFactory() {
 		ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("vm://0");
 		JmsPoolConnectionFactory pooledFactory = new JmsPoolConnectionFactory();
 		pooledFactory.setConnectionFactory(activeMQConnectionFactory);

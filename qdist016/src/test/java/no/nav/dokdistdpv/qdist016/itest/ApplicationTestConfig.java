@@ -7,6 +7,7 @@ import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.consumer.altinn2.Altinn2Client;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
+import no.nav.dokdistdpv.properties.JmsQueueProperties;
 import no.nav.dokdistdpv.properties.ServiceuserProperties;
 import no.nav.dokdistdpv.qdist016.Qdist016Route;
 import no.nav.dokdistdpv.qdist016.Qdist016Service;
@@ -27,7 +28,8 @@ import static org.mockito.Mockito.mock;
 		DokdistdpvProperties.class,
 		SafGraphQLConfig.class,
 		AltinnProperties.class,
-		KeyStoreProperties.class
+		KeyStoreProperties.class,
+		JmsQueueProperties.class
 })
 @Import({
 		Altinn2Client.class,
