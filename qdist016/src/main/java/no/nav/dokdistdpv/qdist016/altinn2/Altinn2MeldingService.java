@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.qdist016;
+package no.nav.dokdistdpv.qdist016.altinn2;
 
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.correspondenceagencyexternalaec.InsertCorrespondenceV2;
@@ -37,7 +37,7 @@ public class Altinn2MeldingService {
 		this.altinnProperties = altinnProperties;
 	}
 
-	String distribuer(HentForsendelseResponse forsendelse) {
+	public String distribuer(HentForsendelseResponse forsendelse) {
 		long forsendelseId = forsendelse.forsendelseId();
 		String konversasjonId = genererKonversasjonId(forsendelseId, forsendelse);
 		List<AltinnDokument> dokumenter = dokumentService.hentDokumenter(forsendelse);

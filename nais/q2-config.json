@@ -19,6 +19,8 @@
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.dev.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
+  "DOKDISTDPV_ENDPOINTS_ALTINN3_URL": "https://platform.tt02.altinn.no",
+  "DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE": "altinn:serviceowner altinn:correspondence.write",
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-dev-2c5a",
   "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-dev",
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring-dev",

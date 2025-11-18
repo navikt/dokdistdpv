@@ -3,6 +3,7 @@ package no.nav.dokdistdpv.qdist016;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
+import no.nav.dokdistdpv.qdist016.altinn2.Altinn2MeldingService;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 import org.apache.camel.Handler;
 import org.springframework.stereotype.Service;
