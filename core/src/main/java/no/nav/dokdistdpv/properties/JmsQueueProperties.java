@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.properties;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -11,7 +12,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class JmsQueueProperties {
 
+	@Valid
 	private final Broker broker = new Broker();
+	@Valid
 	private final Queues queues = new Queues();
 
 	@Data
