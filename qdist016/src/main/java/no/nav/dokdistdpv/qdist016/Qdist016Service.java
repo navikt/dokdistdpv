@@ -39,7 +39,7 @@ public class Qdist016Service {
 	private void distribuerTilAltinn2(HentForsendelseResponse forsendelse) {
 		String konversasjonId = altinn2MeldingService.distribuer(forsendelse);
 		log.info("qdist016 Forsendelse distribuert til Altinn2. forsendelseId={}, bestillingsId={}, konversasjonId={}",
-				forsendelse.konversasjonId(), forsendelse.bestillingsId(), konversasjonId);
+				forsendelse.forsendelseId() , forsendelse.bestillingsId(), konversasjonId);
 		administrerForsendelseConsumer.oppdaterForsendelse(ekspedert(forsendelse.forsendelseId()));
 	}
 
