@@ -46,6 +46,10 @@ spec:
       value: {{ DOKDISTDPV_ENDPOINTS_DOKARKIV_URL }}
     - name : DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE
       value: {{ DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE }}
+    - name : DOKDISTDPV_ENDPOINTS_ALTINN3_URL
+      value: {{ DOKDISTDPV_ENDPOINTS_ALTINN3_URL }}
+    - name : DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE
+      value: {{ DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE }}
     - name: DOKDISTMELLOMLAGER_PROJECTID
       value: {{ DOKDISTMELLOMLAGER_PROJECTID }}
     - name: DOKDISTMELLOMLAGER_BUCKET
@@ -121,3 +125,9 @@ spec:
     application:
       enabled: true
   leaderElection: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner"
+        - name: "altinn:correspondence.write"

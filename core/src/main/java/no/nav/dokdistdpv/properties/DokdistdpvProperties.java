@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.properties;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -12,8 +13,11 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DokdistdpvProperties {
 
+	@Valid
 	private final Qdist016 qdist016 = new Qdist016();
+	@Valid
 	private final Endpoints endpoints = new Endpoints();
+	@Valid
 	private final Sdist007 sdist007 = new Sdist007();
 
 	@Data
@@ -38,9 +42,14 @@ public class DokdistdpvProperties {
 	@Validated
 	public static class Endpoints {
 		@NotNull
+		@Valid
 		private AppEndpoint dokdistadmin;
 		@NotNull
+		@Valid
 		private AppEndpoint dokarkiv;
+		@NotNull
+		@Valid
+		private AppEndpoint altinn3;
 	}
 
 	@Data

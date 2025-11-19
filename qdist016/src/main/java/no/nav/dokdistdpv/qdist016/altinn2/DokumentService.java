@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.qdist016;
+package no.nav.dokdistdpv.qdist016.altinn2;
 
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.consumer.altinn2.mapping.AltinnDokument;
