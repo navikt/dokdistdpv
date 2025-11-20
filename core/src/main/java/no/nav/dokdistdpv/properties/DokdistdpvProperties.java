@@ -24,6 +24,7 @@ public class DokdistdpvProperties {
 	@Validated
 	public static class Qdist016 {
 		private boolean autostartup;
+		private boolean altinn3;
 	}
 
 	@Data

@@ -1,0 +1,17 @@
+{
+  "correspondences": [
+    {
+      "correspondenceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "status": "Initialized",
+      "recipient": "22027838743",
+      "notifications": [
+        {
+          "orderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "isReminder": true,
+          "status": "Success"
+        }
+      ]
+    }
+  ],
+  "attachmentIds": {{{jsonPath request.body '$.existingAttachments'}}}
+}

@@ -81,7 +81,6 @@ public class Qdist016Route extends RouteBuilder {
 				.to("validator:no/nav/meldinger/virksomhet/dokdistfordeling/xsd/qdist008/out/distribuertilkanal.xsd")
 				.unmarshal(new JaxbDataFormat(JAXBContext.newInstance(DistribuerTilKanal.class)))
 				.bean(qdist016Service)
-				.log(INFO, log, format("qdist016 har distribuert forsendelse med id=%s til Altinn", getForsendelseId()))
 				.end()
 				.process(new MDCRemoveProcessor());
 	}

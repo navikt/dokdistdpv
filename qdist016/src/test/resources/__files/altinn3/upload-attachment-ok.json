@@ -1,0 +1,13 @@
+{
+  "fileName": "test.pdf",
+  "displayName": "Test",
+  "isEncrypted": false,
+  "checksum": "45eb5b02ee91526f43a8ff51bd191b59",
+  "sendersReference": "sendersReference",
+  "resourceId": "nav_dokumentdistribusjon_taushetsbelagtpost",
+  "attachmentId": "{{request.path.[5]}}",
+  "status": "Initialized",
+  "statusText": "string",
+  "statusChanged": "2025-11-25T12:01:55.101Z",
+  "dataType": "string"
+}

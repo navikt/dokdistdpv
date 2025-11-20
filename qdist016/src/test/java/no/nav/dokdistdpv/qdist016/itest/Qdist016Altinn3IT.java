@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -51,21 +52,22 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 @DirtiesContext
 @EnableAutoConfiguration
 @SpringBootTest(
 		classes = {ApplicationTestConfig.class},
-		webEnvironment = RANDOM_PORT
+		webEnvironment = RANDOM_PORT,
+		properties = {"dokdistdpv.qdist016.altinn3=true"}
 )
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
-public class Qdist016IT {
+public class Qdist016Altinn3IT {
 
 	private static final String FORSENDELSE_ID = "256569";
 	private static final String DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK = "dokumentObjektReferanseHoveddok";
@@ -97,6 +99,7 @@ public class Qdist016IT {
 	@BeforeEach
 	public void setupBefore() {
 		stubAzure();
+		stubNaisTexasToken();
 	}
 
 	@SneakyThrows
@@ -106,16 +109,16 @@ public class Qdist016IT {
 		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 		stubSafPostJournalpost();
-		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
+		stubAltinnInitializeAttachment("initialize-attachment-ok.json");
+		stubAltinnUploadAttachment("upload-attachment-ok.json");
+		stubAltinnInitializeCorrespondence("initialize-correspondence-ok.json");
 
 		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
-			verify(2, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
+			verify(1, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
 			verify(1, postRequestedFor(urlEqualTo("/safgraphql")));
-			verify(1, postRequestedFor(urlEqualTo("/altinn")));
-			verify(4, postRequestedFor(urlEqualTo("/azure_token")));
 
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString());
@@ -155,7 +158,7 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentHoveddokumentNotFoundInBucket() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
+		stubSafPostJournalpost();
 
 		stubDownloadObjectHoveddokumentNotFound();
 
@@ -168,7 +171,6 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggNotFoundInBucket() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy-ikke-joark.json");
-		stubPutOppdaterForsendelse(OK.value());
 
 		stubDownloadObjectVedleggNotFound();
 
@@ -181,7 +183,6 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggWhenJournalpostNotFoundInSaf() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 
 		stubSafPostJournalpostNotFound();
@@ -195,7 +196,6 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnHentVedleggWhenSafServerError() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 
 		stubSafPostJournalpostServerError();
@@ -207,28 +207,12 @@ public class Qdist016IT {
 
 	@Test
 	@SneakyThrows
-	public void shouldFailToFunksjonellFeilQueueOnAltinnException() {
+	public void shouldFailToFunksjonellFeilQueueOnAltinnUploadBadRequest() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 		stubSafPostJournalpost();
 
-		stubAltinnInsertCorrespondence("altinn/altinnErrorResponse.xml");
-
-		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
-
-		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
-	}
-
-	@Test
-	@SneakyThrows
-	public void shouldFailToFunksjonellFeilQueueOnAltinnNotOkStatus() {
-		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
-		stubDownloadObject();
-		stubSafPostJournalpost();
-
-		stubAltinnInsertCorrespondence("altinn/altinnResponseRejected.xml");
+		stubAltinnInitializeAttachment("initialize-attachment-bad-request.json", BAD_REQUEST.value());
 
 		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
@@ -239,11 +223,10 @@ public class Qdist016IT {
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnAltinnNonFunctionalErrorResponse() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
-		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
 		stubSafPostJournalpost();
 
-		stubAltinnInsertCorrespondence("altinn/altinnErrorResponse_nonfunctional.xml");
+		stubAltinnInitializeAttachment("initialize-attachment-internal-server-error.json", INTERNAL_SERVER_ERROR.value());
 
 		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
@@ -253,13 +236,15 @@ public class Qdist016IT {
 	@SneakyThrows
 	@Test
 	public void shouldFailToFunksjonellQueueOnPutForsendelseNotFound() {
-
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
 		stubPutOppdaterForsendelse(NOT_FOUND.value());
 
 		stubDownloadObject();
 		stubSafPostJournalpost();
-		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
+		stubAltinnInitializeAttachment("initialize-attachment-ok.json");
+		stubAltinnUploadAttachment("upload-attachment-ok.json");
+		stubAltinnInitializeCorrespondence("initialize-correspondence-ok.json");
+
 		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016FunksjonellFeil));
@@ -268,13 +253,15 @@ public class Qdist016IT {
 	@SneakyThrows
 	@Test
 	public void shouldFailToTekniskFeilQueueOnPutForsendelseServerError() {
-
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
 		stubPutOppdaterForsendelse(INTERNAL_SERVER_ERROR.value());
 
 		stubDownloadObject();
 		stubSafPostJournalpost();
-		stubAltinnInsertCorrespondence("altinn/altinnResponse.xml");
+		stubAltinnInitializeAttachment("initialize-attachment-ok.json");
+		stubAltinnUploadAttachment("upload-attachment-ok.json");
+		stubAltinnInitializeCorrespondence("initialize-correspondence-ok.json");
+
 		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
 
 		await().atMost(10, SECONDS).untilAsserted(() -> assertMessageOnQueue(qdist016TekniskFeil));
@@ -352,11 +339,33 @@ public class Qdist016IT {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
-	private void stubAltinnInsertCorrespondence(String bodyFile) {
-		stubFor(post(urlEqualTo("/altinn"))
+	private void stubAltinnInitializeAttachment(String bodyFile) {
+		stubAltinnInitializeAttachment(bodyFile, OK.value());
+	}
+
+	private void stubAltinnInitializeAttachment(String bodyFile, int status) {
+		stubFor(post(urlEqualTo("/altinn3/correspondence/api/v1/attachment"))
 				.willReturn(aResponse()
-						.withHeader(CONTENT_TYPE, APPLICATION_XML_VALUE)
-						.withBodyFile(bodyFile)));
+						.withStatus(status)
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withTransformers("response-template")
+						.withBodyFile("altinn3/" + bodyFile)));
+	}
+
+	private void stubAltinnUploadAttachment(String bodyFile) {
+		stubFor(post(urlPathMatching("/altinn3/correspondence/api/v1/attachment/.*/upload"))
+				.willReturn(aResponse()
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withTransformers("response-template")
+						.withBodyFile("altinn3/" + bodyFile)));
+	}
+
+	private void stubAltinnInitializeCorrespondence(String bodyFile) {
+		stubFor(post(urlPathMatching("/altinn3/correspondence/api/v1/correspondence"))
+				.willReturn(aResponse()
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withTransformers("response-template")
+						.withBodyFile("altinn3/" + bodyFile)));
 	}
 
 	private void stubAzure() {
@@ -365,6 +374,14 @@ public class Qdist016IT {
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response.json")));
+	}
+
+	private void stubNaisTexasToken() {
+		stubFor(post("/nais-texas")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nais-texas/maskinporten-token.json")));
 	}
 
 	private void sendStringMessage(Queue queue, final String message, final String callId) {

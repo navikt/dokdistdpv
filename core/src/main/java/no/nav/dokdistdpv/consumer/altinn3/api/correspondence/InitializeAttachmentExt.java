@@ -1,7 +1,11 @@
-package no.nav.dokdistdpv.consumer.altinn3.correspondence.api.attachment;
+package no.nav.dokdistdpv.consumer.altinn3.api.correspondence;
+
+import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
 
 /**
  * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/">Altinn.Correspondence.API</a>
+ * <p>
+ * Represents a container object for attachments used when initiating a shared attachment
  */
 public record InitializeAttachmentExt(String fileName,
 									  String displayName,
@@ -9,8 +13,6 @@ public record InitializeAttachmentExt(String fileName,
 									  String checksum,
 									  String sendersReference,
 									  String resourceId) {
-	private static final String NAV_RESOURCE_ID = "nav_dokumentdistribusjon_taushetsbelagtpost";
-
 	public InitializeAttachmentExt {
 		if (fileName == null || fileName.length() > 256) {
 			throw new IllegalArgumentException("fileName kan ikke være null eller lengre enn 256 tegn");
@@ -30,12 +32,5 @@ public record InitializeAttachmentExt(String fileName,
 		if (!NAV_RESOURCE_ID.equals(resourceId)) {
 			throw new IllegalArgumentException("resourceId må være " + NAV_RESOURCE_ID);
 		}
-	}
-
-	public static InitializeAttachmentExt create(String fileName,
-												 String displayName,
-												 String checksum,
-												 String sendersReference) {
-		return new InitializeAttachmentExt(fileName, displayName, false, checksum, sendersReference, NAV_RESOURCE_ID);
 	}
 }
