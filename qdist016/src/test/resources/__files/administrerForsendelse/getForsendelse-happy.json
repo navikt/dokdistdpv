@@ -25,19 +25,19 @@
     {
       "tilknyttetSom": "HOVEDDOKUMENT",
       "dokumentObjektReferanse": "dokumentObjektReferanseHoveddok",
-      "arkivDokumentInfoId": "arkivDokumentInfoIdHoveddok",
+      "arkivDokumentInfoId": "100",
       "dokumenttypeId": "dokumenttypeIdHoveddok"
     },
     {
       "tilknyttetSom": "VEDLEGG",
       "dokumentObjektReferanse": "dokumentObjektReferanseVedlegg1",
-      "arkivDokumentInfoId": "arkivDokumentInfoIdVedlegg1",
+      "arkivDokumentInfoId": "101",
       "dokumenttypeId": "dokumenttypeId2Vedlegg1"
     },
     {
       "tilknyttetSom": "VEDLEGG",
       "dokumentObjektReferanse": "dokumentObjektReferanseVedlegg2",
-      "arkivDokumentInfoId": "arkivDokumentInfoIdVedlegg2",
+      "arkivDokumentInfoId": "102",
       "dokumenttypeId": "dokumenttypeIdVedlegg2"
     }
   ]

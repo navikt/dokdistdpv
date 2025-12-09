@@ -3,15 +3,15 @@
     "journalpost": {
       "dokumenter": [
         {
-          "dokumentInfoId": "arkivDokumentInfoIdHoveddok",
+          "dokumentInfoId": "100",
           "tittel": "Hoveddok"
         },
         {
-          "dokumentInfoId": "arkivDokumentInfoIdVedlegg1",
+          "dokumentInfoId": "101",
           "tittel": "Vedlegg1"
         },
         {
-          "dokumentInfoId": "arkivDokumentInfoIdVedlegg2",
+          "dokumentInfoId": "102",
           "tittel": "Vedlegg2"
         }
       ]

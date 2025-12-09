@@ -20,6 +20,8 @@ public record HentForsendelseResponse(
 		DistribusjonsTypeKode distribusjonstype) {
 
 	public static final String ARKIV_SYSTEM_JOARK = "JOARK";
+	public static final String HOVEDDOKUMENT = "HOVEDDOKUMENT";
+	public static final String VEDLEGG = "VEDLEGG";
 
 	public boolean isIkkeArkivertIJoark() {
 		return arkivInformasjon == null || !ARKIV_SYSTEM_JOARK.equals(arkivInformasjon.arkivSystem);

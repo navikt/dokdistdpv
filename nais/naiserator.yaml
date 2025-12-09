@@ -21,6 +21,7 @@ spec:
               -Djavax.net.ssl.keyStore=$(NAV_TRUSTSTORE_PATH)
               -Djavax.net.ssl.keyStorePassword=$(NAV_TRUSTSTORE_PASSWORD)
               -Djavax.net.ssl.keyStoreType=jks
+              --enable-preview
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDISTDPV_JMS_BROKER_HOSTNAME
       value: {{ DOKDISTDPV_JMS_BROKER_HOSTNAME }}

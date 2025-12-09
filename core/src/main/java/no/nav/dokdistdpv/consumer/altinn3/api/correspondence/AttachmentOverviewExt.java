@@ -1,4 +1,4 @@
-package no.nav.dokdistdpv.consumer.altinn3.correspondence.api.attachment;
+package no.nav.dokdistdpv.consumer.altinn3.api.correspondence;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.UUID;
 
 /**
  * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/">Altinn.Correspondence.API</a>
+ * <p>
+ * Represents an overview of a shared attachment that can be used by multiple correspondences
  */
 public record AttachmentOverviewExt(
 		String fileName,
@@ -21,4 +23,11 @@ public record AttachmentOverviewExt(
 		List<UUID> correspondenceIds,
 		String dataType
 ) {
+	@Override
+	public String toString() {
+		return "Attachment(" +
+				"sendersReference='" + sendersReference + '\'' +
+				", attachmentId=" + attachmentId +
+				')';
+	}
 }
