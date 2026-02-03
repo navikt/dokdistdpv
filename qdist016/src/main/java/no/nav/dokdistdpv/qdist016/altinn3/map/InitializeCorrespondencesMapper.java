@@ -1,9 +1,9 @@
 package no.nav.dokdistdpv.qdist016.altinn3.map;
 
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.BaseCorrespondenceExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondenceContentExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondenceNotificationExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesExt;
+import no.altinn.services.altinn3.openapi.domain.BaseCorrespondenceExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondenceContentExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondenceNotificationExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.qdist016.altinn3.UploadedAttachment;
@@ -11,10 +11,10 @@ import no.nav.dokdistdpv.qdist016.altinn3.UploadedAttachment;
 import java.util.List;
 import java.util.UUID;
 
+import static no.altinn.services.altinn3.openapi.domain.EmailContentType.PLAIN;
+import static no.altinn.services.altinn3.openapi.domain.NotificationChannelExt.EMAIL_PREFERRED;
+import static no.altinn.services.altinn3.openapi.domain.NotificationTemplateExt.CUSTOM_MESSAGE;
 import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.EmailContentType.Plain;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.NotificationChannelExt.EmailPreferred;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.NotificationTemplateExt.CustomMessage;
 import static no.nav.dokdistdpv.qdist016.altinn3.map.ContentNotificationTekst.annet;
 import static no.nav.dokdistdpv.qdist016.altinn3.map.ContentNotificationTekst.vedtak;
 import static no.nav.dokdistdpv.qdist016.altinn3.map.ContentNotificationTekst.viktig;
@@ -25,12 +25,12 @@ public class InitializeCorrespondencesMapper {
 
 	public static InitializeCorrespondencesExt map(HentForsendelseResponse forsendelse, List<UploadedAttachment> uploadedAttachments) {
 		ContentNotificationTekst tekst = mapTekst(forsendelse.distribusjonstype(), forsendelse.forsendelseTittel());
-		return new InitializeCorrespondencesExt(
-				mapCorrespondence(forsendelse, tekst),
-				mapRecipients(forsendelse),
-				mapExistingAttachments(uploadedAttachments),
-				UUID.fromString(forsendelse.bestillingsId())
-		);
+		return InitializeCorrespondencesExt.builder()
+				.correspondence(mapCorrespondence(forsendelse, tekst))
+				.recipients(mapRecipients(forsendelse))
+				.existingAttachments(mapExistingAttachments(uploadedAttachments))
+				.idempotentKey(UUID.fromString(forsendelse.bestillingsId()))
+				.build();
 	}
 
 	private static ContentNotificationTekst mapTekst(DistribusjonsTypeKode distribusjonstype, String forsendelseTittel) {
@@ -51,6 +51,8 @@ public class InitializeCorrespondencesMapper {
 				.content(mapCorrespondenceContent(tekst))
 				.notification(mapCorrespondenceNotification(tekst))
 				.isConfidential(true)
+				.isConfirmationNeeded(false)
+				.ignoreReservation(false)
 				.build();
 	}
 
@@ -65,18 +67,19 @@ public class InitializeCorrespondencesMapper {
 
 	private static InitializeCorrespondenceNotificationExt mapCorrespondenceNotification(ContentNotificationTekst tekst) {
 		return InitializeCorrespondenceNotificationExt.builder()
-				.notificationTemplate(CustomMessage)
+				.notificationTemplate(CUSTOM_MESSAGE)
 				.emailSubject(tekst.emailSubject())
 				.emailBody(tekst.emailBody())
-				.emailContentType(Plain)
+				.emailContentType(PLAIN)
 				.smsBody(tekst.smsBody())
 				.sendReminder(true)
 				.reminderEmailSubject(tekst.reminderEmailSubject())
 				.reminderEmailBody(tekst.reminderEmailBody())
-				.reminderEmailContentType(Plain)
+				.reminderEmailContentType(PLAIN)
 				.reminderSmsBody(tekst.reminderSmsBody())
-				.notificationChannel(EmailPreferred)
-				.reminderNotificationChannel(EmailPreferred)
+				.notificationChannel(EMAIL_PREFERRED)
+				.reminderNotificationChannel(EMAIL_PREFERRED)
+				.overrideRegisteredContactInformation(false)
 				.build();
 	}
 

@@ -1,10 +1,10 @@
 package no.nav.dokdistdpv.qdist016.altinn3;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesResponseExt;
+import no.altinn.services.altinn3.openapi.domain.InitializedCorrespondencesExt;
 import no.nav.dokdistdpv.consumer.altinn3.Altinn3CorrespondenceClient;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesResponseExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializedCorrespondencesExt;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.qdist016.altinn3.map.InitializeCorrespondencesMapper;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.StructuredTaskScope;
 
 @Slf4j
@@ -31,17 +32,17 @@ public class Altinn3MeldingService {
 		this.altinn3CorrespondenceClient = altinn3CorrespondenceClient;
 	}
 
-	public String distribuer(HentForsendelseResponse forsendelse) {
+	public UUID distribuer(HentForsendelseResponse forsendelse) {
 		NavDokumenter navDokumenter = navDokumentService.hentNavDokumenter(forsendelse);
 
 		List<UploadedAttachment> attachmentIds = concurrentUpload(navDokumenter);
 		InitializeCorrespondencesExt initializeCorrespondencesExt = InitializeCorrespondencesMapper.map(forsendelse, attachmentIds);
 		InitializeCorrespondencesResponseExt initializeCorrespondencesResponseExt = altinn3CorrespondenceClient.initializeCorrespondence(initializeCorrespondencesExt);
-		InitializedCorrespondencesExt correspondence = initializeCorrespondencesResponseExt.correspondences().getFirst();
+		InitializedCorrespondencesExt correspondence = initializeCorrespondencesResponseExt.getCorrespondences().getFirst();
 		log.info("Sendt melding til virksomhet i Altinn3. correspondenceId={}, numAttachments={}",
-				correspondence.correspondenceId(),
+				correspondence.getCorrespondenceId(),
 				attachmentIds.size());
-		return initializeCorrespondencesResponseExt.getCorrespondenceId();
+		return correspondence.getCorrespondenceId();
 	}
 
 	private List<UploadedAttachment> concurrentUpload(NavDokumenter navDokumenter) {

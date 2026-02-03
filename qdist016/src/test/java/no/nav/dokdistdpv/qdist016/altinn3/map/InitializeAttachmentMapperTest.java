@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.qdist016.altinn3.map;
 
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeAttachmentExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
 import no.nav.dokdistdpv.qdist016.dokument.NavDokument;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ class InitializeAttachmentMapperTest {
 		String md5Hex = DigestUtils.md5Hex("Hei".getBytes());
 		InitializeAttachmentExt initializeAttachmentExt = InitializeAttachmentMapper.map(navDokument, md5Hex);
 
-		assertThat(initializeAttachmentExt.fileName()).isEqualTo("1000_Søknad om foreldrepenger.pdf");
-		assertThat(initializeAttachmentExt.displayName()).isEqualTo("Søknad om foreldrepenger");
-		assertThat(initializeAttachmentExt.isEncrypted()).isFalse();
-		assertThat(initializeAttachmentExt.checksum()).isEqualTo(md5Hex);
-		assertThat(initializeAttachmentExt.sendersReference()).isEqualTo(dokumentObjektReferanse);
-		assertThat(initializeAttachmentExt.resourceId()).isEqualTo(NAV_RESOURCE_ID);
+		assertThat(initializeAttachmentExt.getFileName()).isEqualTo("1000_Søknad om foreldrepenger.pdf");
+		assertThat(initializeAttachmentExt.getDisplayName()).isEqualTo("Søknad om foreldrepenger");
+		assertThat(initializeAttachmentExt.getIsEncrypted()).isFalse();
+		assertThat(initializeAttachmentExt.getChecksum()).isEqualTo(md5Hex);
+		assertThat(initializeAttachmentExt.getSendersReference()).isEqualTo(dokumentObjektReferanse);
+		assertThat(initializeAttachmentExt.getResourceId()).isEqualTo(NAV_RESOURCE_ID);
 	}
 
 	@ParameterizedTest

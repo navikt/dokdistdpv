@@ -1,11 +1,11 @@
 package no.nav.dokdistdpv.qdist016.altinn3.map;
 
-import no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeAttachmentExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
 import no.nav.dokdistdpv.qdist016.dokument.NavDokument;
 
 import java.util.regex.Pattern;
 
+import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
 import static org.apache.commons.lang3.StringUtils.left;
 import static org.apache.commons.lang3.StringUtils.stripEnd;
 
@@ -18,13 +18,14 @@ public class InitializeAttachmentMapper {
 	private static final Pattern UGYLDIGE_TEGN = Pattern.compile("[\u0000\\\\/:*?\"<>|\\t]|\\s+$");
 
 	public static InitializeAttachmentExt map(NavDokument navDokument, String md5Hex) {
-		return new InitializeAttachmentExt(
-				mapFileName(navDokument),
-				mapDisplayName(navDokument.tittel()),
-				false,
-				md5Hex,
-				navDokument.dokumentObjektReferanse(),
-				Altinn3Constants.NAV_RESOURCE_ID);
+		return InitializeAttachmentExt.builder()
+				.fileName(mapFileName(navDokument))
+				.displayName(mapDisplayName(navDokument.tittel()))
+				.isEncrypted(false)
+				.checksum(md5Hex)
+				.sendersReference(navDokument.dokumentObjektReferanse())
+				.resourceId(NAV_RESOURCE_ID)
+				.build();
 	}
 
 	static String mapFileName(NavDokument navDokument) {

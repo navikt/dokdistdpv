@@ -48,6 +48,7 @@ public class Sdist007Service {
 		this.altinn2Client = altinn2Client;
 	}
 
+	@SuppressWarnings("unused")
 	@Handler
 	public List<Forsendelse> behandleUlesteJournalposter(Exchange exchange) {
 
