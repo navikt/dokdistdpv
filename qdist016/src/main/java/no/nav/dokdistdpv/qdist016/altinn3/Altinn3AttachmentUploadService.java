@@ -1,10 +1,10 @@
 package no.nav.dokdistdpv.qdist016.altinn3;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.services.altinn3.openapi.domain.AttachmentOverviewExt;
 import no.nav.dokdistdpv.cloudstorage.DokDistDokumentFraBucket;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.consumer.altinn3.Altinn3CorrespondenceClient;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.AttachmentOverviewExt;
 import no.nav.dokdistdpv.qdist016.altinn3.map.InitializeAttachmentMapper;
 import no.nav.dokdistdpv.qdist016.dokument.NavDokument;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,7 +29,7 @@ public class Altinn3AttachmentUploadService {
 		String attachmentId = altinn3CorrespondenceClient.initializeAttachment(InitializeAttachmentMapper.map(navDokument, md5Hex));
 		AttachmentOverviewExt attachmentOverviewExt = altinn3CorrespondenceClient.uploadAttachment(attachmentId, dokDistDokumentFraBucket.getPdf());
 		log.info("Lastet opp attachment til Altinn3. attachmentId={}, sendersReference={}, length={}",
-				attachmentOverviewExt.attachmentId(), attachmentOverviewExt.sendersReference(), dokDistDokumentFraBucket.getPdf().length);
+				attachmentOverviewExt.getAttachmentId(), attachmentOverviewExt.getSendersReference(), dokDistDokumentFraBucket.getPdf().length);
 		return new UploadedAttachment(attachmentId, navDokument.rekkefoelge());
 	}
 }

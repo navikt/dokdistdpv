@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.AttachmentOverviewExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeAttachmentExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesResponseExt;
+import no.altinn.services.altinn3.openapi.domain.AttachmentOverviewExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesResponseExt;
 import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.exceptions.AttachmentIsNotPublishedException;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
@@ -92,7 +92,7 @@ public class Altinn3CorrespondenceClient {
 				.contentType(APPLICATION_OCTET_STREAM)
 				.body(attachment)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (request, response) -> {
+				.onStatus(HttpStatusCode::isError, (_, response) -> {
 					String feilmelding = "attachment/upload feilet med problemdetail=%s";
 					feilhandtering(response, feilmelding);
 				})
@@ -114,7 +114,7 @@ public class Altinn3CorrespondenceClient {
 				.contentType(APPLICATION_JSON)
 				.body(initializeCorrespondencesExt)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (request, response) -> {
+				.onStatus(HttpStatusCode::isError, (_, response) -> {
 					String feilmelding = "correspondence feilet med problemdetail=%s";
 					feilhandtering(response, feilmelding);
 				})

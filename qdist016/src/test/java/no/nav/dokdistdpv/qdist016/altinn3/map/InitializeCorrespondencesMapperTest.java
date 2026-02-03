@@ -1,9 +1,9 @@
 package no.nav.dokdistdpv.qdist016.altinn3.map;
 
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.BaseCorrespondenceExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondenceContentExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondenceNotificationExt;
-import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.InitializeCorrespondencesExt;
+import no.altinn.services.altinn3.openapi.domain.BaseCorrespondenceExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondenceContentExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondenceNotificationExt;
+import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.qdist016.altinn3.UploadedAttachment;
@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static no.altinn.services.altinn3.openapi.domain.EmailContentType.PLAIN;
+import static no.altinn.services.altinn3.openapi.domain.NotificationChannelExt.EMAIL_PREFERRED;
+import static no.altinn.services.altinn3.openapi.domain.NotificationTemplateExt.CUSTOM_MESSAGE;
 import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.EmailContentType.Plain;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.NotificationChannelExt.EmailPreferred;
-import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.NotificationTemplateExt.CustomMessage;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.ANNET;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode.VIKTIG;
@@ -47,41 +47,41 @@ class InitializeCorrespondencesMapperTest {
 
 		InitializeCorrespondencesExt initializeCorrespondencesExt = InitializeCorrespondencesMapper.map(hentForsendelseReponse, createAttachmentIds());
 
-		assertCorrespondence(initializeCorrespondencesExt.correspondence(), forventetTekst);
-		assertThat(initializeCorrespondencesExt.existingAttachments())
+		assertCorrespondence(initializeCorrespondencesExt.getCorrespondence(), forventetTekst);
+		assertThat(initializeCorrespondencesExt.getExistingAttachments())
 				.containsExactly(UUID.fromString(ATTACHMENT_1), UUID.fromString(ATTACHMENT_2), UUID.fromString(ATTACHMENT_3));
-		assertThat(initializeCorrespondencesExt.idempotentKey().toString()).isEqualTo(BESTILLINGS_ID);
-		assertThat(initializeCorrespondencesExt.recipients()).containsExactly(ISO_IEC_6523_ICD_ORGANISASJONSNUMMER + ":" + MOTTAKER_ID);
+		assertThat(initializeCorrespondencesExt.getIdempotentKey().toString()).isEqualTo(BESTILLINGS_ID);
+		assertThat(initializeCorrespondencesExt.getRecipients()).containsExactly(ISO_IEC_6523_ICD_ORGANISASJONSNUMMER + ":" + MOTTAKER_ID);
 	}
 
 	private static void assertCorrespondence(BaseCorrespondenceExt correspondence, ContentNotificationTekst forventetTekst) {
-		assertThat(correspondence.resourceId()).isEqualTo(NAV_RESOURCE_ID);
-		assertThat(correspondence.sendersReference()).isEqualTo(BESTILLINGS_ID);
-		assertCorrespondenceContent(correspondence.content(), forventetTekst);
-		assertCorrespondenceNotification(correspondence.notification(), forventetTekst);
-		assertThat(correspondence.isConfidential()).isTrue();
+		assertThat(correspondence.getResourceId()).isEqualTo(NAV_RESOURCE_ID);
+		assertThat(correspondence.getSendersReference()).isEqualTo(BESTILLINGS_ID);
+		assertCorrespondenceContent(correspondence.getContent(), forventetTekst);
+		assertCorrespondenceNotification(correspondence.getNotification(), forventetTekst);
+		assertThat(correspondence.getIsConfidential()).isTrue();
 	}
 
 	private static void assertCorrespondenceContent(InitializeCorrespondenceContentExt content, ContentNotificationTekst forventetTekst) {
-		assertThat(content.language()).isEqualTo(ISO_639_1_NORSK_BOKMAAL);
-		assertThat(content.messageTitle()).isEqualTo(forventetTekst.messageTitle());
-		assertThat(content.messageSummary()).isEqualTo(forventetTekst.messageSummary());
-		assertThat(content.messageBody()).isEqualTo(forventetTekst.messageBody());
+		assertThat(content.getLanguage()).isEqualTo(ISO_639_1_NORSK_BOKMAAL);
+		assertThat(content.getMessageTitle()).isEqualTo(forventetTekst.messageTitle());
+		assertThat(content.getMessageSummary()).isEqualTo(forventetTekst.messageSummary());
+		assertThat(content.getMessageBody()).isEqualTo(forventetTekst.messageBody());
 	}
 
 	private static void assertCorrespondenceNotification(InitializeCorrespondenceNotificationExt notification, ContentNotificationTekst forventetTekst) {
-		assertThat(notification.notificationTemplate()).isEqualTo(CustomMessage);
-		assertThat(notification.emailSubject()).isEqualTo(forventetTekst.emailSubject());
-		assertThat(notification.emailBody()).isEqualTo(forventetTekst.emailBody());
-		assertThat(notification.emailContentType()).isEqualTo(Plain);
-		assertThat(notification.smsBody()).isEqualTo(forventetTekst.smsBody());
-		assertThat(notification.sendReminder()).isTrue();
-		assertThat(notification.reminderEmailSubject()).isEqualTo(forventetTekst.reminderEmailSubject());
-		assertThat(notification.reminderEmailBody()).isEqualTo(forventetTekst.reminderEmailBody());
-		assertThat(notification.reminderEmailContentType()).isEqualTo(Plain);
-		assertThat(notification.reminderSmsBody()).isEqualTo(forventetTekst.reminderSmsBody());
-		assertThat(notification.notificationChannel()).isEqualTo(EmailPreferred);
-		assertThat(notification.reminderNotificationChannel()).isEqualTo(EmailPreferred);
+		assertThat(notification.getNotificationTemplate()).isEqualTo(CUSTOM_MESSAGE);
+		assertThat(notification.getEmailSubject()).isEqualTo(forventetTekst.emailSubject());
+		assertThat(notification.getEmailBody()).isEqualTo(forventetTekst.emailBody());
+		assertThat(notification.getEmailContentType()).isEqualTo(PLAIN);
+		assertThat(notification.getSmsBody()).isEqualTo(forventetTekst.smsBody());
+		assertThat(notification.getSendReminder()).isTrue();
+		assertThat(notification.getReminderEmailSubject()).isEqualTo(forventetTekst.reminderEmailSubject());
+		assertThat(notification.getReminderEmailBody()).isEqualTo(forventetTekst.reminderEmailBody());
+		assertThat(notification.getEmailContentType()).isEqualTo(PLAIN);
+		assertThat(notification.getReminderSmsBody()).isEqualTo(forventetTekst.reminderSmsBody());
+		assertThat(notification.getNotificationChannel()).isEqualTo(EMAIL_PREFERRED);
+		assertThat(notification.getReminderNotificationChannel()).isEqualTo(EMAIL_PREFERRED);
 	}
 
 	private static Stream<Arguments> shouldMap() {
