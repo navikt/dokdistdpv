@@ -3,6 +3,7 @@ package no.nav.dokdistdpv.properties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -25,6 +26,8 @@ public class DokdistdpvProperties {
 	public static class Qdist016 {
 		private boolean autostartup;
 		private boolean altinn3;
+		@Positive
+		private int altinn3VedleggZipGrense;
 	}
 
 	@Data

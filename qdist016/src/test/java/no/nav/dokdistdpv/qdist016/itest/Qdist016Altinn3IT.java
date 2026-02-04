@@ -104,7 +104,7 @@ public class Qdist016Altinn3IT {
 
 	@SneakyThrows
 	@Test
-	public void shouldProcessForsendelseOgSendTilDigitalPost() {
+	public void shouldProcessForsendelseOgSendTilAltinnMelding() {
 		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
 		stubPutOppdaterForsendelse(OK.value());
 		stubDownloadObject();
@@ -119,6 +119,8 @@ public class Qdist016Altinn3IT {
 			verify(1, getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
 			verify(1, putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL)));
 			verify(1, postRequestedFor(urlEqualTo("/safgraphql")));
+			verify(1, postRequestedFor(urlEqualTo("/altinn3/correspondence/api/v1/correspondence")));
+			verify(3, postRequestedFor(urlPathMatching("/altinn3/correspondence/api/v1/attachment/.*/upload")));
 
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_HOVEDDOK), anyString());
 			Mockito.verify(encryptedBucketStorage, times(1)).downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString());

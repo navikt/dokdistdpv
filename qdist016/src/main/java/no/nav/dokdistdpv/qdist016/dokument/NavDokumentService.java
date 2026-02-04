@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Integer.parseInt;
@@ -18,6 +19,8 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse
 
 @Component
 public class NavDokumentService {
+	private static final String VARIANTFORMAT_ARKIV = "ARKIV";
+	private final int ESTIMERT_FILSTOERRELSE_BYTES = 100_000;
 	private final SafGraphQLConsumer safConsumer;
 
 	public NavDokumentService(SafGraphQLConsumer safConsumer) {
@@ -37,7 +40,8 @@ public class NavDokumentService {
 				.map(dokument -> new NavDokument(Long.valueOf(dokument.arkivDokumentInfoId()),
 						dokument.dokumentObjektReferanse(),
 						forsendelse.forsendelseTittel(),
-						parseInt(dokument.arkivDokumentInfoId())))
+						parseInt(dokument.arkivDokumentInfoId()),
+						ESTIMERT_FILSTOERRELSE_BYTES))
 				.findFirst()
 				.orElseThrow(() -> new KunneIkkeFinneDokumentException("Kunne ikke finne hoveddokument"));
 	}
@@ -51,20 +55,34 @@ public class NavDokumentService {
 					.filter(dokument -> VEDLEGG.equals(dokument.tilknyttetSom()))
 					.map(dokument -> {
 						int rekkefoelge = counter.getAndIncrement();
-						return new NavDokument(null, dokument.dokumentObjektReferanse(), "Vedlegg " + rekkefoelge, rekkefoelge);
+						return new NavDokument(null,
+								dokument.dokumentObjektReferanse(),
+								"Vedlegg " + rekkefoelge,
+								rekkefoelge,
+								ESTIMERT_FILSTOERRELSE_BYTES);
 					})
 					.toList();
 		} else {
 			JournalpostQueryResponse response = safConsumer.hentJournalpost(forsendelse.arkivInformasjon().arkivId());
-			Map<String, String> dokumentInfoTitler = mapDokumentInfoTitler(response.getData().journalpost().dokumenter());
+			Map<String, JournalpostQueryResponse.DokumentInfo> dokumentInfos = mapDokumentInfo(response.getData().journalpost().dokumenter());
 
 			return forsendelse.dokumenter()
 					.stream()
 					.filter(dokument -> VEDLEGG.equals(dokument.tilknyttetSom()))
 					.map(vedlegg -> {
-						if (dokumentInfoTitler.containsKey(vedlegg.arkivDokumentInfoId())) {
+						if (dokumentInfos.containsKey(vedlegg.arkivDokumentInfoId())) {
 							String key = vedlegg.arkivDokumentInfoId();
-							return new NavDokument(Long.valueOf(key), vedlegg.dokumentObjektReferanse(), dokumentInfoTitler.get(key), parseInt(vedlegg.arkivDokumentInfoId()));
+							JournalpostQueryResponse.DokumentInfo dokumentInfo = dokumentInfos.get(key);
+							Optional<JournalpostQueryResponse.DokumentVariant> arkivVariant = dokumentInfo.dokumentvarianter().stream()
+									.filter(dokumentVariant -> VARIANTFORMAT_ARKIV.equals(dokumentVariant.variantformat()))
+									.findFirst();
+							return new NavDokument(Long.valueOf(key),
+									vedlegg.dokumentObjektReferanse(),
+									dokumentInfo.tittel(),
+									parseInt(vedlegg.arkivDokumentInfoId()),
+									arkivVariant.filter(dokumentVariant -> dokumentVariant.filstoerrelse() != null)
+											.map(JournalpostQueryResponse.DokumentVariant::filstoerrelse)
+											.orElse(ESTIMERT_FILSTOERRELSE_BYTES));
 						} else {
 							throw new KunneIkkeFinneDokumentException(format("DokumentInfoId=%s ikke funnet i journalpost", vedlegg.arkivDokumentInfoId()));
 						}
@@ -72,9 +90,9 @@ public class NavDokumentService {
 		}
 	}
 
-	private Map<String, String> mapDokumentInfoTitler(List<JournalpostQueryResponse.DokumentInfo> dokumentInfos) {
+	private Map<String, JournalpostQueryResponse.DokumentInfo> mapDokumentInfo(List<JournalpostQueryResponse.DokumentInfo> dokumentInfos) {
 		return dokumentInfos.stream()
-				.collect(toMap(JournalpostQueryResponse.DokumentInfo::dokumentInfoId, JournalpostQueryResponse.DokumentInfo::tittel));
+				.collect(toMap(JournalpostQueryResponse.DokumentInfo::dokumentInfoId, dokumentInfo -> dokumentInfo));
 	}
 
 }

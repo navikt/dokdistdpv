@@ -72,6 +72,10 @@ public class SafGraphQLConsumer {
 					dokumenter {
 					  dokumentInfoId
 					  tittel
+					  dokumentvarianter {
+					  	variantformat
+					  	filstoerrelse
+					  }
 					}
 				  }
 				}

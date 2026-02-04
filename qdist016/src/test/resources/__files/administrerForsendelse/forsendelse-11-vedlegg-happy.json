@@ -1,0 +1,98 @@
+{
+  "forsendelseId": 256569,
+  "bestillingsId": "b8b297e1-46c1-4657-9f2d-7cf6dd089b9d",
+  "konversasjonId": null,
+  "forsendelseStatus": "KLAR_FOR_DIST",
+  "forsendelseTittel": "forsendelseTittel",
+  "mottaker": {
+    "mottakerId": "29518815189",
+    "mottakerNavn": "Bjarne Betjent",
+    "mottakerType": "PERSON"
+  },
+  "arkivInformasjon": {
+    "arkivSystem": "JOARK",
+    "arkivId": "123"
+  },
+  "postadresse": {
+    "adresselinje1": "adresselinjeEn",
+    "adresselinje2": "adresselinjeTo",
+    "adresselinje3": "adresselinjeTre",
+    "postnummer": "123",
+    "poststed": "poststed",
+    "landkode": "NO"
+  },
+  "dokumenter": [
+    {
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "dokumentObjektReferanse": "450e8400-e29b-41d4-a716-446655441111",
+      "arkivDokumentInfoId": "100",
+      "dokumenttypeId": "hoveddokument"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "550e8400-e29b-41d4-a716-446655440000",
+      "arkivDokumentInfoId": "101",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "arkivDokumentInfoId": "102",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "7d444840-9dc0-11d1-b245-5ffdce74fad2",
+      "arkivDokumentInfoId": "103",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "e93f03b2-7a54-4632-9c17-8e62d4e13583",
+      "arkivDokumentInfoId": "104",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "a24a6ea4-ce75-4665-a070-57453082c256",
+      "arkivDokumentInfoId": "105",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "arkivDokumentInfoId": "106",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "c56a4180-65aa-42ec-a945-5fd21dec0538",
+      "arkivDokumentInfoId": "107",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "9089851a-2810-4416-8a7e-4050b18e5450",
+      "arkivDokumentInfoId": "108",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "3f42c158-6936-4d2d-8b01-1e96f8c7b649",
+      "arkivDokumentInfoId": "109",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "b1823904-4c6e-41d1-9307-2a6237683935",
+      "arkivDokumentInfoId": "110",
+      "dokumenttypeId": "vedlegg"
+    },
+    {
+      "tilknyttetSom": "VEDLEGG",
+      "dokumentObjektReferanse": "d1351187-5f68-4503-b0e2-861050a6e3d4",
+      "arkivDokumentInfoId": "111",
+      "dokumenttypeId": "vedlegg"
+    }
+  ]
+}

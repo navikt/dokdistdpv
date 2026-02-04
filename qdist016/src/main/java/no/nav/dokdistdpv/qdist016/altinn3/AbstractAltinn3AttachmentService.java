@@ -8,21 +8,20 @@ import no.nav.dokdistdpv.consumer.altinn3.Altinn3CorrespondenceClient;
 import no.nav.dokdistdpv.qdist016.altinn3.map.InitializeAttachmentMapper;
 import no.nav.dokdistdpv.qdist016.dokument.NavDokument;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
-public class Altinn3AttachmentUploadService {
-	private final Altinn3CorrespondenceClient altinn3CorrespondenceClient;
-	private final EncryptedBucketStorage storage;
+abstract class AbstractAltinn3AttachmentService {
 
-	Altinn3AttachmentUploadService(Altinn3CorrespondenceClient altinn3CorrespondenceClient,
-								   EncryptedBucketStorage storage) {
+	protected final Altinn3CorrespondenceClient altinn3CorrespondenceClient;
+	protected final EncryptedBucketStorage storage;
+
+	AbstractAltinn3AttachmentService(Altinn3CorrespondenceClient altinn3CorrespondenceClient,
+									 EncryptedBucketStorage storage) {
 		this.altinn3CorrespondenceClient = altinn3CorrespondenceClient;
 		this.storage = storage;
 	}
 
-	public UploadedAttachment upload(String bestillingsId, NavDokument navDokument) {
+	protected UploadedAttachment fetchInitializeUpload(String bestillingsId, NavDokument navDokument) {
 		String dokumentObjektReferanse = navDokument.dokumentObjektReferanse();
 		DokDistDokumentFraBucket dokDistDokumentFraBucket = storage.downloadObject(dokumentObjektReferanse, bestillingsId);
 		String md5Hex = DigestUtils.md5Hex(dokDistDokumentFraBucket.getPdf());

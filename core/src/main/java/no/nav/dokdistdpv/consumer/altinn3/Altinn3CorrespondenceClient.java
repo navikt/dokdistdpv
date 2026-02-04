@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.services.altinn3.openapi.domain.AltinnProblemDetails;
 import no.altinn.services.altinn3.openapi.domain.AttachmentOverviewExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
@@ -13,7 +14,6 @@ import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -27,11 +27,7 @@ import static no.nav.dokdistdpv.consumer.token.NaisTexasRequestInterceptor.MASKI
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
-/**
- * Implementasjon av:
- * <p>
- * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/">Altinn.Correspondence.API</a>
- */
+/// Klientimplementasjon av [Altinn.Correspondence.API](https://docs.altinn.studio/nb/api/correspondence/spec/#/)
 @Slf4j
 @Component
 public class Altinn3CorrespondenceClient {
@@ -50,13 +46,11 @@ public class Altinn3CorrespondenceClient {
 		this.objectMapper = objectMapper;
 	}
 
-	/**
-	 * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment">Initialize Attachment</a>
-	 * <p>
-	 * Initialize a new Attachment to be shared in correspondences
-	 *
-	 * @return Attachment Id
-	 */
+	/// [Initialize Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment)
+	///
+	/// Initialize a new Attachment to be shared in correspondences
+	///
+	/// @return Attachment Id
 	@Retryable(retryFor = DokdistdpvTechnicalException.class)
 	public String initializeAttachment(InitializeAttachmentExt initializeAttachmentExt) {
 		String json = restClientTexas.post()
@@ -66,7 +60,7 @@ public class Altinn3CorrespondenceClient {
 				.contentType(APPLICATION_JSON)
 				.body(initializeAttachmentExt)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (request, response) -> {
+				.onStatus(HttpStatusCode::isError, (_, response) -> {
 					String feilmelding = "attachment feilet med problemdetail=%s";
 					feilhandtering(response, feilmelding);
 				})
@@ -78,11 +72,9 @@ public class Altinn3CorrespondenceClient {
 		}
 	}
 
-	/**
-	 * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload">Upload Attachment</a>
-	 * <p>
-	 * Initialize Correspondences and uploads attachments in the same request
-	 */
+	/// [Upload Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload)
+	///
+	/// Initialize Correspondences and uploads attachments in the same request
 	@Retryable(retryFor = DokdistdpvTechnicalException.class)
 	public AttachmentOverviewExt uploadAttachment(String attachmentId, byte[] attachment) {
 		return restClientTexas.post()
@@ -99,11 +91,9 @@ public class Altinn3CorrespondenceClient {
 				.body(AttachmentOverviewExt.class);
 	}
 
-	/**
-	 * <a href="https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload">Upload Attachment</a>
-	 * <p>
-	 * Initialize Correspondences
-	 */
+	/// [Upload Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload)
+	///
+	/// Initialize Correspondences
 	@Retryable(retryFor = {DokdistdpvTechnicalException.class, AttachmentIsNotPublishedException.class}, maxAttempts = 6,
 			backoff = @Backoff(delay = 2000, multiplier = 1.2, maxDelay = 60000))
 	public InitializeCorrespondencesResponseExt initializeCorrespondence(InitializeCorrespondencesExt initializeCorrespondencesExt) {
@@ -122,10 +112,10 @@ public class Altinn3CorrespondenceClient {
 	}
 
 	private void feilhandtering(ClientHttpResponse response, String feilmelding) throws IOException {
-		ProblemDetail problemDetail = mapProblemDetail(response);
+		AltinnProblemDetails problemDetail = mapProblemDetail(response);
 
 		if (response.getStatusCode().is4xxClientError()) {
-			int errorCode = getErrorCode(problemDetail);
+			int errorCode = mapCode(problemDetail);
 			if (errorCode == ATTACHMENT_IS_NOT_PUBLISHED) {
 				throw new AttachmentIsNotPublishedException(feilmelding.formatted(problemDetail));
 			}
@@ -135,16 +125,19 @@ public class Altinn3CorrespondenceClient {
 		}
 	}
 
-	private static int getErrorCode(ProblemDetail problemDetail) {
-		return problemDetail.getProperties() != null ? (int) problemDetail.getProperties().getOrDefault("errorCode", 0) : 0;
+	private static Integer mapCode(AltinnProblemDetails problemDetail) {
+		return problemDetail.getCode() == null ? 0 : problemDetail.getCode();
 	}
 
-	private ProblemDetail mapProblemDetail(ClientHttpResponse response) throws IOException {
+	private AltinnProblemDetails mapProblemDetail(ClientHttpResponse response) throws IOException {
 		byte[] body = response.getBody().readAllBytes();
 		try {
-			return objectMapper.readValue(body, ProblemDetail.class);
+			return objectMapper.readValue(body, AltinnProblemDetails.class);
 		} catch (JsonMappingException e) {
-			return ProblemDetail.forStatusAndDetail(response.getStatusCode(), new String(body));
+			return AltinnProblemDetails.builder()
+					.status(response.getStatusCode().value())
+					.detail(new String(body))
+					.build();
 		}
 	}
 }
