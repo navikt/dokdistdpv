@@ -60,27 +60,30 @@ public class BehandleAltinnMeldingHendelseService {
 
 			HentForsendelseResponse hentForsendelse = hentForsendelse(altinnEventMelding.resourceinstance().toString());
 
-			if (!FORSENDELSE_STATUS_OVERSENDT.equals(hentForsendelse.forsendelseStatus())) {
-				log.info("forsendelse med forsendelseId={} og status {} kan ikke behandles", hentForsendelse.forsendelseId(), hentForsendelse.forsendelseStatus());
-				return;
-			}
+			if (hentForsendelse != null) {
 
-			if (ALTINN_EVENT_TYPE_SEND_TIL_PRINT.contains(altinnEventMelding.type())) {
-				administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(altinnEventMelding.type(), hentForsendelse.forsendelseId()));
-				return;
-			}
+				if (!FORSENDELSE_STATUS_OVERSENDT.equals(hentForsendelse.forsendelseStatus())) {
+					log.info("forsendelse med forsendelseId={} og status {} kan ikke behandles", hentForsendelse.forsendelseId(), hentForsendelse.forsendelseStatus());
+					return;
+				}
 
-			if (ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT.contains(altinnEventMelding.type())) {
-				administrerForsendelseConsumer.oppdaterForsendelse(
-						OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
-				return;
-			}
+				if (ALTINN_EVENT_TYPE_SEND_TIL_PRINT.contains(altinnEventMelding.type())) {
+					administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(altinnEventMelding.type(), hentForsendelse.forsendelseId()));
+					return;
+				}
 
-			if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(altinnEventMelding.type()) && ARKIV_SYSTEM_JOARK.equals(hentForsendelse.arkivInformasjon().arkivSystem())) {
-				dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
-						.settStatusEkspedert(false)
-						.datoLest(altinnEventMelding.time())
-						.build());
+				if (ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT.contains(altinnEventMelding.type())) {
+					administrerForsendelseConsumer.oppdaterForsendelse(
+							OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
+					return;
+				}
+
+				if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(altinnEventMelding.type()) && ARKIV_SYSTEM_JOARK.equals(hentForsendelse.arkivInformasjon().arkivSystem())) {
+					dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
+							.settStatusEkspedert(false)
+							.datoLest(altinnEventMelding.time())
+							.build());
+				}
 			}
 		} catch (Exception e) {
 			log.error("feilet med parsing av kafka-hendelse til Json - {}", e.getMessage(), e);
@@ -92,7 +95,9 @@ public class BehandleAltinnMeldingHendelseService {
 				.oppslagsnoekkel(KONVERSASJONSID.noekkel)
 				.verdi(konversasjonId)
 				.build());
-
+		if (forsendelseId == null) {
+			return null;
+		}
 		return administrerForsendelseConsumer.hentForsendelse(forsendelseId);
 	}
 
