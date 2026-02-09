@@ -1,7 +1,10 @@
 package no.nav.dokdistdpv.consumer.rdist001;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilPrintRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
+import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
+import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelserResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
@@ -137,6 +140,40 @@ public class AdministrerForsendelseConsumer {
 			log.info("oppdaterForsendelse har oppdatert forsendelse med forsendelseId={} til konversasjonId={}",
 					oppdaterForsendelse.forsendelseId(), oppdaterForsendelse.konversasjonId());
 		}
+	}
+
+	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	public String finnForsendelse(final FinnForsendelseRequest finnForsendelseRequest) {
+		var oppslagsnoekkel = finnForsendelseRequest.oppslagsnoekkel();
+		var verdi = finnForsendelseRequest.verdi();
+
+		log.info("finnForsendelse henter forsendelse med {}={}", oppslagsnoekkel, verdi);
+
+		var response = webClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.path("/finnforsendelse/{oppslagsnoekkel}/{verdi}")
+						.build(oppslagsnoekkel, verdi))
+				.retrieve()
+				.bodyToMono(FinnForsendelseResponse.class)
+				.map(FinnForsendelseResponse::forsendelseId)
+				.doOnError(this::handleError)
+				.block();
+
+		log.info("finnForsendelse har hentet forsendelse med forsendelseId={} og {}={}", response, oppslagsnoekkel, verdi);
+		return response;
+	}
+
+	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	public void distribuerTilNyKanal(final DistribuerTilPrintRequest distribuerTilPrintRequest) {
+
+		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilPrintRequest.forsendelseId());
+		webClient.post()
+				.uri("rest/v1/administrerforsendelse/distribuertilnykanal")
+				.bodyValue(distribuerTilPrintRequest)
+				.retrieve()
+				.toBodilessEntity()
+				.doOnError(this::handleError)
+				.block();
 	}
 
 	private void handleError(Throwable error) {

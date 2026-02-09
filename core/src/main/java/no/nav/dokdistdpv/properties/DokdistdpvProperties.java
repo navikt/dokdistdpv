@@ -19,16 +19,16 @@ public class DokdistdpvProperties {
 	private final Endpoints endpoints = new Endpoints();
 	@Valid
 	private final Sdist007 sdist007 = new Sdist007();
+	@Valid
+	private final Topics topic = new Topics();
 
 	@Data
-	@Validated
 	public static class Qdist016 {
 		private boolean autostartup;
 		private boolean altinn3;
 	}
 
 	@Data
-	@Validated
 	public static class Sdist007 {
 		private boolean autostartup;
 		@NotEmpty
@@ -40,7 +40,6 @@ public class DokdistdpvProperties {
 	}
 
 	@Data
-	@Validated
 	public static class Endpoints {
 		@NotNull
 		@Valid
@@ -54,12 +53,17 @@ public class DokdistdpvProperties {
 	}
 
 	@Data
-	@Validated
 	public static class AppEndpoint {
 		@NotEmpty
 		private String url;
 
 		@NotEmpty
 		private String scope;
+	}
+
+	@Data
+	public static class Topics {
+		@NotEmpty
+		private String altinnMeldingHendelse;
 	}
 }
