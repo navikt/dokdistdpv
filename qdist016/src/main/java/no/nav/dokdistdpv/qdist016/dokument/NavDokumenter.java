@@ -22,7 +22,7 @@ public class NavDokumenter {
 			throw new ForsendelseValidationException("Ingen bestillingsId");
 		}
 		if (hoveddokument == null) {
-			throw new KunneIkkeFinneDokumentException("Kunne ikke finne hoveddokument for bestillingsId" + bestillingsId);
+			throw new KunneIkkeFinneDokumentException("Kunne ikke finne hoveddokument for bestillingsId=" + bestillingsId);
 		}
 		this.bestillingsId = bestillingsId;
 		this.hoveddokument = hoveddokument;
@@ -48,9 +48,11 @@ public class NavDokumenter {
 	}
 
 	public NavDokument findByDokumentObjektReferanse(String dokumentObjektReferanse) {
-		return lookupRegistry.computeIfAbsent(dokumentObjektReferanse, key -> {
-			throw new ForsendelseValidationException("Fant ikke dokumentObjektReferanse=" + key);
-		});
+		NavDokument dokument = lookupRegistry.get(dokumentObjektReferanse);
+		if (dokument == null) {
+			throw new ForsendelseValidationException("Fant ikke dokumentObjektReferanse=" + dokumentObjektReferanse);
+		}
+		return dokument;
 	}
 
 	/// Hoveddokument og vedlegg

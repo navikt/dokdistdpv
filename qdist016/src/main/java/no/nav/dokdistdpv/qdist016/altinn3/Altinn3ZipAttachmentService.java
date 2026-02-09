@@ -28,7 +28,6 @@ import java.util.concurrent.StructuredTaskScope;
 import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
 import static no.nav.dokdistdpv.qdist016.altinn3.map.NameMapper.mapFileName;
 import static org.apache.commons.io.IOUtils.SOFT_MAX_ARRAY_LENGTH;
-import static org.apache.commons.io.IOUtils.closeQuietly;
 
 @Slf4j
 @Component
@@ -73,22 +72,24 @@ public class Altinn3ZipAttachmentService extends AbstractAltinn3AttachmentServic
 		int sumVedleggFilstoerrelse = navDokumenter.getSumVedleggFilstoerrelse();
 		log.info("Allokerer {} bytes til zip attachment for bestillingsId={}", sumVedleggFilstoerrelse, navDokumenter.getBestillingsId());
 		final ByteArraySeekableByteChannel byteChannel = ByteArraySeekableByteChannel.wrap(new byte[sumVedleggFilstoerrelse]);
-		ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(byteChannel);
-		zipOut.setUseZip64(Zip64Mode.AsNeeded);
-		List<List<NavDokument>> partition = Lists.partition(navDokumenter.getVedlegg(), CONCURRENT_FETCH_SIZE);
-		partition.forEach(navDokumenterPartition -> {
-			List<DokDistDokumentFraBucket> dokumenter = getDokumenter(navDokumenter.getBestillingsId(), navDokumenterPartition);
-			dokumenter.forEach(dokDistDokumentFraBucket -> {
-				NavDokument navDokument = navDokumenter.findByDokumentObjektReferanse(dokDistDokumentFraBucket.getObjectName());
-				try {
-					addEntryToZip(zipOut, mapFileName(navDokument), dokDistDokumentFraBucket.getPdf());
-				} catch (IOException e) {
-					throw new DokdistdpvTechnicalException("Klarte ikke legge fil dokumentObjektReferanse=" + navDokument.dokumentObjektReferanse() + " i zip. " + e.getMessage(), e);
-				}
-			});
+		try (ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(byteChannel)) {
+			zipOut.setUseZip64(Zip64Mode.AsNeeded);
+			List<List<NavDokument>> partition = Lists.partition(navDokumenter.getVedlegg(), CONCURRENT_FETCH_SIZE);
+			partition.forEach(navDokumenterPartition -> {
+				List<DokDistDokumentFraBucket> dokumenter = getDokumenter(navDokumenter.getBestillingsId(), navDokumenterPartition);
+				dokumenter.forEach(dokDistDokumentFraBucket -> {
+					NavDokument navDokument = navDokumenter.findByDokumentObjektReferanse(dokDistDokumentFraBucket.getObjectName());
+					try {
+						addEntryToZip(zipOut, mapFileName(navDokument), dokDistDokumentFraBucket.getPdf());
+					} catch (IOException e) {
+						throw new DokdistdpvTechnicalException("Klarte ikke legge fil dokumentObjektReferanse=" + navDokument.dokumentObjektReferanse() + " i zip. " + e.getMessage(), e);
+					}
+				});
 
-		});
-		closeQuietly(zipOut);
+			});
+		} catch (IOException e) {
+			throw new DokdistdpvTechnicalException("Klarte ikke lukke ZipArchiveOutputStream. " + e.getMessage(), e);
+		}
 		return byteChannel.toByteArray();
 	}
 
