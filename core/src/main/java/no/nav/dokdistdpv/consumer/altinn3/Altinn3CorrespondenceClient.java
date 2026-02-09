@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.altinn.services.altinn3.openapi.domain.AltinnProblemDetails;
 import no.altinn.services.altinn3.openapi.domain.AttachmentOverviewExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesResponseExt;
+import no.altinn.services.altinn3.openapi.domain.ProblemDetails;
 import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.exceptions.AttachmentIsNotPublishedException;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
@@ -112,10 +112,10 @@ public class Altinn3CorrespondenceClient {
 	}
 
 	private void feilhandtering(ClientHttpResponse response, String feilmelding) throws IOException {
-		AltinnProblemDetails problemDetail = mapProblemDetail(response);
+		ProblemDetails problemDetail = mapProblemDetail(response);
 
 		if (response.getStatusCode().is4xxClientError()) {
-			int errorCode = mapCode(problemDetail);
+			int errorCode = mapErrorCode(problemDetail);
 			if (errorCode == ATTACHMENT_IS_NOT_PUBLISHED) {
 				throw new AttachmentIsNotPublishedException(feilmelding.formatted(problemDetail));
 			}
@@ -125,16 +125,17 @@ public class Altinn3CorrespondenceClient {
 		}
 	}
 
-	private static Integer mapCode(AltinnProblemDetails problemDetail) {
-		return problemDetail.getCode() == null ? 0 : problemDetail.getCode();
+	private static int mapErrorCode(ProblemDetails problemDetail) {
+		Object errorCode = problemDetail.getAdditionalProperty("errorCode");
+		return errorCode == null ? 0 : (int) errorCode;
 	}
 
-	private AltinnProblemDetails mapProblemDetail(ClientHttpResponse response) throws IOException {
+	private ProblemDetails mapProblemDetail(ClientHttpResponse response) throws IOException {
 		byte[] body = response.getBody().readAllBytes();
 		try {
-			return objectMapper.readValue(body, AltinnProblemDetails.class);
+			return objectMapper.readValue(body, ProblemDetails.class);
 		} catch (JsonMappingException e) {
-			return AltinnProblemDetails.builder()
+			return ProblemDetails.builder()
 					.status(response.getStatusCode().value())
 					.detail(new String(body))
 					.build();
