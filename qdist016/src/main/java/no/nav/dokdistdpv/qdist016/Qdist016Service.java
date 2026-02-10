@@ -10,6 +10,8 @@ import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKa
 import org.apache.camel.Handler;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest.ekspedert;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest.oversendt;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
@@ -51,10 +53,10 @@ public class Qdist016Service {
 	}
 
 	private void distribuerTilAltinn3(HentForsendelseResponse forsendelse) {
-		String konversasjonId = altinn3MeldingService.distribuer(forsendelse);
+		UUID konversasjonId = altinn3MeldingService.distribuer(forsendelse);
 		log.info("qdist016 Forsendelse distribuert til Altinn3. forsendelseId={}, bestillingsId={}, konversasjonId={}",
 				forsendelse.forsendelseId() , forsendelse.bestillingsId(), konversasjonId);
-		administrerForsendelseConsumer.oppdaterForsendelse(oversendt(forsendelse.forsendelseId(), konversasjonId));
+		administrerForsendelseConsumer.oppdaterForsendelse(oversendt(forsendelse.forsendelseId(), konversasjonId.toString()));
 	}
 
 	private void distribuerTilAltinn2(HentForsendelseResponse forsendelse) {
