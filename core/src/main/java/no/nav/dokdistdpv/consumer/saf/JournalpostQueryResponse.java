@@ -25,7 +25,14 @@ public class JournalpostQueryResponse {
 
 	public record DokumentInfo(
 			String dokumentInfoId,
-			String tittel
+			String tittel,
+			List<DokumentVariant> dokumentvarianter
+	) {
+	}
+
+	public record DokumentVariant(
+			String variantformat,
+			Integer filstoerrelse
 	) {
 	}
 

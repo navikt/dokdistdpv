@@ -4,15 +4,33 @@
       "dokumenter": [
         {
           "dokumentInfoId": "100",
-          "tittel": "Hoveddok"
+          "tittel": "Hoveddok",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
         },
         {
           "dokumentInfoId": "101",
-          "tittel": "Vedlegg1"
+          "tittel": "Vedlegg1",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
         },
         {
           "dokumentInfoId": "102",
-          "tittel": "Vedlegg2"
+          "tittel": "Vedlegg2",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
         }
       ]
     }

@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.exception;
 
-public abstract class DokdistdpvFunctionalException extends RuntimeException{
+public abstract class DokdistdpvFunctionalException extends RuntimeException {
 
 	public DokdistdpvFunctionalException(String message) {
 		super(message);

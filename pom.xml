@@ -38,6 +38,8 @@
 		<dok-common.version>1.7.1</dok-common.version>
 		<dok-legacy-tjenestespesifikasjoner.version>41-d282678</dok-legacy-tjenestespesifikasjoner.version>
 		<jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
+		<commons-compress.version>1.28.0</commons-compress.version>
+		<commons-io.version>2.21.0</commons-io.version>
 
 		<!-- Test -->
 		<spring-cloud-contract-wiremock.version>4.3.0</spring-cloud-contract-wiremock.version>
@@ -148,6 +150,16 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>jackson-databind-nullable</artifactId>
 				<version>${jackson-databind-nullable.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons-compress.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
 			</dependency>
 
 			<!-- Test -->
