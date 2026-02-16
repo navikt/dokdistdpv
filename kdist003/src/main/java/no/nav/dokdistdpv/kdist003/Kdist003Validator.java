@@ -13,6 +13,9 @@ public class Kdist003Validator {
 	public static final String CORRESPONDENCE_NOTIFICATION_CREATION_FAILED = "no.altinn.correspondence.correspondencenotificationcreationfailed";
 
 	public static final Set<String> ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING = Set.of(
+			"no.altinn.correspondence.attachmentinitialized",
+			"no.altinn.correspondence.attachmentuploadprocessing",
+			"no.altinn.correspondence.attachmentpublished",
 			"no.altinn.correspondence.attachmentuploadfailed",
 			"no.altinn.correspondence.attachmentpurged",
 			"no.altinn.correspondence.correspondenceinitialized",

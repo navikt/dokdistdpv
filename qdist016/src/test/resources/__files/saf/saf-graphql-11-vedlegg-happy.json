@@ -1,0 +1,128 @@
+{
+  "data": {
+    "journalpost": {
+      "dokumenter": [
+        {
+          "dokumentInfoId": "100",
+          "tittel": "Hoveddokument",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "101",
+          "tittel": "Vedlegg 1",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "102",
+          "tittel": "Vedlegg 2",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "103",
+          "tittel": "Vedlegg 3",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "104",
+          "tittel": "Vedlegg 4",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "105",
+          "tittel": "Vedlegg 5",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "106",
+          "tittel": "Vedlegg 6",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "107",
+          "tittel": "Vedlegg 7",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "108",
+          "tittel": "Vedlegg 8",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "109",
+          "tittel": "Vedlegg 9",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "110",
+          "tittel": "Vedlegg 10",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        },
+        {
+          "dokumentInfoId": "111",
+          "tittel": "Vedlegg 11",
+          "dokumentvarianter": [
+            {
+              "variantformat": "ARKIV",
+              "filstoerrelse": "8"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

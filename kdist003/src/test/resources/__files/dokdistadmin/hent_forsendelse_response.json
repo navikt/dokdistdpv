@@ -1,9 +1,9 @@
 {
   "forsendelseId": 1720847,
   "bestillingsId": "b8b297e1-46c1-4657-9f2d-7cf6dd089b9d",
-  "konversasjonId": null,
+  "konversasjonId": "af0e7e0c-579c-4563-9398-10cdf031b80d",
   "forsendelseStatus": "OVERSENDT",
-  "forsendelseTittel": "Vedtakt om dagpenger",
+  "forsendelseTittel": "Vedtak om dagpenger",
   "mottaker": {
     "mottakerId": "22027838743",
     "mottakerNavn": "mottakerNavn",

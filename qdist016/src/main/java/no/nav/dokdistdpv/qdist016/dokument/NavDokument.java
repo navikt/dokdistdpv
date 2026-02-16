@@ -4,7 +4,8 @@ public record NavDokument(
 		Long arkivDokumentInfoId,
 		String dokumentObjektReferanse,
 		String tittel,
-		int rekkefoelge
+		int rekkefoelge,
+		int filstoerrelse
 ) {
 	public boolean isArkivertIJoark() {
 		return arkivDokumentInfoId != null;
