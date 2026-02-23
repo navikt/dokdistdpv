@@ -6,10 +6,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.dokdistdpv.kdist003.domain.AltinnEventMelding;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,9 +28,12 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
@@ -38,7 +44,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		webEnvironment = NONE
 )
 @AutoConfigureWireMock(port = 0)
-@EmbeddedKafka(partitions = 1, topics = {"test-ut-topic"},
+@EmbeddedKafka(partitions = 1, topics = {"altinn-melding-hendelse"},
 		brokerProperties = {
 				"offsets.topic.replication.factor=1",
 				"transaction.state.log.replication.factor=1",
@@ -58,9 +64,8 @@ public abstract class AbstractIT {
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
 	private ObjectMapper objectMapper;
-	public static Consumer<String, AltinnEventMelding> consumer;
-
-	private Producer<String, AltinnEventMelding> producer;
+	protected Consumer<String, AltinnEventMelding> consumer;
+	protected Producer<String, AltinnEventMelding> producer;
 
 	@BeforeEach
 	void setUp() {
@@ -68,11 +73,23 @@ public abstract class AbstractIT {
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		producer = producer();
-		consumer = setupKafkaConsumer();
+		producer = createProducer();
+		consumer = createConsumer();
+
+		deleteMessages();
 	}
 
-	protected Producer<String, AltinnEventMelding> producer() {
+	@AfterEach
+	void tearDown() {
+		if (consumer != null) {
+			consumer.close();
+		}
+		if (producer != null) {
+			producer.close();
+		}
+	}
+
+	protected Producer<String, AltinnEventMelding> createProducer() {
 		Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
 
 		JsonSerializer<AltinnEventMelding> valueSerializer = new JsonSerializer<>(objectMapper);
@@ -80,23 +97,41 @@ public abstract class AbstractIT {
 		return new DefaultKafkaProducerFactory<>(configs, new StringSerializer(), valueSerializer).createProducer();
 	}
 
-	protected Consumer<String, AltinnEventMelding> setupKafkaConsumer() {
-		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("itest-group", "true", embeddedKafkaBroker);
+	protected Consumer<String, AltinnEventMelding> createConsumer() {
+		// Use unique group ID per test to avoid offset conflicts
+		String uniqueGroupId = "itest-group-" + UUID.randomUUID();
+		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(uniqueGroupId, "true", embeddedKafkaBroker);
 		consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-		consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-		consumerProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-		consumerProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, AltinnEventMelding.class.getName());
-		consumerProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-		consumer = new DefaultKafkaConsumerFactory<String, AltinnEventMelding>(consumerProps).createConsumer();
+		JsonDeserializer<AltinnEventMelding> valueDeserializer = new JsonDeserializer<>(AltinnEventMelding.class, objectMapper);
+		valueDeserializer.setUseTypeHeaders(false);
+		valueDeserializer.addTrustedPackages("*");
 
-		consumer.subscribe(singletonList(PRIVAT_ALTINN_MELDING_TOPIC));
-		return consumer;
+		StringDeserializer keyDeserializer = new StringDeserializer();
+
+		Consumer<String, AltinnEventMelding> newConsumer = new DefaultKafkaConsumerFactory<>(
+				consumerProps,
+				keyDeserializer,
+				valueDeserializer
+		).createConsumer();
+
+		newConsumer.subscribe(singletonList(PRIVAT_ALTINN_MELDING_TOPIC));
+		return newConsumer;
+	}
+
+	private void deleteMessages() {
+		ConsumerRecords<String, AltinnEventMelding> records;
+		do {
+			records = consumer.poll(Duration.ofSeconds(10));
+		} while (!records.isEmpty());
 	}
 
 	protected void sendToInnTopic(AltinnEventMelding altinnEventMelding) {
 		producer.send(new ProducerRecord<>(PRIVAT_ALTINN_MELDING_TOPIC, altinnEventMelding));
 		producer.flush();
+	}
+
+	public ConsumerRecord<String, AltinnEventMelding> getConsumerRecord() {
+		return KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(15));
 	}
 }

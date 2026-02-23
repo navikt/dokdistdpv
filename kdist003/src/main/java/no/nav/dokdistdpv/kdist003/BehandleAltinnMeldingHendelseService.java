@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.consumer.dokarkiv.DokarkivConsumer;
 import no.nav.dokdistdpv.consumer.dokarkiv.OppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
-import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilPrintRequest;
+import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
@@ -14,19 +14,18 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import static no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest.Oppslagsnoekkel.KONVERSASJONSID;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.ALTINN_EVENT_TYPE_SEND_TIL_PRINT;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.CORRESPONDENCE_PUBLISH_FAILED;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.FORSENDELSE_STATUS_OVERSENDT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPE_SEND_TIL_PRINT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.CORRESPONDENCE_PUBLISH_FAILED;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.FORSENDELSE_STATUS_OVERSENDT;
 import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateAltinnEvent;
 
 @Slf4j
 @Component
 public class BehandleAltinnMeldingHendelseService {
 
-	public static final String KANAL_PRINT = "PRINT";
 	public static final String MELDINGSFEIL = "MELDINGSFEIL";
 	public static final String VARSLINGSFEIL = "VARSLINGSFEIL";
 	public static final String AARSAK_PUBLISERING_FEIL = "Publisering av meldingen feilet";
@@ -79,7 +78,6 @@ public class BehandleAltinnMeldingHendelseService {
 						.settStatusEkspedert(false)
 						.datoLest(altinnEventMelding.time())
 						.build());
-
 			}
 		}
 	}
@@ -95,23 +93,20 @@ public class BehandleAltinnMeldingHendelseService {
 		return administrerForsendelseConsumer.hentForsendelse(forsendelseId);
 	}
 
-	private DistribuerTilPrintRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
+	private DistribuerTilNyKanalRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
 		if (CORRESPONDENCE_PUBLISH_FAILED.equals(eventType)) {
-			return DistribuerTilPrintRequest.builder()
+			return DistribuerTilNyKanalRequest.builder()
 					.forsendelseId(forsendelseId)
-					.kanal(KANAL_PRINT)
 					.arsak(MELDINGSFEIL)
 					.arsakBeskrivelse(AARSAK_PUBLISERING_FEIL)
 					.build();
 
 		}
 
-		return DistribuerTilPrintRequest.builder()
+		return DistribuerTilNyKanalRequest.builder()
 				.forsendelseId(forsendelseId)
-				.kanal(KANAL_PRINT)
 				.arsak(VARSLINGSFEIL)
 				.arsakBeskrivelse(AARSAK_VARSLING_FEIL)
 				.build();
-
 	}
 }

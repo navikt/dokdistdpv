@@ -1,7 +1,7 @@
 package no.nav.dokdistdpv.consumer.rdist001;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilPrintRequest;
+import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseResponse;
@@ -164,12 +164,12 @@ public class AdministrerForsendelseConsumer {
 	}
 
 	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
-	public void distribuerTilNyKanal(final DistribuerTilPrintRequest distribuerTilPrintRequest) {
+	public void distribuerTilNyKanal(final DistribuerTilNyKanalRequest distribuerTilNyKanalRequest) {
 
-		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilPrintRequest.forsendelseId());
+		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilNyKanalRequest.forsendelseId());
 		webClient.post()
 				.uri("/distribuertilnykanal")
-				.bodyValue(distribuerTilPrintRequest)
+				.bodyValue(distribuerTilNyKanalRequest)
 				.retrieve()
 				.toBodilessEntity()
 				.doOnError(this::handleError)

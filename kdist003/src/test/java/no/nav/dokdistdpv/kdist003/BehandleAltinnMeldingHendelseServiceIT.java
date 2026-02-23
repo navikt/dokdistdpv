@@ -1,19 +1,21 @@
 package no.nav.dokdistdpv.kdist003;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import no.nav.dokdistdpv.kdist003.domain.AltinnEventMelding;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -21,14 +23,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.reset;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static java.time.Duration.ofSeconds;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.CORRESPONDENCE_NOTIFICATION_CREATION_FAILED;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.CORRESPONDENCE_PUBLISH_FAILED;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -43,6 +49,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 	@BeforeEach
 	void setUp() {
+		reset(); // Reset WireMock stubs between tests
 		stubAzure();
 	}
 
@@ -56,34 +63,45 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
 
-		verify(1, WireMock.putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse")));
+		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
+		verify(1, putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse")));
 	}
 
-	@Test
-	void shouldLesMeldingCorrespondencerConfirmedOrReadAndUpdateJournalpostLestDato() {
+	@ParameterizedTest
+	@MethodSource("meldingTypes")
+	void shouldLesMeldingCorrespondencerConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
+		stubPutOppdaterForsendelse();
 		stubPatchOppdaterDistribusjonsinfo();
 
-		sendToInnTopic(createMelding("no.altinn.correspondence.correspondencereceiverread"));
+		sendToInnTopic(createMelding(type));
 
 		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
-
 	}
 
-	@Test
-	void shouldLesMeldingCorrespondencerPublishFailedOrNotificationCreationFailedSendMeldingToPrint() {
+	static Stream<Arguments> meldingTypes() {
+		return Stream.of(
+				Arguments.of("no.altinn.correspondence.correspondencereceiverread"),
+				Arguments.of("no.altinn.correspondence.correspondencereceivedconfirmed")
+		);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {CORRESPONDENCE_PUBLISH_FAILED, CORRESPONDENCE_NOTIFICATION_CREATION_FAILED})
+	void shouldLesMeldingCorrespondencerPublishFailedOrNotificationCreationFailedSendMeldingToPrint(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPostDistribuerTilPrint();
 
-		sendToInnTopic(createMelding("no.altinn.correspondence.correspondencenotificationcreationfailed"));
+		sendToInnTopic(createMelding(type));
 
 		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
+		verify(1, postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH)));
 	}
 
 	@Test
@@ -91,15 +109,11 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		stubFinnForsendelse();
 		stubHentForsendelseWithStatusKlarForDist();
 
-		sendToInnTopic(createMelding("no.altinn.correspondence.correspondencenotificationcreationfailed"));
+		sendToInnTopic(createMelding(ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT));
 
 		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
-	}
-
-	ConsumerRecord<String, AltinnEventMelding> getConsumerRecord() {
-		return KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(20));
 	}
 
 	void stubFinnForsendelse() {
