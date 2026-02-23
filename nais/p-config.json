@@ -2,6 +2,7 @@
   "APP_NAME": "dokdistdpv",
   "ENVIRONMENT": "p",
   "DOKDISTDPV_SECRETS": "dokdistdpv",
+  "KAFKA_POOL": "nav-prod",
   "MIN_REPLICAS": "2",
   "MAX_REPLICAS": "4",
   "INGRESSES": [

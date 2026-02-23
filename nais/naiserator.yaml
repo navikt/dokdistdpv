@@ -128,6 +128,8 @@ spec:
     application:
       enabled: true
   leaderElection: true
+  kafka:
+    pool: {{ KAFKA_POOL }}
   maskinporten:
     enabled: true
     scopes:
