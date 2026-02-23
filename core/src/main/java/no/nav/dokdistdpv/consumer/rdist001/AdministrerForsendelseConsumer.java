@@ -168,7 +168,7 @@ public class AdministrerForsendelseConsumer {
 
 		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilPrintRequest.forsendelseId());
 		webClient.post()
-				.uri("rest/v1/administrerforsendelse/distribuertilnykanal")
+				.uri("/distribuertilnykanal")
 				.bodyValue(distribuerTilPrintRequest)
 				.retrieve()
 				.toBodilessEntity()

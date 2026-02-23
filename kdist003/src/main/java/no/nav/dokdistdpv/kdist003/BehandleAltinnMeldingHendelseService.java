@@ -74,11 +74,12 @@ public class BehandleAltinnMeldingHendelseService {
 			} else if (ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT.contains(altinnEventMelding.type())) {
 				administrerForsendelseConsumer.oppdaterForsendelse(
 						OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
-			} else if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(altinnEventMelding.type()) && ARKIV_SYSTEM_JOARK.equals(hentForsendelse.arkivInformasjon().arkivSystem())) {
+			} else if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(altinnEventMelding.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
 				dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
 						.settStatusEkspedert(false)
 						.datoLest(altinnEventMelding.time())
 						.build());
+
 			}
 		}
 	}

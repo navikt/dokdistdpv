@@ -48,8 +48,11 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public abstract class AbstractIT {
 
 	protected static final String PRIVAT_ALTINN_MELDING_TOPIC = "altinn-melding-hendelse";
-	public static final String FINN_FORSENDELSE_PATH = "/rest/v1/administrerforsendelse/finnforsendelse/konversasjonsId/af0e7e0c-579c-4563-9398-10cdf031b80d";
-	public static final String HENT_FORSENDELSE_PATH = "/rest/v1/administrerforsendelse/hentForsendelser";
+	public static final String FINN_FORSENDELSE_PATH = "/administrerforsendelse/finnforsendelse/konversasjonsId/af0e7e0c-579c-4563-9398-10cdf031b80d";
+	public static final String HENT_FORSENDELSE_PATH = "/administrerforsendelse";
+	public static final String OPPDATERDISTRIBUSJONSINFO_URL = "/rest/journalpostapi/v1/journalpost/.*/oppdaterDistribusjonsinfo";
+	public static final String DISTRIBUERTILPRINT_PATH = "/administrerforsendelse/distribuertilnykanal";
+
 
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
