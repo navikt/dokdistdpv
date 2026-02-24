@@ -1,7 +1,7 @@
 package no.nav.dokdistdpv.kdist003;
 
+import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
-import no.nav.dokdistdpv.kdist003.domain.AltinnEventMelding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -142,8 +142,8 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				));
 	}
 
-	AltinnEventMelding createMelding(String type) {
-		return AltinnEventMelding.builder()
+	AltinnEvents createMelding(String type) {
+		return AltinnEvents.builder()
 				.id(UUID.randomUUID())
 				.resourceinstance(UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d"))
 				.resource("urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost")

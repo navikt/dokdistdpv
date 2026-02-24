@@ -1,6 +1,7 @@
 package no.nav.dokdistdpv.kdist003;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
 import no.nav.dokdistdpv.consumer.dokarkiv.DokarkivConsumer;
 import no.nav.dokdistdpv.consumer.dokarkiv.OppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
@@ -8,7 +9,6 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
-import no.nav.dokdistdpv.kdist003.domain.AltinnEventMelding;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -45,24 +45,24 @@ public class BehandleAltinnMeldingHendelseService {
 	@KafkaListener(
 			topics = "${dokdistdpv.topic.altinn-melding-hendelse}",
 			groupId = "dokdistdpv-kdist003")
-	public void behandleAltinnMelding(ConsumerRecord<String, AltinnEventMelding> altinnMelding) {
+	public void behandleAltinnMelding(ConsumerRecord<String, AltinnEvents> altinnEventsConsumerRecord) {
 
 		try {
-			AltinnEventMelding altinnEventMelding = altinnMelding.value();
+			AltinnEvents altinnEvents = altinnEventsConsumerRecord.value();
 
-			if (ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING.contains(altinnEventMelding.type())) {
-				log.info("Altinn event med resourceinstance={} og type={} kan ikke behandles", altinnEventMelding.resourceinstance(), altinnEventMelding.type());
+			if (altinnEvents == null || ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING.contains(altinnEvents.type())) {
+				log.info("Altinn event med resourceinstance={} og type={} kan ikke behandles", altinnEvents.resourceinstance(), altinnEvents.type());
 			}
 
-			validateAltinnEvent(altinnEventMelding);
-			processAltinnEvent(altinnEventMelding);
+			validateAltinnEvent(altinnEvents);
+			processAltinnEvent(altinnEvents);
 
 		} catch (Exception e) {
 			log.error("feilet med parsing av kafka-hendelse til Json - {}", e.getMessage(), e);
 		}
 	}
 
-	private void processAltinnEvent(AltinnEventMelding altinnEventMelding) {
+	private void processAltinnEvent(AltinnEvents altinnEventMelding) {
 		HentForsendelseResponse hentForsendelse = hentForsendelse(altinnEventMelding.resourceinstance().toString());
 
 		if (hentForsendelse != null) {
