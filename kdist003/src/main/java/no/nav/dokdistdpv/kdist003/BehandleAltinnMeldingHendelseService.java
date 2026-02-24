@@ -9,6 +9,7 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
+import no.nav.dokdistdpv.kdist003.domain.InternAltinnEvents;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class BehandleAltinnMeldingHendelseService {
 	@KafkaListener(
 			topics = "${dokdistdpv.topic.altinn-melding-hendelse}",
 			groupId = "dokdistdpv-kdist003")
-	public void behandleAltinnMelding(ConsumerRecord<String, AltinnEvents> altinnEventsConsumerRecord) {
+	public void lesOgBehandleAltinnMelding(ConsumerRecord<String, AltinnEvents> altinnEventsConsumerRecord) {
 
 		try {
 			AltinnEvents altinnEvents = altinnEventsConsumerRecord.value();
@@ -55,29 +56,31 @@ public class BehandleAltinnMeldingHendelseService {
 				log.info("Altinn event med resourceinstance={} og type={} kan ikke behandles", altinnEvents.resourceinstance(), altinnEvents.type());
 			}
 
-			validateAltinnEvent(altinnEvents);
-			processAltinnEvent(altinnEvents);
+			InternAltinnEvents internAltinnEvents = MapInternAltinnEvent.map(altinnEvents);
+
+			validateAltinnEvent(internAltinnEvents);
+			behandleForsendelse(internAltinnEvents);
 
 		} catch (Exception e) {
 			log.error("feilet med parsing av kafka-hendelse til Json - {}", e.getMessage(), e);
 		}
 	}
 
-	private void processAltinnEvent(AltinnEvents altinnEventMelding) {
-		HentForsendelseResponse hentForsendelse = hentForsendelse(altinnEventMelding.resourceinstance().toString());
+	private void behandleForsendelse(InternAltinnEvents internAltinnEvents) {
+		HentForsendelseResponse hentForsendelse = hentForsendelse(internAltinnEvents.resourceinstance().toString());
 
 		if (hentForsendelse != null) {
 			if (!FORSENDELSE_STATUS_OVERSENDT.equals(hentForsendelse.forsendelseStatus())) {
 				log.info("forsendelse med forsendelseId={} og status={} kan ikke behandles", hentForsendelse.forsendelseId(), hentForsendelse.forsendelseStatus());
-			} else if (ALTINN_EVENT_TYPE_SEND_TIL_PRINT.contains(altinnEventMelding.type())) {
-				administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(altinnEventMelding.type(), hentForsendelse.forsendelseId()));
-			} else if (ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT.contains(altinnEventMelding.type())) {
+			} else if (ALTINN_EVENT_TYPE_SEND_TIL_PRINT.contains(internAltinnEvents.type())) {
+				administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(internAltinnEvents.type(), hentForsendelse.forsendelseId()));
+			} else if (ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT.contains(internAltinnEvents.type())) {
 				administrerForsendelseConsumer.oppdaterForsendelse(
 						OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
-			} else if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(altinnEventMelding.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
+			} else if (ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO.contains(internAltinnEvents.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
 				dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
 						.settStatusEkspedert(false)
-						.datoLest(altinnEventMelding.time())
+						.datoLest(internAltinnEvents.time())
 						.build());
 			}
 		}

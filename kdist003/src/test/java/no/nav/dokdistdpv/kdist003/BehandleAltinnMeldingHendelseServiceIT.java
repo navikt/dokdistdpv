@@ -61,7 +61,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		sendToInnTopic(createMelding(ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT));
 
-		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
+		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
 		verify(1, putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse")));
@@ -77,7 +77,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		sendToInnTopic(createMelding(type));
 
-		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
+		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
 	}
@@ -98,7 +98,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		sendToInnTopic(createMelding(type));
 
-		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
+		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
 		verify(1, postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH)));
@@ -111,7 +111,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		sendToInnTopic(createMelding(ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT));
 
-		behandleAltinnMeldingHendelseService.behandleAltinnMelding(getConsumerRecord());
+		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
 	}
