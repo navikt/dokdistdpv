@@ -49,6 +49,7 @@ public class BehandleAltinnMeldingHendelseService {
 
 		try {
 			AltinnEvents altinnEvents = altinnEventsConsumerRecord.value();
+			log.info("kdist003 mottatt kafka-hendelse med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
 
 			if (altinnEvents == null || ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING.contains(altinnEvents.type())) {
 				log.info("Altinn event med resourceinstance={} og type={} kan ikke behandles", altinnEvents.resourceinstance(), altinnEvents.type());
