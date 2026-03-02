@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.kdist003;
 
-import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,15 +26,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.reset;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.CORRESPONDENCE_NOTIFICATION_CREATION_FAILED;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.CORRESPONDENCE_PUBLISH_FAILED;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_ALTINN_HENDELSESTYPE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -49,17 +48,16 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 	@BeforeEach
 	void setUp() {
-		reset(); // Reset WireMock stubs between tests
 		stubAzure();
 	}
 
 	@Test
-	void shouldLesMeldingEventTypeCorrespondencePublishedAndUpdateForsendelseStatusToEkspedert() {
+	void shouldReadEventTypePublishedAndUpdateForsendelseStatusToEkspedert() {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPutOppdaterForsendelse();
 
-		sendToInnTopic(createMelding(ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT));
+		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
 
 		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
@@ -69,7 +67,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 	@ParameterizedTest
 	@MethodSource("meldingTypes")
-	void shouldLesMeldingCorrespondencerConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
+	void shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPutOppdaterForsendelse();
@@ -90,8 +88,8 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {CORRESPONDENCE_PUBLISH_FAILED, CORRESPONDENCE_NOTIFICATION_CREATION_FAILED})
-	void shouldLesMeldingCorrespondencerPublishFailedOrNotificationCreationFailedSendMeldingToPrint(String type) {
+	@ValueSource(strings = {MELDING_FEILET_HENDELSESTYPE, VARSLING_FEILET_ALTINN_HENDELSESTYPE})
+	void shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPostDistribuerTilPrint();
@@ -105,11 +103,11 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	}
 
 	@Test
-	void shouldLogMeldingWhenForsendelseStatusIsKlarForDist() {
+	void shouldLogMeldingWhenForsendelseStatusIsNotOversendt() {
 		stubFinnForsendelse();
 		stubHentForsendelseWithStatusKlarForDist();
 
-		sendToInnTopic(createMelding(ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT));
+		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
 
 		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
 
@@ -142,8 +140,8 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				));
 	}
 
-	AltinnEvents createMelding(String type) {
-		return AltinnEvents.builder()
+	AltinnEvent createMelding(String type) {
+		return AltinnEvent.builder()
 				.id(UUID.randomUUID())
 				.resourceinstance(UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d"))
 				.resource("urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost")
