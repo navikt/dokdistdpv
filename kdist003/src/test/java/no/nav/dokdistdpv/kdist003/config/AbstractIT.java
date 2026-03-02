@@ -3,7 +3,7 @@ package no.nav.dokdistdpv.kdist003.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -47,8 +47,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @EmbeddedKafka(partitions = 1, topics = {"altinn-melding-hendelse"},
 		brokerProperties = {
 				"offsets.topic.replication.factor=1",
-				"transaction.state.log.replication.factor=1",
-				"transaction.state.log.min.isr=1"
 		})
 @ActiveProfiles("itest")
 public abstract class AbstractIT {
@@ -64,15 +62,12 @@ public abstract class AbstractIT {
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
 	private ObjectMapper objectMapper;
-	protected Consumer<String, AltinnEvents> consumer;
-	protected Producer<String, AltinnEvents> producer;
+	protected Consumer<String, AltinnEvent> consumer;
+	protected Producer<String, AltinnEvent> producer;
 
 	@BeforeEach
 	void setUp() {
-		objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new JavaTimeModule());
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
+		objectMapper = objectMapper();
 		producer = createProducer();
 		consumer = createConsumer();
 
@@ -89,27 +84,26 @@ public abstract class AbstractIT {
 		}
 	}
 
-	protected Producer<String, AltinnEvents> createProducer() {
+	protected Producer<String, AltinnEvent> createProducer() {
 		Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
 
-		JsonSerializer<AltinnEvents> valueSerializer = new JsonSerializer<>(objectMapper);
+		JsonSerializer<AltinnEvent> valueSerializer = new JsonSerializer<>(objectMapper);
 		valueSerializer.setAddTypeInfo(false);
 		return new DefaultKafkaProducerFactory<>(configs, new StringSerializer(), valueSerializer).createProducer();
 	}
 
-	protected Consumer<String, AltinnEvents> createConsumer() {
-		// Use unique group ID per test to avoid offset conflicts
+	protected Consumer<String, AltinnEvent> createConsumer() {
 		String uniqueGroupId = "itest-group-" + UUID.randomUUID();
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(uniqueGroupId, "true", embeddedKafkaBroker);
 		consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-		JsonDeserializer<AltinnEvents> valueDeserializer = new JsonDeserializer<>(AltinnEvents.class, objectMapper);
+		JsonDeserializer<AltinnEvent> valueDeserializer = new JsonDeserializer<>(AltinnEvent.class, objectMapper);
 		valueDeserializer.setUseTypeHeaders(false);
 		valueDeserializer.addTrustedPackages("*");
 
 		StringDeserializer keyDeserializer = new StringDeserializer();
 
-		Consumer<String, AltinnEvents> newConsumer = new DefaultKafkaConsumerFactory<>(
+		Consumer<String, AltinnEvent> newConsumer = new DefaultKafkaConsumerFactory<>(
 				consumerProps,
 				keyDeserializer,
 				valueDeserializer
@@ -120,18 +114,25 @@ public abstract class AbstractIT {
 	}
 
 	private void deleteMessages() {
-		ConsumerRecords<String, AltinnEvents> records;
+		ConsumerRecords<String, AltinnEvent> records;
 		do {
 			records = consumer.poll(Duration.ofSeconds(10));
 		} while (!records.isEmpty());
 	}
 
-	protected void sendToInnTopic(AltinnEvents altinnEvents) {
-		producer.send(new ProducerRecord<>(PRIVAT_ALTINN_MELDING_TOPIC, altinnEvents));
+	protected void sendToInnTopic(AltinnEvent altinnEvent) {
+		producer.send(new ProducerRecord<>(PRIVAT_ALTINN_MELDING_TOPIC, altinnEvent));
 		producer.flush();
 	}
 
-	public ConsumerRecord<String, AltinnEvents> getConsumerRecord() {
+	public ConsumerRecord<String, AltinnEvent> getConsumerRecord() {
 		return KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(15));
+	}
+
+	ObjectMapper objectMapper() {
+		objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		return objectMapper;
 	}
 }

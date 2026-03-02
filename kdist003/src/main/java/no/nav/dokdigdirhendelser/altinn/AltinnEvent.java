@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record AltinnEvents(
+public record AltinnEvent(
         /**
          * Unique identifier for the event
          */

@@ -7,10 +7,10 @@ public class Kdist003Constants {
 	public static final String RESOURCE = "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost";
 	public static final String ALTERNATIVE_SUBJECT = "/organisation/889640782";
 	public static final String FORSENDELSE_STATUS_OVERSENDT = "OVERSENDT";
-	public static final String CORRESPONDENCE_PUBLISH_FAILED = "no.altinn.correspondence.correspondencepublishfailed";
-	public static final String CORRESPONDENCE_NOTIFICATION_CREATION_FAILED = "no.altinn.correspondence.correspondencenotificationcreationfailed";
+	public static final String MELDING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencepublishfailed";
+	public static final String VARSLING_FEILET_ALTINN_HENDELSESTYPE = "no.altinn.correspondence.correspondencenotificationcreationfailed";
 
-	public static final Set<String> ALTINN_EVENT_TYPES_MED_INGEN_BEHANDLING = Set.of(
+	public static final Set<String> IGNORERTE_HENDELSESTYPER = Set.of(
 			"no.altinn.correspondence.attachmentinitialized",
 			"no.altinn.correspondence.attachmentuploadprocessing",
 			"no.altinn.correspondence.attachmentpublished",
@@ -23,15 +23,15 @@ public class Kdist003Constants {
 			"no.altinn.correspondence.correspondencereceiverneverread",
 			"no.altinn.correspondence.correspondencereceiverneverconfirmed");
 
-	public static final Set<String> ALTINN_EVENT_TYPES_OPPDATER_LEST_DATO = Set.of(
+	public static final Set<String> OPPDATER_LEST_DATO_HENDELSESTYPER = Set.of(
 			"no.altinn.correspondence.correspondencereceiverread",
 			"no.altinn.correspondence.correspondencereceiverconfirmed");
 
-	public static final String ALTINN_EVENT_TYPE_OPPDATER_TIL_EKSPEDERT = "no.altinn.correspondence.correspondencepublished";
+	public static final String OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE = "no.altinn.correspondence.correspondencepublished";
 
-	public static final Set<String> ALTINN_EVENT_TYPE_SEND_TIL_PRINT = Set.of(
-			CORRESPONDENCE_PUBLISH_FAILED,
-			CORRESPONDENCE_NOTIFICATION_CREATION_FAILED);
+	public static final Set<String> SEND_TIL_PRINT_HENDELSESTYPER = Set.of(
+			MELDING_FEILET_HENDELSESTYPE,
+			VARSLING_FEILET_ALTINN_HENDELSESTYPE);
 
 	private Kdist003Constants() {
 	}

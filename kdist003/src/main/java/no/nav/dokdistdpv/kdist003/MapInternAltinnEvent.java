@@ -1,20 +1,17 @@
 package no.nav.dokdistdpv.kdist003;
 
-import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
-import no.nav.dokdistdpv.kdist003.domain.InternAltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 
 public class MapInternAltinnEvent {
 
-	public static InternAltinnEvents map(AltinnEvents altinnEvents) {
-		return InternAltinnEvents.builder()
-				.id(altinnEvents.id())
-				.resource(altinnEvents.resource())
-				.resourceinstance(altinnEvents.resourceinstance())
-				.type(altinnEvents.type())
-				.source(altinnEvents.source())
-				.specversion(altinnEvents.specversion())
-				.alternativesubject(altinnEvents.alternativesubject())
-				.time(altinnEvents.time())
+	public static InternAltinnHendelse map(AltinnEvent altinnEvent) {
+		return InternAltinnHendelse.builder()
+				.resource(altinnEvent.resource())
+				.resourceinstance(altinnEvent.resourceinstance())
+				.type(altinnEvent.type())
+				.alternativesubject(altinnEvent.alternativesubject())
+				.time(altinnEvent.time())
 				.build();
 	}
 }

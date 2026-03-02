@@ -69,7 +69,7 @@ public class AdministrerForsendelseConsumer {
 						.build(forsendelseId))
 				.retrieve()
 				.bodyToMono(HentForsendelseResponse.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		log.info("hentForsendelse har hentet forsendelse med forsendelseId={}", forsendelseId);
@@ -86,7 +86,7 @@ public class AdministrerForsendelseConsumer {
 				.bodyValue(oppdaterForsendelse)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		oppdaterForsendelseLog(oppdaterForsendelse);
@@ -156,7 +156,7 @@ public class AdministrerForsendelseConsumer {
 				.retrieve()
 				.bodyToMono(FinnForsendelseResponse.class)
 				.map(FinnForsendelseResponse::forsendelseId)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		log.info("finnForsendelse har hentet forsendelse med forsendelseId={} og {}={}", response, oppslagsnoekkel, verdi);
@@ -172,21 +172,22 @@ public class AdministrerForsendelseConsumer {
 				.bodyValue(distribuerTilNyKanalRequest)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 	}
 
-	private void handleError(Throwable error) {
+	private Throwable mapError(Throwable error) {
 		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
-			throw new AdministrerForsendelseFunctionalException(
+			return new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
 							response.getStatusCode(),
 							response.getMessage()),
 					error);
 		} else {
-			throw new AdministrerForsendelseTechnicalException(
+			return new AdministrerForsendelseTechnicalException(
 					format("Kall mot AdministrerForsendelse feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}
+
 }
