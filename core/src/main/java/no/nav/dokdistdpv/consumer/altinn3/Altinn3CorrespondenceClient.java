@@ -67,7 +67,7 @@ public class Altinn3CorrespondenceClient {
 				.body(String.class);
 		try {
 			return objectMapper.readValue(json, String.class);
-		} catch (JsonProcessingException e) {
+		} catch (JsonProcessingException _) {
 			throw new DokdistdpvTechnicalException("Klarte ikke å deserialisere json");
 		}
 	}
@@ -134,7 +134,7 @@ public class Altinn3CorrespondenceClient {
 		byte[] body = response.getBody().readAllBytes();
 		try {
 			return objectMapper.readValue(body, ProblemDetails.class);
-		} catch (JsonMappingException e) {
+		} catch (JsonMappingException _) {
 			return ProblemDetails.builder()
 					.status(response.getStatusCode().value())
 					.detail(new String(body))

@@ -51,6 +51,8 @@ spec:
       value: {{ DOKDISTDPV_ENDPOINTS_ALTINN3_URL }}
     - name : DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE
       value: {{ DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE }}
+    - name : DOKDISTDPV_TOPIC_ALTINN_MELDING_HENDELSE
+      value: {{ DOKDISTDPV_TOPIC_ALTINN_MELDING_HENDELSE }}
     - name: DOKDISTMELLOMLAGER_PROJECTID
       value: {{ DOKDISTMELLOMLAGER_PROJECTID }}
     - name: DOKDISTMELLOMLAGER_BUCKET
@@ -126,6 +128,8 @@ spec:
     application:
       enabled: true
   leaderElection: true
+  kafka:
+    pool: {{ KAFKA_POOL }}
   maskinporten:
     enabled: true
     scopes:

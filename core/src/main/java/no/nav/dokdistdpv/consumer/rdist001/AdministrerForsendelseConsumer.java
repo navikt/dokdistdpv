@@ -1,7 +1,10 @@
 package no.nav.dokdistdpv.consumer.rdist001;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
+import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
+import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelserResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
@@ -66,7 +69,7 @@ public class AdministrerForsendelseConsumer {
 						.build(forsendelseId))
 				.retrieve()
 				.bodyToMono(HentForsendelseResponse.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		log.info("hentForsendelse har hentet forsendelse med forsendelseId={}", forsendelseId);
@@ -83,7 +86,7 @@ public class AdministrerForsendelseConsumer {
 				.bodyValue(oppdaterForsendelse)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		oppdaterForsendelseLog(oppdaterForsendelse);
@@ -139,17 +142,52 @@ public class AdministrerForsendelseConsumer {
 		}
 	}
 
-	private void handleError(Throwable error) {
+	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	public String finnForsendelse(final FinnForsendelseRequest finnForsendelseRequest) {
+		var oppslagsnoekkel = finnForsendelseRequest.oppslagsnoekkel();
+		var verdi = finnForsendelseRequest.verdi();
+
+		log.info("finnForsendelse henter forsendelse med {}={}", oppslagsnoekkel, verdi);
+
+		var response = webClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.path("/finnforsendelse/{oppslagsnoekkel}/{verdi}")
+						.build(oppslagsnoekkel, verdi))
+				.retrieve()
+				.bodyToMono(FinnForsendelseResponse.class)
+				.map(FinnForsendelseResponse::forsendelseId)
+				.onErrorMap(this::mapError)
+				.block();
+
+		log.info("finnForsendelse har hentet forsendelse med forsendelseId={} og {}={}", response, oppslagsnoekkel, verdi);
+		return response;
+	}
+
+	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	public void distribuerTilNyKanal(final DistribuerTilNyKanalRequest distribuerTilNyKanalRequest) {
+
+		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilNyKanalRequest.forsendelseId());
+		webClient.post()
+				.uri("/distribuertilnykanal")
+				.bodyValue(distribuerTilNyKanalRequest)
+				.retrieve()
+				.toBodilessEntity()
+				.onErrorMap(this::mapError)
+				.block();
+	}
+
+	private Throwable mapError(Throwable error) {
 		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
-			throw new AdministrerForsendelseFunctionalException(
+			return new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
 							response.getStatusCode(),
 							response.getMessage()),
 					error);
 		} else {
-			throw new AdministrerForsendelseTechnicalException(
+			return new AdministrerForsendelseTechnicalException(
 					format("Kall mot AdministrerForsendelse feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}
+
 }

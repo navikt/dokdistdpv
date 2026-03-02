@@ -2,6 +2,7 @@
   "APP_NAME": "dokdistdpv",
   "ENVIRONMENT": "q2",
   "DOKDISTDPV_SECRETS": "dokdistdpv",
+  "KAFKA_POOL": "nav-dev",
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "1",
   "INGRESSES": [
@@ -21,6 +22,7 @@
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTDPV_ENDPOINTS_ALTINN3_URL": "https://platform.tt02.altinn.no",
   "DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE": "altinn:serviceowner altinn:correspondence.write",
+  "DOKDISTDPV_TOPIC_ALTINN_MELDING_HENDELSE" : "teamdokumenthandtering.privat-altinn-melding-hendelse",
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-dev-2c5a",
   "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-dev",
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring-dev",
