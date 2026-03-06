@@ -8,6 +8,7 @@ import no.nav.dokdistdpv.certificate.KeyStoreProperties;
 import no.nav.dokdistdpv.properties.AltinnProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,7 @@ public class Altinn2ClientConfig {
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
 		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
 		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(8)));
+		client.getInFaultInterceptors().add(new LoggingInInterceptor());
 	}
 
 	private static Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties, KeyStoreCredentials keyStoreCredentials) {

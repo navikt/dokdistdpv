@@ -136,3 +136,8 @@ spec:
       consumes:
         - name: "altinn:serviceowner"
         - name: "altinn:correspondence.write"
+  accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
