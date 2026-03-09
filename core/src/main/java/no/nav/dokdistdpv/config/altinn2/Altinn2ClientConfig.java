@@ -23,6 +23,7 @@ import static org.apache.cxf.message.Message.RECEIVE_TIMEOUT;
 import static org.apache.cxf.rt.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILED_RENEW;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
+import static org.apache.cxf.transport.http.HTTPConduit.NO_IO_EXCEPTIONS;
 
 @Configuration
 public class Altinn2ClientConfig {
@@ -42,12 +43,13 @@ public class Altinn2ClientConfig {
 	}
 
 	private static void configureClient(ICorrespondenceAgencyExternalEC2 port,
-								KeyStoreProperties keyStoreProperties,
-								KeyStoreCredentials keyStoreCredentials) {
+										KeyStoreProperties keyStoreProperties,
+										KeyStoreCredentials keyStoreCredentials) {
 		Client client = ClientProxy.getClient(port);
 		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties, keyStoreCredentials));
 		client.getRequestContext().put("security.must-understand", true);
 		client.getRequestContext().put("org.apache.cxf.message.Message.MAINTAIN_SESSION", true);
+		client.getRequestContext().put(NO_IO_EXCEPTIONS, true);
 		client.getRequestContext().put(SESSION_MAINTAIN_PROPERTY, true);
 		client.getRequestContext().put(CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
