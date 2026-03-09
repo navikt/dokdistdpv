@@ -47,7 +47,7 @@
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-		<openapi-generator-maven-plugin.version>7.19.0</openapi-generator-maven-plugin.version>
+		<openapi-generator-maven-plugin.version>7.20.0</openapi-generator-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
