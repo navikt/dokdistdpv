@@ -4,13 +4,17 @@ import no.altinn.correspondenceagencyexternalaec.AttachmentsV2;
 import no.altinn.correspondenceagencyexternalaec.BinaryAttachmentExternalBEV2List;
 import no.altinn.correspondenceagencyexternalaec.BinaryAttachmentV2;
 import no.altinn.correspondenceagencyexternalaec.ExternalContentV2;
+import no.nav.dokdistdpv.consumer.altinn.map.AttachmentNameMapper;
 import no.nav.dokdistdpv.consumer.rdist001.domain.DistribusjonsTypeKode;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 
 import java.util.List;
 
+import static io.micrometer.common.util.StringUtils.isBlank;
+import static java.lang.Long.parseLong;
 import static no.altinn.correspondenceagencyexternalaec.AttachmentFunctionType.UNSPECIFIED;
 import static no.altinn.correspondenceagencyexternalaec.UserTypeRestriction.DEFAULT;
+import static no.nav.dokdistdpv.consumer.altinn.map.AttachmentNameMapper.mapDisplayName;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.LANGUAGE_CODE_BOKMAAL;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_ANNET;
 import static no.nav.dokdistdpv.utils.AltinnCorrespondenceConstant.MESSAGE_TITLE_VEDTAK;
@@ -46,8 +50,8 @@ public class ContentMapper {
 			BinaryAttachmentV2 attachment = new BinaryAttachmentV2();
 			attachment.setDestinationType(DEFAULT);
 			attachment.setFunctionType(UNSPECIFIED);
-			attachment.setFileName(mapFilename(forsendelsedokument.arkivDokumentInfoId(), dokument.tittel()));
-			attachment.setName(dokument.tittel());
+			attachment.setFileName(mapFileName(forsendelsedokument.arkivDokumentInfoId(), dokument.tittel()));
+			attachment.setName(mapDisplayName(dokument.tittel()));
 			attachment.setEncrypted(false);
 			attachment.setData(dokument.pdf());
 			attachment.setSendersReference(forsendelsedokument.dokumentObjektReferanse());
@@ -59,12 +63,12 @@ public class ContentMapper {
 		return attachments;
 	}
 
-	static String mapFilename(String arkivDokumentInfoId, String dokumenttittel) {
-		String cleanedTittel = dokumenttittel.replaceAll("[\\\\/:*?\"<>|\\t]|\\s+$", "");
-		if(cleanedTittel.endsWith(".pdf")) {
-			return arkivDokumentInfoId + cleanedTittel;
+	static String mapFileName(String arkivDokumentInfoId, String dokumenttittel) {
+		if(isBlank(arkivDokumentInfoId)) {
+			return AttachmentNameMapper.mapFileName(dokumenttittel);
+		} else {
+			return AttachmentNameMapper.mapFileName(parseLong(arkivDokumentInfoId), dokumenttittel);
 		}
-		return arkivDokumentInfoId + cleanedTittel + ".pdf";
 	}
 
 	public static String mapMessageTitle(DistribusjonsTypeKode distribusjonstype) {

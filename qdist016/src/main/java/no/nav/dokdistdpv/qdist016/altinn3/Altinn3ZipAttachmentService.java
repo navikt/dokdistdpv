@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.StructuredTaskScope;
 
 import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
-import static no.nav.dokdistdpv.qdist016.altinn3.map.NameMapper.mapFileName;
+import static no.nav.dokdistdpv.qdist016.altinn3.map.InitializeAttachmentNameMapper.mapFileName;
 import static org.apache.commons.io.IOUtils.SOFT_MAX_ARRAY_LENGTH;
 
 @Slf4j
