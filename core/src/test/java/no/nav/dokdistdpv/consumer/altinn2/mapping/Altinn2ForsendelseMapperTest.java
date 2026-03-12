@@ -121,7 +121,7 @@ class Altinn2ForsendelseMapperTest {
 			assertEquals(DEFAULT, attachment.getDestinationType());
 			assertEquals(UNSPECIFIED, attachment.getFunctionType());
 			assertFalse(attachment.isEncrypted());
-			assertEquals(forsendelse.dokumenter().get(i).arkivDokumentInfoId() + dokumenter.get(i).tittel() + ".pdf", attachment.getFileName());
+			assertEquals(forsendelse.dokumenter().get(i).arkivDokumentInfoId() + "_" + dokumenter.get(i).tittel() + ".pdf", attachment.getFileName());
 			assertEquals(dokumenter.get(i).tittel(), attachment.getName());
 			assertEquals(dokumenter.get(i).pdf(), attachment.getData());
 			assertEquals(forsendelse.dokumenter().get(i).dokumentObjektReferanse(), attachment.getSendersReference());
@@ -142,9 +142,9 @@ class Altinn2ForsendelseMapperTest {
 	private HentForsendelseResponse createHentForsendelseReponse(DistribusjonsTypeKode distribusjonsTypeKode) {
 
 		List<HentForsendelseResponse.Dokument> dokumenter = List.of(
-				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse1", "arkivDokumentInfoId1", null),
-				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse2", "arkivDokumentInfoId2", null),
-				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse3", "arkivDokumentInfoId3", null)
+				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse1", "1000", null),
+				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse2", "1001", null),
+				new HentForsendelseResponse.Dokument(null, "dokumentObjektReferanse3", "1002", null)
 		);
 
 		HentForsendelseResponse.Mottaker mottaker = new HentForsendelseResponse.Mottaker(REPORTEE, REPORTEE_NAME, null);

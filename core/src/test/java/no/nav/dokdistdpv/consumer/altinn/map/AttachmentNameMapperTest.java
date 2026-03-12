@@ -1,23 +1,21 @@
-package no.nav.dokdistdpv.qdist016.altinn3.map;
+package no.nav.dokdistdpv.consumer.altinn.map;
 
-import no.nav.dokdistdpv.qdist016.dokument.NavDokument;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.UUID;
 import java.util.stream.Stream;
 
-import static no.nav.dokdistdpv.qdist016.altinn3.map.NameMapper.mapDisplayName;
-import static no.nav.dokdistdpv.qdist016.altinn3.map.NameMapper.mapFileName;
+import static no.nav.dokdistdpv.consumer.altinn.map.AttachmentNameMapper.mapDisplayName;
+import static no.nav.dokdistdpv.consumer.altinn.map.AttachmentNameMapper.mapFileName;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class NameMapperTest {
+public class AttachmentNameMapperTest {
 
 	@ParameterizedTest
 	@MethodSource("provideFilenameTitles")
 	void shouldMapAndCleanFilenames(String tittel, String expectedFilename) {
-		String actualFilename = mapFileName(new NavDokument(1000L, UUID.randomUUID().toString(), tittel, 1, 0));
+		String actualFilename = mapFileName(1000L, tittel);
 
 		assertThat(actualFilename).isEqualTo(expectedFilename);
 	}
@@ -37,14 +35,17 @@ class NameMapperTest {
 				Arguments.of("Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf", "1000_Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf"),
 				Arguments.of("a".repeat(256), "1000_" + "a".repeat(246) + ".pdf"),
 				Arguments.of("\0Søknad om hjelpemiddel / \0ortopedisk middel", "1000_Søknad om hjelpemiddel  ortopedisk middel.pdf"),
-				Arguments.of("Søknad om pdf.pdf", "1000_Søknad om pdf.pdf")
+				Arguments.of("Søknad om pdf.pdf", "1000_Søknad om pdf.pdf"),
+				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger.", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("ABCDEF-12345.jpeg", "1000_ABCDEF-12345.jpeg.pdf")
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideFilenameTitlesIkkeArkivertIJoark")
 	void shouldMapAndCleanFilenamesIkkeArkivertIJoark(String tittel, String expectedFilename) {
-		String actualFilename = mapFileName(new NavDokument(null, UUID.randomUUID().toString(), tittel, 1, 0));
+		String actualFilename = mapFileName(tittel);
 
 		assertThat(actualFilename).isEqualTo(expectedFilename);
 	}
@@ -64,7 +65,10 @@ class NameMapperTest {
 				Arguments.of("Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf", "Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf"),
 				Arguments.of("a".repeat(256), "a".repeat(251) + ".pdf"),
 				Arguments.of("\0Søknad om hjelpemiddel / \0ortopedisk middel", "Søknad om hjelpemiddel  ortopedisk middel.pdf"),
-				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf")
+				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf"),
+				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger.", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("ABCDEF-12345.jpeg", "ABCDEF-12345.jpeg.pdf")
 		);
 	}
 
@@ -89,7 +93,10 @@ class NameMapperTest {
 				Arguments.of("Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf", "Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf"),
 				Arguments.of("a".repeat(256), "a".repeat(255)),
 				Arguments.of("\0Søknad om hjelpemiddel / \0ortopedisk middel", "Søknad om hjelpemiddel / ortopedisk middel"),
-				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf")
+				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf"),
+				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "Søknad \u0002om foreldrep\u001Fenger"),
+				Arguments.of("Søknad om foreldrepenger.", "Søknad om foreldrepenger."),
+				Arguments.of("ABCDEF-12345.jpeg", "ABCDEF-12345.jpeg")
 		);
 	}
 }
