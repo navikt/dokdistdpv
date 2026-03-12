@@ -25,7 +25,7 @@ public class AttachmentNameMapper {
 	}
 
 	public static String mapFileName(String tittel) {
-		return left(fjernPdfFilendelse(fjernUgyldigeFileNameTegn(trim(removeEnd(tittel, PUNKTUM)))), FILE_NAME_DIFF) + PDF_FILENDELSE;
+		return left(fjernUgyldigeFileNameTegn(removeEnd(trim(fjernPdfFilendelse(trim(tittel))), PUNKTUM)), FILE_NAME_DIFF) + PDF_FILENDELSE;
 	}
 
 	public static String mapDisplayName(String tittel) {

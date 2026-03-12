@@ -38,6 +38,10 @@ public class AttachmentNameMapperTest {
 				Arguments.of("Søknad om pdf.pdf", "1000_Søknad om pdf.pdf"),
 				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "1000_Søknad om foreldrepenger.pdf"),
 				Arguments.of("Søknad om foreldrepenger.", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger.pdf ", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger. ", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger. .pdf", "1000_Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger  .pdf", "1000_Søknad om foreldrepenger.pdf"),
 				Arguments.of("ABCDEF-12345.jpeg", "1000_ABCDEF-12345.jpeg.pdf")
 		);
 	}
@@ -68,6 +72,10 @@ public class AttachmentNameMapperTest {
 				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf"),
 				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "Søknad om foreldrepenger.pdf"),
 				Arguments.of("Søknad om foreldrepenger.", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger.pdf ", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger. ", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger. .pdf", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger  .pdf", "Søknad om foreldrepenger.pdf"),
 				Arguments.of("ABCDEF-12345.jpeg", "ABCDEF-12345.jpeg.pdf")
 		);
 	}
@@ -96,6 +104,10 @@ public class AttachmentNameMapperTest {
 				Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf"),
 				Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "Søknad \u0002om foreldrep\u001Fenger"),
 				Arguments.of("Søknad om foreldrepenger.", "Søknad om foreldrepenger."),
+				Arguments.of("Søknad om foreldrepenger.pdf ", "Søknad om foreldrepenger.pdf"),
+				Arguments.of("Søknad om foreldrepenger. ", "Søknad om foreldrepenger."),
+				Arguments.of("Søknad om foreldrepenger. .pdf", "Søknad om foreldrepenger. .pdf"),
+				Arguments.of("Søknad om foreldrepenger  .pdf", "Søknad om foreldrepenger  .pdf"),
 				Arguments.of("ABCDEF-12345.jpeg", "ABCDEF-12345.jpeg")
 		);
 	}
