@@ -72,7 +72,8 @@ public class Altinn3ZipAttachmentService extends AbstractAltinn3AttachmentServic
 		int sumVedleggFilstoerrelse = navDokumenter.getSumVedleggFilstoerrelse();
 		log.info("Allokerer {} bytes til zip attachment for bestillingsId={}", sumVedleggFilstoerrelse, navDokumenter.getBestillingsId());
 		final ByteArraySeekableByteChannel byteChannel = ByteArraySeekableByteChannel.wrap(new byte[sumVedleggFilstoerrelse]);
-		try (ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(byteChannel)) {
+		try {
+			ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(byteChannel);
 			zipOut.setUseZip64(Zip64Mode.AsNeeded);
 			List<List<NavDokument>> partition = Lists.partition(navDokumenter.getVedlegg(), CONCURRENT_FETCH_SIZE);
 			partition.forEach(navDokumenterPartition -> {
@@ -85,12 +86,13 @@ public class Altinn3ZipAttachmentService extends AbstractAltinn3AttachmentServic
 						throw new DokdistdpvTechnicalException("Klarte ikke legge fil dokumentObjektReferanse=" + navDokument.dokumentObjektReferanse() + " i zip. " + e.getMessage(), e);
 					}
 				});
-
 			});
+			zipOut.finish();
+			byteChannel.truncate(zipOut.getBytesWritten());
+			return byteChannel.toByteArray();
 		} catch (IOException e) {
 			throw new DokdistdpvTechnicalException("Klarte ikke lukke ZipArchiveOutputStream. " + e.getMessage(), e);
 		}
-		return byteChannel.toByteArray();
 	}
 
 	private List<DokDistDokumentFraBucket> getDokumenter(String bestillingsId, List<NavDokument> navDokumenter) {
