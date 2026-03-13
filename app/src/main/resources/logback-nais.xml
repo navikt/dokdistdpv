@@ -35,4 +35,7 @@
 	<logger name="org.apache.cxf.services" level="INFO" additivity="false">
 		<appender-ref ref="teamLogs"/>
 	</logger>
+	<logger name="teamLogs" level="INFO" additivity="false">
+		<appender-ref ref="teamLogs"/>
+	</logger>
 </included>
