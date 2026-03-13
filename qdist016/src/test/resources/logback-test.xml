@@ -10,5 +10,8 @@
 	<logger name="no.nav.dokdistdpv" level="DEBUG" additivity="false">
 		<appender-ref ref="CONSOLE"/>
 	</logger>
+	<logger name="org.apache.cxf.services" level="INFO" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
 
 </configuration>

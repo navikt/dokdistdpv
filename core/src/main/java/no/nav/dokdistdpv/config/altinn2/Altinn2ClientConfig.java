@@ -9,11 +9,14 @@ import no.nav.dokdistdpv.properties.AltinnProperties;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.unit.DataSize;
 
 import java.util.Properties;
+import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
@@ -42,8 +45,8 @@ public class Altinn2ClientConfig {
 	}
 
 	private static void configureClient(ICorrespondenceAgencyExternalEC2 port,
-								KeyStoreProperties keyStoreProperties,
-								KeyStoreCredentials keyStoreCredentials) {
+										KeyStoreProperties keyStoreProperties,
+										KeyStoreCredentials keyStoreCredentials) {
 		Client client = ClientProxy.getClient(port);
 		client.getRequestContext().put("security.signature.properties", getKeyStoreProperties(keyStoreProperties, keyStoreCredentials));
 		client.getRequestContext().put("security.must-understand", true);
@@ -53,7 +56,17 @@ public class Altinn2ClientConfig {
 		client.getRequestContext().put(STS_ISSUE_AFTER_FAILED_RENEW, true);
 		client.getRequestContext().put(STS_TOKEN_IMMINENT_EXPIRY_VALUE, 15);
 		client.getRequestContext().put(RECEIVE_TIMEOUT, valueOf(MINUTES.toMillis(8)));
+		client.getOutInterceptors().add(configureLoggingOutInterceptor());
 		client.getInFaultInterceptors().add(new LoggingInInterceptor());
+	}
+
+	private static LoggingOutInterceptor configureLoggingOutInterceptor() {
+		LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor();
+		loggingOutInterceptor.setLogBinary(false);
+		loggingOutInterceptor.setPrettyLogging(true);
+		loggingOutInterceptor.setSensitiveElementNames(Set.of("systemUserName", "systemPassword", "Data"));
+		loggingOutInterceptor.setLimit((int) DataSize.ofMegabytes(10).toBytes());
+		return loggingOutInterceptor;
 	}
 
 	private static Properties getKeyStoreProperties(KeyStoreProperties keyStoreProperties, KeyStoreCredentials keyStoreCredentials) {

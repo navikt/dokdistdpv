@@ -23,7 +23,6 @@ import static no.nav.dokdistdpv.consumer.altinn2.mapping.Altinn2ForsendelseMappe
 @Slf4j
 @Component
 public class Altinn2Client {
-
 	private static final int FALLBACK_ERROR_ID = -999;
 	private static final String FALLBACK_ALTINN_ERROR_MESSAGE = "AltinnErrorMessage var ikke satt på responsen";
 
