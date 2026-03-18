@@ -8,6 +8,7 @@ import no.nav.dokdistdpv.qdist016.altinn2.Altinn2MeldingService;
 import no.nav.dokdistdpv.qdist016.altinn3.Altinn3MeldingService;
 import no.nav.meldinger.virksomhet.dokdistfordeling.qdist008.out.DistribuerTilKanal;
 import org.apache.camel.Handler;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -15,10 +16,13 @@ import java.util.UUID;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest.ekspedert;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest.oversendt;
 import static no.nav.dokdistdpv.qdist016.Validator.validerForsendelse;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_FORSENDELSE_ID;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_REQUEST_ID;
 
 @Slf4j
 @Service
 public class Qdist016Service {
+	private static final String QDIST016 = "qdist016";
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final Altinn2MeldingService altinn2MeldingService;
@@ -40,16 +44,23 @@ public class Qdist016Service {
 	@Handler
 	public String distribuerForsendelseTilDPV(DistribuerTilKanal distribuerTilKanal) {
 		String forsendelseId = distribuerTilKanal.getForsendelseId();
-		HentForsendelseResponse forsendelse = administrerForsendelseConsumer.hentForsendelse(forsendelseId);
-		validerForsendelse(forsendelseId, forsendelse);
+		MDC.put(MDC_REQUEST_ID, QDIST016);
+		MDC.put(MDC_FORSENDELSE_ID, forsendelseId);
+		try {
+			HentForsendelseResponse forsendelse = administrerForsendelseConsumer.hentForsendelse(forsendelseId);
+			validerForsendelse(forsendelseId, forsendelse);
 
-		if(distribuerTilAltinn3) {
-			distribuerTilAltinn3(forsendelse);
-		} else {
-			distribuerTilAltinn2(forsendelse);
+			if(distribuerTilAltinn3) {
+				distribuerTilAltinn3(forsendelse);
+			} else {
+				distribuerTilAltinn2(forsendelse);
+			}
+
+			return forsendelseId;
+		} finally {
+			MDC.remove(MDC_REQUEST_ID);
+			MDC.remove(MDC_FORSENDELSE_ID);
 		}
-
-		return forsendelseId;
 	}
 
 	private void distribuerTilAltinn3(HentForsendelseResponse forsendelse) {

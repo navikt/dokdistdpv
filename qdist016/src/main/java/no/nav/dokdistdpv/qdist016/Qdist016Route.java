@@ -56,19 +56,21 @@ public class Qdist016Route extends RouteBuilder {
 		onException(DokdistdpvTechnicalException.class)
 				.handled(true)
 				.useOriginalMessage()
-				.log(ERROR, log, "${exception}; " + getForsendelseId())
+				.log(WARN, log, getForsendelseId() + "; ${exception}")
 				.to("jms:" + qdist016TekniskFeil.getQueueName());
 
 		onException(DokdistdpvFunctionalException.class, IllegalArgumentException.class)
 				.handled(true)
 				.useOriginalMessage()
-				.log(WARN, log, "${exception}; " + getForsendelseId())
+				.logStackTrace(true)
+				.log(ERROR, log, getForsendelseId() + "; ${exception}")
 				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
 
 		onException(AltinnException.class)
 				.handled(true)
 				.useOriginalMessage()
-				.log(WARN, log, format("Feil ved distribusjon av forsendelse med id %s til Altinn. Feilmelding: ${exception.message};", getForsendelseId()))
+				.logStackTrace(true)
+				.log(ERROR, log, format("Feil ved distribusjon av forsendelse med %s til Altinn. Feilmelding: ${exception.message};", getForsendelseId()))
 				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
 
 		from("jms:" + qdist016.getQueueName() + "?transacted=true")
