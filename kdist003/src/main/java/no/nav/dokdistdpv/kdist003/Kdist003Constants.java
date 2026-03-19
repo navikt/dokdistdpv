@@ -5,7 +5,6 @@ import java.util.Set;
 public class Kdist003Constants {
 
 	public static final String RESOURCE = "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost";
-	public static final String ALTERNATIVE_SUBJECT = "/organisation/889640782";
 	public static final String FORSENDELSE_STATUS_OVERSENDT = "OVERSENDT";
 	public static final String MELDING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencepublishfailed";
 	public static final String VARSLING_FEILET_ALTINN_HENDELSESTYPE = "no.altinn.correspondence.correspondencenotificationcreationfailed";

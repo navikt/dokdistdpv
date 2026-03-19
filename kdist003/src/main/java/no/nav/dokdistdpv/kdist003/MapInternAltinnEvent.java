@@ -10,8 +10,10 @@ public class MapInternAltinnEvent {
 				.resource(altinnEvent.resource())
 				.resourceinstance(altinnEvent.resourceinstance())
 				.type(altinnEvent.type())
-				.alternativesubject(altinnEvent.alternativesubject())
 				.time(altinnEvent.time())
 				.build();
+	}
+
+	private MapInternAltinnEvent() {
 	}
 }
