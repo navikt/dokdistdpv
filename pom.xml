@@ -175,6 +175,13 @@
 				<version>${spring-cloud-contract-wiremock.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>no.nav.dokdistdpv</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
