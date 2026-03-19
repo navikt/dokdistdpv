@@ -13,12 +13,15 @@ import no.altinn.correspondenceagencyexternalaec.ReceiptExternal;
 import no.nav.dokdistdpv.exception.AltinnException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.AltinnProperties;
+import org.slf4j.MDC;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 import static no.nav.dokdistdpv.consumer.altinn2.mapping.Altinn2ForsendelseMapper.mapCorrespondenceStatusFilter;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_FORSENDELSE_ID;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_REQUEST_ID;
 
 @Slf4j
 @Component
@@ -38,7 +41,7 @@ public class Altinn2Client {
 
 	@Retryable(retryFor = {SOAPFaultException.class, DokdistdpvTechnicalException.class})
 	public ReceiptExternal insertCorrespondence(String konversasjonId, InsertCorrespondenceV2 insertCorrespondenceV2) {
-		log.info("Skal distribuere forsendelse med konversasjonId={} til Altinn", konversasjonId);
+		log.info("{} Skal distribuere forsendelse med forsendelseId={}, konversasjonId={} til Altinn", MDC.get(MDC_REQUEST_ID), MDC.get(MDC_FORSENDELSE_ID), konversasjonId);
 
 		try {
 			return iCorrespondenceAgencyExternalEC2.insertCorrespondenceEC(
@@ -54,21 +57,21 @@ public class Altinn2Client {
 			String errorMsg = getErrorMsg(faultInfo);
 			String errorGuid = getErrorGuid(faultInfo);
 			if (errorMsg.contains("non-functional error")) {
-				log.error("Distribusjon til Altinn feilet teknisk med errorId={}, feilmelding={}, guid={}", errorId, errorMsg, errorGuid);
-				throw new DokdistdpvTechnicalException(e.getMessage(), e);
+				String errorMessage = "Distribusjon av melding med konversasjonsId=%s til Altinn feilet teknisk med errorId=%s, guid=%s, feilmelding=%s".formatted(konversasjonId, errorId, errorGuid, errorMsg);
+				throw new DokdistdpvTechnicalException(errorMessage, e);
 			} else {
-				log.warn("Distribusjon til Altinn feilet funksjonelt med errorId={}, feilmelding={}, guid={}", errorId, errorMsg, errorGuid);
-				throw new AltinnException(e.getMessage(), e.getCause());
+				String errorMessage = "Distribusjon av melding med konversasjonsId=%s til Altinn feilet funksjonelt med errorId=%s, guid=%s, feilmelding=%s".formatted(konversasjonId, errorId, errorGuid, errorMsg);
+				throw new AltinnException(errorMessage, e);
 			}
 		} catch (SOAPFaultException e) {
-			log.warn("Distribusjon til Altinn feilet med feilmelding={} ", e.getMessage(), e);
+			log.info("Distribusjon til Altinn feilet men retryes, feilmelding={}", e.getMessage(), e);
 			throw e;
 		}
 	}
 
 	@Retryable(retryFor = SOAPFaultException.class)
 	public Optional<CorrespondenceStatusResultV3> hentCorrespondenceStatusResult(String mottakerId, String konversasjonId) {
-		log.info("Skal hente status for forsendelse med konversasjonId={} fra Altinn", konversasjonId);
+		log.info("{} Skal hente status for forsendelse med konversasjonId={} fra Altinn", MDC.get(MDC_REQUEST_ID), konversasjonId);
 
 		CorrespondenceStatusFilterV3 correspondenceStatusFilterV3 = mapCorrespondenceStatusFilter(
 				mottakerId,
@@ -94,7 +97,7 @@ public class Altinn2Client {
 	}
 
 	private static String getErrorGuid(AltinnFault fault) {
-		return fault.getUserGuid() != null ? fault.getErrorGuid() : "Ukjent GUID";
+		return fault.getErrorGuid() != null ? fault.getErrorGuid() : "Ukjent GUID";
 	}
 
 	private static String getErrorMsg(AltinnFault fault) {

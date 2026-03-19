@@ -6,4 +6,6 @@ public class DokdistdpvConstant {
 	public static final String PROPERTY_JOURNALPOST_ID = "journalpostId";
 	public static final String CALL_ID = "callId";
 	public static final String NAV_CONSUMER_ID = "Nav-Consumer-Id";
+	public static final String MDC_REQUEST_ID = "requestId";
+	public static final String MDC_FORSENDELSE_ID = "forsendelseId";
 }

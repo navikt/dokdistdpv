@@ -15,6 +15,7 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelserResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -29,11 +30,14 @@ import static java.util.Objects.nonNull;
 import static no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusTypeV2.CONFIRMED;
 import static no.altinn.correspondenceagencyexternalaec.CorrespondenceStatusTypeV2.READ;
 import static no.nav.dokdistdpv.sdist007.altinn.AltinnCorrespondenceECMapper.mapToCorrespondence;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_FORSENDELSE_ID;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_REQUEST_ID;
 
 @Slf4j
 @Component
 public class Sdist007Service {
 
+	public static final String SDIST007 = "sdist007";
 	public static final int MAX_JOURNALPOSTS_PER_REQUEST = 100;
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
@@ -51,32 +55,38 @@ public class Sdist007Service {
 	@SuppressWarnings("unused")
 	@Handler
 	public List<Forsendelse> behandleUlesteJournalposter(Exchange exchange) {
+		MDC.put(MDC_REQUEST_ID, SDIST007);
+		try {
+			List<String> journalposter = dokarkivConsumer.finnUlesteJournalposter();
 
-		List<String> journalposter = dokarkivConsumer.finnUlesteJournalposter();
+			if (journalposter.isEmpty()) {
+				log.info("Sdist007 fant ingen uleste journalposter i Joark.");
+				return null;
+			}
 
-		if (journalposter.isEmpty()) {
-			log.info("Sdist007 fant ingen uleste journalposter i Joark.");
-			return null;
+			log.info("Sdist007 fant antall={} uleste journalposter i Joark", journalposter.size());
+
+			List<Forsendelse> ulesteForsendelse = hentUlesteForsendelser(journalposter).stream()
+					.map(HentForsendelserResponse::forsendelseListe)
+					.flatMap(Collection::stream)
+					.map(hentForsendelseResponse -> {
+						HentForsendelseResponse.ArkivInformasjon arkivInformasjon = hentForsendelseResponse.arkivInformasjon();
+						exchange.setProperty("journalpostId", arkivInformasjon.arkivId());
+
+						Optional<Long> forsendelseId = oppdaterDistribusjonOrSendNotificationToAltinn(hentForsendelseResponse);
+						forsendelseId.ifPresent(id -> MDC.put(MDC_FORSENDELSE_ID, String.valueOf(id)));
+
+						return forsendelseId.map(id -> Forsendelse.builder().forsendelseId(id).build());
+					})
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.toList();
+
+			return ulesteForsendelse.isEmpty() ? null : ulesteForsendelse;
+		} finally {
+			MDC.remove(MDC_REQUEST_ID);
+			MDC.remove(MDC_FORSENDELSE_ID);
 		}
-
-		log.info("Sdist007 fant antall={} uleste journalposter i Joark", journalposter.size());
-
-		List<Forsendelse> ulesteForsendelse = hentUlesteForsendelser(journalposter).stream()
-				.map(HentForsendelserResponse::forsendelseListe)
-				.flatMap(Collection::stream)
-				.map(hentForsendelseResponse -> {
-					HentForsendelseResponse.ArkivInformasjon arkivInformasjon = hentForsendelseResponse.arkivInformasjon();
-					exchange.setProperty("journalpostId", arkivInformasjon.arkivId());
-
-					Optional<Long> forsendelseId = oppdaterDistribusjonOrSendNotificationToAltinn(hentForsendelseResponse);
-
-					return forsendelseId.map(id -> Forsendelse.builder().forsendelseId(id).build())
-							.orElse(null);
-				})
-				.filter(Objects::nonNull)
-				.toList();
-
-		return ulesteForsendelse.isEmpty() ? null : ulesteForsendelse;
 	}
 
 	private List<HentForsendelserResponse> hentUlesteForsendelser(List<String> ulesteJournalposter) {
@@ -86,6 +96,7 @@ public class Sdist007Service {
 	}
 
 	public Optional<Long> oppdaterDistribusjonOrSendNotificationToAltinn(HentForsendelseResponse hentForsendelseResponse) {
+		MDC.put(MDC_FORSENDELSE_ID, String.valueOf(hentForsendelseResponse.forsendelseId()));
 		String journalpostId = hentForsendelseResponse.arkivInformasjon().arkivId();
 
 		Optional<CorrespondenceStatusResultV3> correspondenceStatusResultV3 = altinn2Client.hentCorrespondenceStatusResult(hentForsendelseResponse.mottaker().mottakerId(),

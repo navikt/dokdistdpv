@@ -28,7 +28,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 /// Klientimplementasjon av [Altinn.Correspondence.API](https://docs.altinn.studio/nb/api/correspondence/spec/#/)
-@Slf4j
 @Component
 public class Altinn3CorrespondenceClient {
 	private final RestClient restClientTexas;

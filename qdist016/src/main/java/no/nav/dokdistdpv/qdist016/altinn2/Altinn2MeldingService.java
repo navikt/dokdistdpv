@@ -49,11 +49,11 @@ public class Altinn2MeldingService {
 		var receipt = altinn2Client.insertCorrespondence(konversasjonId, insertCorrespondenceV2);
 
 		if (receipt.getReceiptStatusCode() != OK) {
-			log.error("qdist016 Forsendelse med forsendelseId={}, bestillingsId={} forsøkt distribuert til Altinn2 feilet med status={} og statusCode={}",
-					forsendelseId, forsendelse.bestillingsId(),
+			log.error("qdist016 Forsendelse med forsendelseId={}, bestillingsId={}, konversasjonId={} forsøkt distribuert til Altinn2 feilet med status={} og statusCode={}",
+					forsendelseId, forsendelse.bestillingsId(), konversasjonId,
 					receipt.getReceiptTypeName(), receipt.getReceiptStatusCode());
-			throw new AltinnException("Distribusjon av forsendelse til Altinn2 feilet! Status=%s, Statuskode=%s, text=%s"
-					.formatted(receipt.getReceiptTypeName(), receipt.getReceiptStatusCode(), receipt.getReceiptText()));
+			throw new AltinnException("Distribusjon av forsendelse med konversasjonId=%s til Altinn2 feilet! Status=%s, Statuskode=%s, text=%s"
+					.formatted(konversasjonId, receipt.getReceiptTypeName(), receipt.getReceiptStatusCode(), receipt.getReceiptText()));
 		}
 		return konversasjonId;
 	}
