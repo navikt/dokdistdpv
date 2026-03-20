@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.StructuredTaskScope;
 
 import static no.nav.dokdistdpv.consumer.altinn3.Altinn3Constants.NAV_RESOURCE_ID;
-import static no.nav.dokdistdpv.qdist016.altinn3.map.InitializeAttachmentNameMapper.mapFileName;
+import static no.nav.dokdistdpv.qdist016.altinn3.map.InitializeAttachmentNameMapper.mapZipEntryFileName;
 import static org.apache.commons.io.IOUtils.SOFT_MAX_ARRAY_LENGTH;
 
 @Slf4j
@@ -81,7 +81,7 @@ public class Altinn3ZipAttachmentService extends AbstractAltinn3AttachmentServic
 				dokumenter.forEach(dokDistDokumentFraBucket -> {
 					NavDokument navDokument = navDokumenter.findByDokumentObjektReferanse(dokDistDokumentFraBucket.getObjectName());
 					try {
-						addEntryToZip(zipOut, mapFileName(navDokument), dokDistDokumentFraBucket.getPdf());
+						addEntryToZip(zipOut, mapZipEntryFileName(navDokument), dokDistDokumentFraBucket.getPdf());
 					} catch (IOException e) {
 						throw new DokdistdpvTechnicalException("Klarte ikke legge fil dokumentObjektReferanse=" + navDokument.dokumentObjektReferanse() + " i zip. " + e.getMessage(), e);
 					}
