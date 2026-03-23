@@ -11,4 +11,11 @@ public final class InitializeAttachmentNameMapper {
 		}
 		return AttachmentNameMapper.mapFileName(navDokument.tittel());
 	}
+
+	public static String mapZipEntryFileName(NavDokument navDokument) {
+		if (navDokument.isArkivertIJoark()) {
+			return AttachmentNameMapper.mapZipEntryFileName(navDokument.arkivDokumentInfoId(), navDokument.tittel());
+		}
+		return AttachmentNameMapper.mapZipEntryFileName(navDokument.tittel());
+	}
 }
