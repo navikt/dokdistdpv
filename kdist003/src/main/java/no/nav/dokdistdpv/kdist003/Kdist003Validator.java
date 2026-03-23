@@ -3,10 +3,8 @@ package no.nav.dokdistdpv.kdist003;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 
 import static java.lang.String.format;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALTERNATIVE_SUBJECT;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.RESOURCE;
 import static no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse.isResourceNavTaushetsbelagtpost;
-import static no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse.isSubjectNavOrganisasjon;
 
 public class Kdist003Validator {
 
@@ -22,11 +20,6 @@ public class Kdist003Validator {
 
 		if (!isResourceNavTaushetsbelagtpost(altinnEvent.resource())) {
 			throw new IllegalArgumentException(format("Ugyldig verdi: resource %s er ikke lik med %s", altinnEvent.resource(), RESOURCE));
-
-		}
-
-		if (!isSubjectNavOrganisasjon(altinnEvent.alternativesubject())) {
-			throw new IllegalArgumentException(format("Ugyldig verdi %s: alternativesubject må være %s", altinnEvent.alternativesubject(), ALTERNATIVE_SUBJECT));
 
 		}
 
