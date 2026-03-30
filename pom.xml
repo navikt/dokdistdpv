@@ -35,7 +35,7 @@
 		<com.ibm.mq.jakarta.client.version>9.4.5.0</com.ibm.mq.jakarta.client.version>
 		<jaxws-ri.version>3.0.2</jaxws-ri.version>
 		<httpclient.version>4.5.14</httpclient.version>
-		<cxf-bom.version>4.1.4</cxf-bom.version>
+		<cxf-bom.version>4.2.0</cxf-bom.version>
 		<dok-common.version>1.7.1</dok-common.version>
 		<dok-legacy-tjenestespesifikasjoner.version>41-d282678</dok-legacy-tjenestespesifikasjoner.version>
 		<jackson-databind-nullable.version>0.2.9</jackson-databind-nullable.version>
