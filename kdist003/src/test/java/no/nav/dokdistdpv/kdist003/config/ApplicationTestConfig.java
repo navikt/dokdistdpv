@@ -16,6 +16,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.kafka.listener.CommonErrorHandler;
+import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 
 import static org.mockito.Mockito.mock;
 
@@ -41,6 +44,11 @@ public class ApplicationTestConfig {
 	@Bean
 	public EncryptedBucketStorage bucketStorage() {
 		return mock(EncryptedBucketStorage.class);
+	}
+
+	@Bean
+	public CommonErrorHandler noRetryErrorHandler() {
+		return new DefaultErrorHandler(new FixedBackOff(0L, 0L));
 	}
 
 }

@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -19,9 +17,11 @@ import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
@@ -31,9 +31,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.ARSAK_PUBLISERING_FEILET;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.ARSAK_VARSLING_FEILET;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.MELDINGSFEIL;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.VARSLINGSFEIL;
+import static no.nav.dokdistdpv.kdist003.BehandleAltinnMeldingHendelseService.FORSENDELSE_STATUS_EKSPEDERT;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_ALTINN_HENDELSESTYPE;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -41,10 +48,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
-	private static final String FORSENDELSE_ID = "/1720847";
-
-	@Autowired
-	private BehandleAltinnMeldingHendelseService behandleAltinnMeldingHendelseService;
+	private static final String FORSENDELSE_ID = "1720847";
 
 	@BeforeEach
 	void setUp() {
@@ -59,59 +63,59 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
 
-		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
-
-		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
-		verify(1, putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse")));
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse"))
+					.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
+					.withRequestBody(matchingJsonPath("$.forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT))));
+		});
 	}
 
 	@ParameterizedTest
 	@MethodSource("meldingTypes")
 	void shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
 		stubFinnForsendelse();
-		stubHentForsendelse();
+		stubHentForsendelse("hent_forsendelse_ekspedert_response.json");
 		stubPutOppdaterForsendelse();
 		stubPatchOppdaterDistribusjonsinfo();
 
 		sendToInnTopic(createMelding(type));
 
-		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
-
-		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+					.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z"))));
+		});
 	}
 
 	static Stream<Arguments> meldingTypes() {
 		return Stream.of(
 				Arguments.of("no.altinn.correspondence.correspondencereceiverread"),
-				Arguments.of("no.altinn.correspondence.correspondencereceivedconfirmed")
+				Arguments.of("no.altinn.correspondence.correspondencereceiverconfirmed")
 		);
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {MELDING_FEILET_HENDELSESTYPE, VARSLING_FEILET_ALTINN_HENDELSESTYPE})
-	void shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint(String type) {
+	@MethodSource
+	void shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint(String type, String expectedArsak, String expectedArsakbeskrivelse) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPostDistribuerTilPrint();
 
 		sendToInnTopic(createMelding(type));
 
-		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
-
-		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
-		verify(1, postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH)));
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH))
+					.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
+					.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
+					.withRequestBody(matchingJsonPath("$.arsak", equalTo(expectedArsak)))
+					.withRequestBody(matchingJsonPath("$.arsakBeskrivelse", equalTo(expectedArsakbeskrivelse))));
+		});
 	}
 
-	@Test
-	void shouldLogMeldingWhenForsendelseStatusIsNotOversendt() {
-		stubFinnForsendelse();
-		stubHentForsendelseWithStatusKlarForDist();
-
-		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
-
-		behandleAltinnMeldingHendelseService.lesOgBehandleAltinnMelding(getConsumerRecord());
-
-		verify(1, getRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + FORSENDELSE_ID)));
+	static Stream<Arguments> shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint() {
+		return Stream.of(
+				Arguments.of(MELDING_FEILET_HENDELSESTYPE, MELDINGSFEIL, ARSAK_PUBLISERING_FEILET),
+				Arguments.of(VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET)
+		);
 	}
 
 	void stubFinnForsendelse() {
@@ -123,20 +127,15 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	}
 
 	void stubHentForsendelse() {
-		stubFor(get(urlMatching(HENT_FORSENDELSE_PATH + FORSENDELSE_ID))
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("dokdistadmin/hent_forsendelse_response.json")
-				));
+		stubHentForsendelse("hent_forsendelse_response.json");
 	}
 
-	void stubHentForsendelseWithStatusKlarForDist() {
-		stubFor(get(urlMatching(HENT_FORSENDELSE_PATH + FORSENDELSE_ID))
+	void stubHentForsendelse(String fil) {
+		stubFor(get(urlEqualTo(HENT_FORSENDELSE_PATH + "/" + FORSENDELSE_ID))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("dokdistadmin/hent_forsendelse_status_klar_for_dist.json")
+						.withBodyFile("dokdistadmin/" + fil)
 				));
 	}
 
@@ -149,7 +148,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				.type(type)
 				.alternativesubject("/organisation/889640782")
 				.specversion("1.0")
-				.time(OffsetDateTime.now())
+				.time(OffsetDateTime.parse("2026-04-16T09:42:29Z"))
 				.build();
 	}
 
