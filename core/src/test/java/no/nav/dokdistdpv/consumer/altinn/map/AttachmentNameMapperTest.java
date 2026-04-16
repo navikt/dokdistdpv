@@ -76,8 +76,8 @@ public class AttachmentNameMapperTest {
 			Arguments.of("Helseskjema d.t\t.05.05.25\t", "1000_Helseskjema d.t.05.05.25.pdf"),
 			Arguments.of("Dokument (Uten relevant innhold)   ", "1000_Dokument (Uten relevant innhold).pdf"),
 			Arguments.of("Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf", "1000_Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf"),
-			Arguments.of("a".repeat(256), "1000_" + "a".repeat(246) + ".pdf"),
-			Arguments.of("ñ".repeat(256), "1000_" + "ñ".repeat(123) + ".pdf"),
+			Arguments.of("a".repeat(256), "1000_" + "a".repeat(141) + ".pdf"),
+			Arguments.of("ñ".repeat(256), "1000_" + "ñ".repeat(141) + ".pdf"),
 			Arguments.of("\0Søknad om hjelpemiddel / \0ortopedisk middel", "1000_Søknad om hjelpemiddel  ortopedisk middel.pdf"),
 			Arguments.of("Søknad om pdf.pdf", "1000_Søknad om pdf.pdf"),
 			Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "1000_Søknad om foreldrepenger.pdf"),
@@ -89,7 +89,7 @@ public class AttachmentNameMapperTest {
 			Arguments.of("ABCDEF-12345.jpeg", "1000_ABCDEF-12345.jpeg.pdf"),
 			Arguments.of(
 					"Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señor_L’Haïd_Æther_Ðis_Þat_€£¥§©®±²³µ¶·¹º»¼½¾¿×÷_Very_Long_Filename_To_Stress_Test_Zipping_Encoding_And_Limits_V3.pdf",
-					"1000_Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señor_L’Haïd_Æther_Ði.pdf")};
+					"1000_Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señ.pdf")};
 
 	public static final Arguments[] IKKE_ARKIVERTE_TITLER_ZIP_FILENAME_ASSERT = {Arguments.of("Søknad om foreldrepenger", "Søknad om foreldrepenger.pdf"),
 			Arguments.of("Søknad om foreldrepenger.pdf", "Søknad om foreldrepenger.pdf"),
@@ -102,8 +102,8 @@ public class AttachmentNameMapperTest {
 			Arguments.of("Helseskjema d.t\t.05.05.25\t", "Helseskjema d.t.05.05.25.pdf"),
 			Arguments.of("Dokument (Uten relevant innhold)   ", "Dokument (Uten relevant innhold).pdf"),
 			Arguments.of("Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf", "Uønsket_hendelse_avvik_HMS_Utsatt_for_mye_marsipankake_ABCDEF5_000.pdf"),
-			Arguments.of("a".repeat(256), "a".repeat(251) + ".pdf"),
-			Arguments.of("ñ".repeat(256), "ñ".repeat(125) + ".pdf"),
+			Arguments.of("a".repeat(256), "a".repeat(146) + ".pdf"),
+			Arguments.of("ñ".repeat(256), "ñ".repeat(146) + ".pdf"),
 			Arguments.of("\0Søknad om hjelpemiddel / \0ortopedisk middel", "Søknad om hjelpemiddel  ortopedisk middel.pdf"),
 			Arguments.of("Søknad om pdf.pdf", "Søknad om pdf.pdf"),
 			Arguments.of("Søknad \u0002om foreldrep\u001Fenger", "Søknad om foreldrepenger.pdf"),
@@ -115,7 +115,7 @@ public class AttachmentNameMapperTest {
 			Arguments.of("ABCDEF-12345.jpeg", "ABCDEF-12345.jpeg.pdf"),
 			Arguments.of(
 					"Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señor_L’Haïd_Æther_Ðis_Þat_€£¥§©®±²³µ¶·¹º»¼½¾¿×÷_Very_Long_Filename_To_Stress_Test_Zipping_Encoding_And_Limits_V3.pdf",
-					"Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señor_L’Haïd_Æther_Ðis_Þat_€£¥§©®±²³µ¶·¹º»¼½¾¿×÷_Very_Long_Filename_To_Stress_Test_Zipping_Encoding_And_Limits_V3.pdf"
+					"Western_Test_2026_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß_àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ_ŒœŠšŸŽž_Dvořák_Łódź_Müde_Åre_Øl_Çava_Façade_Noël_Mañana_Señor_L’.pdf"
 			)};
 
 	public static final Arguments[] DISPLAY_NAME_ASSERT = {Arguments.of("Søknad om foreldrepenger", "Søknad om foreldrepenger"),
