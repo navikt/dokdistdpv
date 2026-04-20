@@ -13,14 +13,18 @@ import no.nav.dokdistdpv.exception.Kdist003JsonProcessingException;
 import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakMeldingsfeil;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakVarslingsfeil;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest.Oppslagsnoekkel.KONVERSASJONSID;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.FORSENDELSE_STATUS_OVERSENDT;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.IGNORERTE_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_LEST_DATO_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.SEND_TIL_PRINT_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateAltinnEvent;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -28,11 +32,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Component
 public class BehandleAltinnMeldingHendelseService {
 
-	public static final String MELDINGSFEIL = "MELDINGSFEIL";
-	public static final String VARSLINGSFEIL = "VARSLINGSFEIL";
-	public static final String AARSAK_PUBLISERING_FEILET = "Publisering av meldingen feilet";
-	public static final String AARSAK_VARSLING_FEILET = "Utsending av varsel feilet";
 	public static final String ARKIV_SYSTEM_JOARK = "Joark";
+	public static final String FORSENDELSE_STATUS_EKSPEDERT = "EKSPEDERT";
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokarkivConsumer dokarkivConsumer;
@@ -44,6 +45,7 @@ public class BehandleAltinnMeldingHendelseService {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 	}
 
+	@Retryable
 	@KafkaListener(
 			topics = "${dokdistdpv.topic.altinn-melding-hendelse}",
 			groupId = "dokdistdpv-kdist003")
@@ -61,7 +63,6 @@ public class BehandleAltinnMeldingHendelseService {
 			}
 
 			InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(altinnEvent);
-
 			HentForsendelseResponse hentForsendelse = hentForsendelse(internAltinnHendelse.resourceinstance().toString());
 
 			if (hentForsendelse == null) {
@@ -70,23 +71,19 @@ public class BehandleAltinnMeldingHendelseService {
 			}
 
 			behandleForsendelse(hentForsendelse, internAltinnHendelse);
-
 		} catch (Exception e) {
-			log.error("feilet med parsing av kafka-hendelse til Json - {}", e.getMessage(), e);
-			throw new Kdist003JsonProcessingException("feilet med parsing av kafka-hendelse til Json", e);
+			throw new Kdist003JsonProcessingException("kdist003 klarte ikke behandle kafka-hendelse. message=" + e.getMessage(), e);
 		}
 	}
 
 	private void behandleForsendelse(HentForsendelseResponse hentForsendelse, InternAltinnHendelse internAltinnHendelse) {
-
-		if (!FORSENDELSE_STATUS_OVERSENDT.equals(hentForsendelse.forsendelseStatus())) {
-			log.info("forsendelse med forsendelseId={} og status={} kan ikke behandles", hentForsendelse.forsendelseId(), hentForsendelse.forsendelseStatus());
-			return;
-		}
-
 		if (SEND_TIL_PRINT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
 			administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(internAltinnHendelse.type(), hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE.contains(internAltinnHendelse.type())) {
+			if (FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus())) {
+				log.info("forsendelse med forsendelseId={} er allerede ekspedert", hentForsendelse.forsendelseId());
+				return;
+			}
 			administrerForsendelseConsumer.oppdaterForsendelse(
 					OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_LEST_DATO_HENDELSESTYPER.contains(internAltinnHendelse.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
@@ -95,7 +92,6 @@ public class BehandleAltinnMeldingHendelseService {
 					.datoLest(internAltinnHendelse.time())
 					.build());
 		}
-
 	}
 
 	private HentForsendelseResponse hentForsendelse(String konversasjonId) {
@@ -112,12 +108,12 @@ public class BehandleAltinnMeldingHendelseService {
 	}
 
 	private DistribuerTilNyKanalRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
-		return DistribuerTilNyKanalRequest.builder()
-				.forsendelseId(forsendelseId)
-				.arsak(MELDINGSFEIL.equals(eventType) ? MELDINGSFEIL : VARSLINGSFEIL)
-				.arsakBeskrivelse(AARSAK_PUBLISERING_FEILET.equals(eventType) ? AARSAK_PUBLISERING_FEILET : AARSAK_VARSLING_FEILET)
-				.build();
-
-
+		if (MELDING_FEILET_HENDELSESTYPE.equals(eventType)) {
+			return arsakMeldingsfeil(forsendelseId);
+		} else if (VARSLING_FEILET_HENDELSESTYPE.equals(eventType)) {
+			return arsakVarslingsfeil(forsendelseId);
+		} else {
+			throw new UnsupportedOperationException("Kan ikke sende til print. eventType=" + eventType);
+		}
 	}
 }
