@@ -41,6 +41,7 @@ import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDEL
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -64,14 +65,18 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(putRequestedFor(urlEqualTo(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse"))
-					.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
-					.withRequestBody(matchingJsonPath("$.forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT))));
+			try {
+				verify(putRequestedFor(urlEqualTo(OPPDATER_FORSENDELSE_PATH))
+						.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
+						.withRequestBody(matchingJsonPath("$.forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT))));
+			} catch (RuntimeException e) {
+				fail();
+			}
 		});
 	}
 
 	@ParameterizedTest
-	@MethodSource("meldingTypes")
+	@MethodSource
 	void shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse("hent_forsendelse_ekspedert_response.json");
@@ -81,12 +86,16 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		sendToInnTopic(createMelding(type));
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
-					.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z"))));
+			try {
+				verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+						.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z"))));
+			} catch (RuntimeException e) {
+				fail();
+			}
 		});
 	}
 
-	static Stream<Arguments> meldingTypes() {
+	static Stream<Arguments> shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato() {
 		return Stream.of(
 				Arguments.of("no.altinn.correspondence.correspondencereceiverread"),
 				Arguments.of("no.altinn.correspondence.correspondencereceiverconfirmed")
@@ -103,11 +112,15 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		sendToInnTopic(createMelding(type));
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH))
-					.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
-					.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
-					.withRequestBody(matchingJsonPath("$.arsak", equalTo(expectedArsak)))
-					.withRequestBody(matchingJsonPath("$.arsakBeskrivelse", equalTo(expectedArsakbeskrivelse))));
+			try {
+				verify(postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH))
+						.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
+						.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
+						.withRequestBody(matchingJsonPath("$.arsak", equalTo(expectedArsak)))
+						.withRequestBody(matchingJsonPath("$.arsakBeskrivelse", equalTo(expectedArsakbeskrivelse))));
+			} catch (RuntimeException e) {
+				fail();
+			}
 		});
 	}
 
@@ -161,7 +174,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	}
 
 	private void stubPutOppdaterForsendelse() {
-		stubFor(put(HENT_FORSENDELSE_PATH + "/oppdaterforsendelse")
+		stubFor(put(OPPDATER_FORSENDELSE_PATH)
 				.willReturn(aResponse()
 						.withStatus(OK.value())));
 	}
