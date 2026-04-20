@@ -13,7 +13,6 @@ import no.nav.dokdistdpv.exception.Kdist003JsonProcessingException;
 import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakMeldingsfeil;
@@ -45,7 +44,6 @@ public class BehandleAltinnMeldingHendelseService {
 		this.administrerForsendelseConsumer = administrerForsendelseConsumer;
 	}
 
-	@Retryable
 	@KafkaListener(
 			topics = "${dokdistdpv.topic.altinn-melding-hendelse}",
 			groupId = "dokdistdpv-kdist003")
