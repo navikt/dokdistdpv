@@ -63,9 +63,10 @@ public class BehandleAltinnMeldingHendelseService {
 			} else {
 				loggIngenBehandling(altinnEvent);
 			}
-
 		} catch (Exception e) {
-			throw new Kdist003Exception("kdist003 klarte ikke behandle hendelse. message=" + e.getMessage(), e);
+			String message = "kdist003 klarte ikke behandle hendelse. message=" + e.getMessage();
+			log.error(message, e);
+			throw new Kdist003Exception(message, e);
 		}
 	}
 
