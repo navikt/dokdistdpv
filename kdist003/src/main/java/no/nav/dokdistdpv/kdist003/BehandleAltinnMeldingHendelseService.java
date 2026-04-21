@@ -9,7 +9,7 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
-import no.nav.dokdistdpv.exception.Kdist003JsonProcessingException;
+import no.nav.dokdistdpv.exception.Kdist003Exception;
 import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,10 +18,11 @@ import org.springframework.stereotype.Component;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakMeldingsfeil;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakVarslingsfeil;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest.Oppslagsnoekkel.KONVERSASJONSID;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.IGNORERTE_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.HENDELSESTYPER_SOM_BEHANDLES;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_LEST_DATO_HENDELSESTYPER;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.SEND_TIL_PRINT_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateAltinnEvent;
@@ -51,33 +52,38 @@ public class BehandleAltinnMeldingHendelseService {
 
 		try {
 			AltinnEvent altinnEvent = altinnHendelseConsumerRecord.value();
-			log.info("kdist003 mottatt kafka-hendelse med resourceinstance={} og type={}", altinnEvent.resourceinstance(), altinnEvent.type());
+			log.info("kdist003 har mottatt hendelse med id={}, resourceinstance={}, type={}",
+					altinnEvent.id(), altinnEvent.resourceinstance(), altinnEvent.type());
 
 			validateAltinnEvent(altinnEvent);
 
-			if (IGNORERTE_HENDELSESTYPER.contains(altinnEvent.type())) {
-				loggIngenBehandlingHendelse(altinnEvent);
-				return;
+			if (HENDELSESTYPER_SOM_BEHANDLES.contains(altinnEvent.type())) {
+				InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(altinnEvent);
+				behandleHendelse(internAltinnHendelse);
+			} else {
+				loggIngenBehandling(altinnEvent);
 			}
 
-			InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(altinnEvent);
-			HentForsendelseResponse hentForsendelse = hentForsendelse(internAltinnHendelse.resourceinstance().toString());
-
-			if (hentForsendelse == null) {
-				log.info("Fant ikke forsendelse med konversasjonId={}", internAltinnHendelse.resourceinstance());
-				return;
-			}
-
-			behandleForsendelse(hentForsendelse, internAltinnHendelse);
 		} catch (Exception e) {
-			throw new Kdist003JsonProcessingException("kdist003 klarte ikke behandle kafka-hendelse. message=" + e.getMessage(), e);
+			throw new Kdist003Exception("kdist003 klarte ikke behandle hendelse. message=" + e.getMessage(), e);
 		}
+	}
+
+	private void behandleHendelse(InternAltinnHendelse internAltinnHendelse) {
+		HentForsendelseResponse hentForsendelse = hentForsendelse(internAltinnHendelse.resourceinstance().toString());
+
+		if (hentForsendelse == null) {
+			log.info("Fant ikke forsendelse med konversasjonId={}", internAltinnHendelse.resourceinstance());
+			return;
+		}
+
+		behandleForsendelse(hentForsendelse, internAltinnHendelse);
 	}
 
 	private void behandleForsendelse(HentForsendelseResponse hentForsendelse, InternAltinnHendelse internAltinnHendelse) {
 		if (SEND_TIL_PRINT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
 			administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(internAltinnHendelse.type(), hentForsendelse.forsendelseId()));
-		} else if (OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE.contains(internAltinnHendelse.type())) {
+		} else if (OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
 			if (FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus())) {
 				log.info("forsendelse med forsendelseId={} er allerede ekspedert", hentForsendelse.forsendelseId());
 				return;
@@ -101,17 +107,17 @@ public class BehandleAltinnMeldingHendelseService {
 		return isBlank(forsendelseId) ? null : administrerForsendelseConsumer.hentForsendelse(forsendelseId);
 	}
 
-	private void loggIngenBehandlingHendelse(AltinnEvent altinnEvent) {
-		log.info("Altinn hendelse med resourceinstance={} og type={} kan ikke behandles", altinnEvent.resourceinstance(), altinnEvent.type());
+	private void loggIngenBehandling(AltinnEvent altinnEvent) {
+		log.info("Hendelse med resourceinstance={}, type={} har ingen behandling", altinnEvent.resourceinstance(), altinnEvent.type());
 	}
 
 	private DistribuerTilNyKanalRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
-		if (MELDING_FEILET_HENDELSESTYPE.equals(eventType)) {
-			return arsakMeldingsfeil(forsendelseId);
-		} else if (VARSLING_FEILET_HENDELSESTYPE.equals(eventType)) {
-			return arsakVarslingsfeil(forsendelseId);
-		} else {
-			throw new UnsupportedOperationException("Kan ikke sende til print. eventType=" + eventType);
-		}
+		return switch (eventType) {
+			case MELDING_FEILET_HENDELSESTYPE -> arsakMeldingsfeil(forsendelseId);
+			case VARSLING_FEILET_HENDELSESTYPE, OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE ->
+					arsakVarslingsfeil(forsendelseId);
+			case null, default ->
+					throw new UnsupportedOperationException("Kan ikke sende til print. eventType=" + eventType);
+		};
 	}
 }
