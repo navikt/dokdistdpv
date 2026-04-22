@@ -3,7 +3,6 @@ package no.nav.dokdistdpv.kdist003;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +37,9 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalReq
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.VARSLINGSFEIL;
 import static no.nav.dokdistdpv.kdist003.BehandleAltinnMeldingHendelseService.FORSENDELSE_STATUS_EKSPEDERT;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_LEST_DATO_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -56,13 +57,14 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		stubAzure();
 	}
 
-	@Test
-	void shouldReadEventTypePublishedAndUpdateForsendelseStatusToEkspedert() {
+	@ParameterizedTest
+	@MethodSource
+	void shouldReadEventTypePublishedAndUpdateForsendelseStatusToEkspedert(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPutOppdaterForsendelse();
 
-		sendToInnTopic(createMelding(OPPDATER_TIL_EKSPEDERT_HENDELSESTYPE));
+		sendToInnTopic(createMelding(type));
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			try {
@@ -73,6 +75,10 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				fail();
 			}
 		});
+	}
+
+	static Stream<Arguments> shouldReadEventTypePublishedAndUpdateForsendelseStatusToEkspedert() {
+		return OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER.stream().map(Arguments::of);
 	}
 
 	@ParameterizedTest
@@ -96,10 +102,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	}
 
 	static Stream<Arguments> shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato() {
-		return Stream.of(
-				Arguments.of("no.altinn.correspondence.correspondencereceiverread"),
-				Arguments.of("no.altinn.correspondence.correspondencereceiverconfirmed")
-		);
+		return OPPDATER_LEST_DATO_HENDELSESTYPER.stream().map(Arguments::of);
 	}
 
 	@ParameterizedTest
@@ -127,7 +130,8 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	static Stream<Arguments> shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint() {
 		return Stream.of(
 				Arguments.of(MELDING_FEILET_HENDELSESTYPE, MELDINGSFEIL, ARSAK_PUBLISERING_FEILET),
-				Arguments.of(VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET)
+				Arguments.of(VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET),
+				Arguments.of(OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET)
 		);
 	}
 
