@@ -83,6 +83,9 @@ public class BehandleAltinnMeldingHendelseService {
 
 	private void behandleForsendelse(HentForsendelseResponse hentForsendelse, InternAltinnHendelse internAltinnHendelse) {
 		if (SEND_TIL_PRINT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
+			dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
+					.tilbakestillJournalpost(true)
+					.build());
 			administrerForsendelseConsumer.distribuerTilNyKanal(mapDistribuerTilPrint(internAltinnHendelse.type(), hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
 			if (FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus())) {
@@ -93,7 +96,6 @@ public class BehandleAltinnMeldingHendelseService {
 					OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_LEST_DATO_HENDELSESTYPER.contains(internAltinnHendelse.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
 			dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
-					.settStatusEkspedert(false)
 					.datoLest(internAltinnHendelse.time())
 					.build());
 		}

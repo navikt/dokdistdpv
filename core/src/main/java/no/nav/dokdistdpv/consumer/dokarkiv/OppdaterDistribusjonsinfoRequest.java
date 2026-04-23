@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 public class OppdaterDistribusjonsinfoRequest {
-	private Boolean settStatusEkspedert;
+	private boolean settStatusEkspedert;
 	private OffsetDateTime datoLest;
+	private boolean tilbakestillJournalpost;
 }

@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -111,11 +110,14 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		stubFinnForsendelse();
 		stubHentForsendelse();
 		stubPostDistribuerTilPrint();
+		stubPatchOppdaterDistribusjonsinfo();
 
 		sendToInnTopic(createMelding(type));
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			try {
+				verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+						.withRequestBody(matchingJsonPath("$.tilbakestillJournalpost", equalTo("true"))));
 				verify(postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH))
 						.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
 						.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
@@ -185,7 +187,6 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 	private void stubPatchOppdaterDistribusjonsinfo() {
 		stubFor(patch(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL))
-				.withRequestBody(containing("\"settStatusEkspedert\":false"))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withStatus(OK.value())));
