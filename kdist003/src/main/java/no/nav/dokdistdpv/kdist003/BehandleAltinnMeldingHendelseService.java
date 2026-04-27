@@ -34,6 +34,7 @@ public class BehandleAltinnMeldingHendelseService {
 
 	public static final String ARKIV_SYSTEM_JOARK = "Joark";
 	public static final String FORSENDELSE_STATUS_EKSPEDERT = "EKSPEDERT";
+	public static final String FORSENDELSE_STATUS_FEILET = "FEILET";
 
 	private final AdministrerForsendelseConsumer administrerForsendelseConsumer;
 	private final DokarkivConsumer dokarkivConsumer;
@@ -90,6 +91,10 @@ public class BehandleAltinnMeldingHendelseService {
 		} else if (OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
 			if (FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus())) {
 				log.info("forsendelse med forsendelseId={} er allerede ekspedert", hentForsendelse.forsendelseId());
+				return;
+			}
+			if (FORSENDELSE_STATUS_FEILET.equals(hentForsendelse.forsendelseStatus())) {
+				log.info("forsendelse med forsendelseId={} er satt til feilet. Oppdaterer ikke til ekspedert", hentForsendelse.forsendelseId());
 				return;
 			}
 			administrerForsendelseConsumer.oppdaterForsendelse(
