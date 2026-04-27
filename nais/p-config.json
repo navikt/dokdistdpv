@@ -20,7 +20,7 @@
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
-  "DOKDISTDPV_ENDPOINTS_ALTINN3_URL": "https://api.altinn.no",
+  "DOKDISTDPV_ENDPOINTS_ALTINN3_URL": "https://platform.altinn.no",
   "DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE": "altinn:serviceowner altinn:correspondence.write",
   "DOKDISTDPV_TOPIC_ALTINN_MELDING_HENDELSE" : "teamdokumenthandtering.privat-altinn-melding-hendelse",
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-prod-a63b",
