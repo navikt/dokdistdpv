@@ -110,6 +110,31 @@ public class Qdist016Altinn3IT extends AbstractQdist016IT {
 		});
 	}
 
+	@SneakyThrows
+	@Test
+	public void shouldProcessForsendelseOgRetryIntializeCorrespondence() {
+		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
+		stubPutOppdaterForsendelse(OK.value());
+		stubDownloadObject();
+		stubSafPostJournalpost();
+		stubAltinnInitializeAttachment("initialize-attachment-ok.json");
+		stubAltinnUploadAttachment("upload-attachment-ok.json");
+		stubAltinnInitializeCorrespondenceNotPublished();
+
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
+
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verifyPostCorrespondenceApiV1Attachment("100_forsendelseTittel.pdf", "forsendelseTittel", "f17a25259e4754b3df4b13a2a72de79c", "dokumentObjektReferanseHoveddok");
+			verifyPostCorrespondenceApiV1Attachment("101_Vedlegg1.pdf", "Vedlegg1", "650b8155c1c4eeb58d1a5fb531762813", "dokumentObjektReferanseVedlegg1");
+			verifyPostCorrespondenceApiV1Attachment("102_Vedlegg2.pdf", "Vedlegg2", "45eb5b02ee91526f43a8ff51bd191b59", "dokumentObjektReferanseVedlegg2");
+			verify(3, postRequestedFor(urlPathMatching("/altinn3/correspondence/api/v1/attachment/.*/upload")));
+			verify(postRequestedFor(urlEqualTo("/altinn3/correspondence/api/v1/correspondence"))
+					.withRequestBody(matchingJsonPath("$[?(@.existingAttachments.size() == 3)]")));
+			verify(putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL))
+					.withRequestBody(matchingJsonPath("$[?(@.forsendelseStatus == 'OVERSENDT')]")));
+		});
+	}
+
 	@Test
 	@SneakyThrows
 	public void shouldFailToTekniskFeilQueueOnAdministrerForsendelseServerError() {

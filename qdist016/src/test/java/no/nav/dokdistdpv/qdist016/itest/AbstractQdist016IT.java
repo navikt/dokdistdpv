@@ -23,9 +23,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -74,6 +76,24 @@ abstract class AbstractQdist016IT {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withTransformers("response-template")
 						.withBodyFile("altinn3/" + bodyFile)));
+	}
+
+	protected static void stubAltinnInitializeCorrespondenceNotPublished() {
+		stubFor(post(urlPathMatching("/altinn3/correspondence/api/v1/correspondence"))
+				.inScenario("attachmentNotPublished")
+				.whenScenarioStateIs(STARTED)
+				.willSetStateTo("retry")
+				.willReturn(aResponse()
+						.withStatus(BAD_REQUEST.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("altinn3/initialize-correspondence-attachment-not-published.json")));
+		stubFor(post(urlPathMatching("/altinn3/correspondence/api/v1/correspondence"))
+				.inScenario("attachmentNotPublished")
+				.whenScenarioStateIs("retry")
+				.willReturn(aResponse()
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withTransformers("response-template")
+						.withBodyFile("altinn3/initialize-correspondence-ok.json")));
 	}
 
 	protected static void stubAzure() {

@@ -28,6 +28,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 /// Klientimplementasjon av [Altinn.Correspondence.API](https://docs.altinn.studio/nb/api/correspondence/spec/#/)
+@Slf4j
 @Component
 public class Altinn3CorrespondenceClient {
 	private final RestClient restClientTexas;
@@ -94,7 +95,7 @@ public class Altinn3CorrespondenceClient {
 	///
 	/// Initialize Correspondences
 	@Retryable(retryFor = {DokdistdpvTechnicalException.class, AttachmentIsNotPublishedException.class}, maxAttempts = 6,
-			backoff = @Backoff(delay = 2000, multiplier = 1.2, maxDelay = 60000))
+			backoff = @Backoff(delay = 2000, multiplier = 3, maxDelay = 60000))
 	public InitializeCorrespondencesResponseExt initializeCorrespondence(InitializeCorrespondencesExt initializeCorrespondencesExt) {
 		return restClientTexas.post()
 				.uri("/correspondence/api/v1/correspondence")
@@ -116,6 +117,7 @@ public class Altinn3CorrespondenceClient {
 		if (response.getStatusCode().is4xxClientError()) {
 			int errorCode = mapErrorCode(problemDetail);
 			if (errorCode == ATTACHMENT_IS_NOT_PUBLISHED) {
+				log.info("initializeCorrespondence gir errorCode={}, forsøker retry", ATTACHMENT_IS_NOT_PUBLISHED);
 				throw new AttachmentIsNotPublishedException(feilmelding.formatted(problemDetail));
 			}
 			throw new AltinnException(feilmelding.formatted(problemDetail));
