@@ -20,7 +20,6 @@
 		<module>core</module>
 		<module>qdist016</module>
 		<module>altinn-schemas</module>
-		<module>sdist007</module>
 		<module>kdist003</module>
 	</modules>
 
@@ -65,11 +64,6 @@
 			<dependency>
 				<groupId>no.nav.dokdistdpv</groupId>
 				<artifactId>qdist016</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.dokdistdpv</groupId>
-				<artifactId>sdist007</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

@@ -19,10 +19,6 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.dokdistdpv</groupId>
-			<artifactId>sdist007</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.dokdistdpv</groupId>
 			<artifactId>kdist003</artifactId>
 		</dependency>
 	</dependencies>
