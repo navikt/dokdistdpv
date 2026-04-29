@@ -11,7 +11,6 @@ spec:
       mountPath: /var/run/secrets/nais_secrets
   envFrom:
     - secret: {{ DOKDISTDPV_SECRETS }}
-    - secret: altinn2-taushetsbelagt-post
   env:
     - name: JAVA_TRUSTSTORE_OPTIONS
       value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
@@ -61,16 +60,6 @@ spec:
       value: {{ DOKDISTMELLOMLAGER_KEYRING }}
     - name: DOKDISTMELLOMLAGER_KEYID
       value: {{ DOKDISTMELLOMLAGER_KEYID }}
-    - name: NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS
-      value: {{ NAV_VIRKSOMHETSSERTIFIKAT_CREDENTIALS }}
-    - name: NAV_VIRKSOMHETSSERTIFIKAT_KEY
-      value: {{ NAV_VIRKSOMHETSSERTIFIKAT_KEY }}
-    - name: ALTINN_ENDPOINT
-      value: {{ ALTINN_ENDPOINT }}
-    - name: ALTINN_SERVICE_CODE
-      value: "{{ ALTINN_SERVICE_CODE }}"
-    - name: ALTINN_SERVICE_EDITION_CODE
-      value: "{{ ALTINN_SERVICE_EDITION_CODE }}"
     - name: SAF_BASE_URL
       value: {{ SAF_BASE_URL }}
     - name: SAF_SCOPE
@@ -109,11 +98,6 @@ spec:
     requests:
       cpu: 60m
       memory: 1024Mi
-  vault:
-    enabled: true
-    paths:
-      - kvPath: {{ NAV_VIRKSOMHETSSERTIFIKAT_VAULT }}
-        mountPath: "/secrets/virksomhetssertifikat"
   observability:
     autoInstrumentation:
       enabled: true

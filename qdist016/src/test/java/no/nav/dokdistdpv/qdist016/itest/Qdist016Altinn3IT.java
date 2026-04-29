@@ -48,8 +48,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @EnableAutoConfiguration
 @SpringBootTest(
 		classes = {ApplicationTestConfig.class},
-		webEnvironment = RANDOM_PORT,
-		properties = {"dokdistdpv.qdist016.altinn3=true"}
+		webEnvironment = RANDOM_PORT
 )
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
@@ -303,7 +302,6 @@ public class Qdist016Altinn3IT extends AbstractQdist016IT {
 		when(encryptedBucketStorage.downloadObject(eq(DOKUMENT_OBJEKT_REFERANSE_VEDLEGG1), anyString()))
 				.thenThrow(new ObjectDownloadFailedException("Object not found", new Throwable()));
 	}
-
 
 	private void stubDokdistGetForsendelse(HttpStatus status) {
 		stubFor(get(urlEqualTo(HENTFORSENDELSE_URL))

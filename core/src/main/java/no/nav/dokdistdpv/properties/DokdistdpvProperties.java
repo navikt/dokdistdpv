@@ -23,7 +23,6 @@ public class DokdistdpvProperties {
 	@Data
 	public static class Qdist016 {
 		private boolean autostartup;
-		private boolean altinn3;
 		@Positive
 		private int altinn3VedleggZipGrense;
 	}

@@ -31,8 +31,4 @@
 	<logger name="no.nav.dokdistdpv" level="INFO" additivity="false">
 		<appender-ref ref="applikasjonslogg"/>
 	</logger>
-
-	<logger name="org.apache.cxf.services" level="INFO" additivity="false">
-		<appender-ref ref="teamLogs"/>
-	</logger>
 </included>

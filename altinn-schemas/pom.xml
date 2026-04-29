@@ -14,10 +14,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>jakarta.xml.ws</groupId>
-			<artifactId>jakarta.xml.ws-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>jakarta.annotation</groupId>
 			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
@@ -33,36 +29,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf-bom.version}</version>
-				<executions>
-					<execution>
-						<id>wsdl2java-generate</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-						<configuration>
-							<wsdlOptions>
-								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/wsdl/CorrespondenceAgencyExternalEC2.wsdl</wsdl>
-									<extraargs>
-										<extraarg>-autoNameResolution</extraarg>
-										<extraarg>-p</extraarg>
-										<extraarg>no.altinn.correspondenceagencyexternalaec</extraarg>
-									</extraargs>
-									<wsdlLocation>classpath:wsdl/CorrespondenceAgencyExternalEC2.wsdl</wsdlLocation>
-									<bindingFiles>
-										<bindingFile>${basedir}/src/main/resources/CorrespondenceAgencyExternalEC2Binding.xml</bindingFile>
-									</bindingFiles>
-								</wsdlOption>
-							</wsdlOptions>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
