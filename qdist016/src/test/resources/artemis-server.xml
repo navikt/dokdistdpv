@@ -30,11 +30,6 @@
 					<queue name="qdist016_boq"/>
 				</anycast>
 			</address>
-			<address name="qdist009">
-				<anycast>
-					<queue name="qdist009"/>
-				</anycast>
-			</address>
 		</addresses>
 	</core>
 </configuration>
