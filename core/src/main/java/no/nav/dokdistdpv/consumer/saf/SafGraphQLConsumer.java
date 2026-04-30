@@ -1,8 +1,8 @@
 package no.nav.dokdistdpv.consumer.saf;
 
-import no.nav.dokdistdpv.config.SafGraphQLConfig;
 import no.nav.dokdistdpv.exception.SafGraphQLFunctionalException;
 import no.nav.dokdistdpv.exception.SafGraphQLTechnicalException;
+import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import no.nav.dokdistdpv.utils.MDCOperations;
@@ -12,6 +12,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 public class SafGraphQLConsumer {
@@ -19,14 +21,16 @@ public class SafGraphQLConsumer {
 	private final WebClient safGraphQLClient;
 	private final JournalpostValidator journalpostValidator;
 
-	public SafGraphQLConsumer(AzureToken azureToken,
-							  WebClient safGraphQLClient,
-							  SafGraphQLConfig safGraphQLConfig,
+	public SafGraphQLConsumer(DokdistdpvProperties dokdistdpvProperties,
+							  AzureToken azureToken,
+							  WebClient.Builder webClientBuilder,
 							  JournalpostValidator journalpostValidator) {
 		this.journalpostValidator = journalpostValidator;
-		this.safGraphQLClient = safGraphQLClient
-				.mutate()
-				.filter(new WebClientAzureAuthentication(azureToken, safGraphQLConfig.getScope()))
+		this.safGraphQLClient = webClientBuilder
+				.clone()
+				.baseUrl(dokdistdpvProperties.getEndpoints().getSaf().getUrl())
+				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.filter(new WebClientAzureAuthentication(azureToken, dokdistdpvProperties.getEndpoints().getSaf().getScope()))
 				.build();
 	}
 

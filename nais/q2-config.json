@@ -15,17 +15,17 @@
   "DOKDISTDPV_JMS_QUEUES_QDIST016": "QA.Q2_DOKDISTDPV.QDIST016_DIST_TIL_DPV",
   "DOKDISTDPV_JMS_QUEUES_QDIST016_TEKNISK_FEIL": "QA.Q2_DOKDISTDPV.QDIST016_DIST_TIL_DPV_BOQ",
   "DOKDISTDPV_JMS_QUEUES_QDIST016_FUNKSJONELL_FEIL": "QA.Q2_DOKDISTDPV.QDIST016_FUNK_FEIL",
+  "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "http://dokdistadmin.teamdokumenthandtering.svc.nais.local/rest/v1/administrerforsendelse",
   "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
-  "DOKDISTDPV_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.dev.intern.nav.no/rest/v1/administrerforsendelse",
-  "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest",
+  "DOKDISTDPV_ENDPOINTS_DOKARKIV_URL": "http://dokarkiv.teamdokumenthandtering.svc.nais.local/rest",
   "DOKDISTDPV_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
+  "DOKDISTDPV_ENDPOINTS_SAF_URL": "http://saf.teamdokumenthandtering.svc.nais.local/graphql",
+  "DOKDISTDPV_ENDPOINTS_SAF_SCOPE": "api://dev-fss.teamdokumenthandtering.saf/.default",
   "DOKDISTDPV_ENDPOINTS_ALTINN3_URL": "https://platform.tt02.altinn.no",
   "DOKDISTDPV_ENDPOINTS_ALTINN3_SCOPE": "altinn:serviceowner altinn:correspondence.write",
   "DOKDISTDPV_TOPIC_ALTINN_MELDING_HENDELSE" : "teamdokumenthandtering.privat-altinn-melding-hendelse",
   "DOKDISTMELLOMLAGER_PROJECTID": "teamdokumenthandteri-dev-2c5a",
   "DOKDISTMELLOMLAGER_BUCKET": "dokdistmellomlager-dev",
   "DOKDISTMELLOMLAGER_KEYRING": "dokdistmellomlager-keyring-dev",
-  "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric-dev",
-  "SAF_BASE_URL": "https://saf.dev.intern.nav.no/graphql",
-  "SAF_SCOPE": "api://dev-fss.teamdokumenthandtering.saf/.default"
+  "DOKDISTMELLOMLAGER_KEYID": "dokdistmellomlager-symmetric-dev"
 }

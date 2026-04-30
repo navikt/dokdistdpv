@@ -37,6 +37,9 @@ public class DokdistdpvProperties {
 		private AppEndpoint dokarkiv;
 		@NotNull
 		@Valid
+		private AppEndpoint saf;
+		@NotNull
+		@Valid
 		private AppEndpoint altinn3;
 	}
 
