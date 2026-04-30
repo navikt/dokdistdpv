@@ -43,11 +43,6 @@ public class JmsConfig {
 	}
 
 	@Bean
-	public Queue qdist009(JmsQueueProperties jmsQueueProperties) throws JMSException {
-		return new MQQueue(jmsQueueProperties.getQueues().getQdist009());
-	}
-
-	@Bean
 	public ConnectionFactory connectionFactory(final JmsQueueProperties jmsQueueProperties,
 											   final ServiceuserProperties serviceuserProperties) throws JMSException {
 		return createConnectionFactory(jmsQueueProperties, serviceuserProperties);

@@ -33,8 +33,7 @@ import static org.springframework.http.HttpStatus.OK;
 @EnableAutoConfiguration
 @SpringBootTest(
 		classes = {ApplicationTestConfig.class},
-		webEnvironment = RANDOM_PORT,
-		properties = {"dokdistdpv.qdist016.altinn3=true"}
+		webEnvironment = RANDOM_PORT
 )
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
