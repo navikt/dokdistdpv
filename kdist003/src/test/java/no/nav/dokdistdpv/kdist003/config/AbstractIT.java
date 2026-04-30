@@ -1,13 +1,13 @@
 package no.nav.dokdistdpv.kdist003.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
@@ -25,7 +25,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		classes = {ApplicationTestConfig.class},
 		webEnvironment = NONE
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 @EmbeddedKafka(partitions = 1, topics = {"altinn-melding-hendelse"},
 		brokerProperties = {
 				"offsets.topic.replication.factor=1",
@@ -42,7 +42,7 @@ public abstract class AbstractIT {
 
 
 	@Autowired
-	protected ObjectMapper objectMapper;
+	protected JsonMapper jsonMapper;
 	@Autowired
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
 	@Autowired
@@ -59,7 +59,7 @@ public abstract class AbstractIT {
 
 	@SneakyThrows
 	protected void sendToInnTopic(AltinnEvent altinnEvent) {
-		kafkaTemplate.send(PRIVAT_ALTINN_MELDING_TOPIC, objectMapper.writeValueAsString(altinnEvent))
+		kafkaTemplate.send(PRIVAT_ALTINN_MELDING_TOPIC, jsonMapper.writeValueAsString(altinnEvent))
 				.get(10, TimeUnit.SECONDS);
 	}
 }

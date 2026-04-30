@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.jms.core.JmsTemplate;
-import wiremock.org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -161,11 +160,8 @@ abstract class AbstractQdist016IT {
 	}
 
 	protected static String classpathToString(String classpathResource) throws IOException {
-		try {
-			InputStream inputStream = new ClassPathResource(classpathResource).getInputStream();
-			String message = IOUtils.toString(inputStream, UTF_8);
-			IOUtils.closeQuietly(inputStream);
-			return message;
+		try (InputStream inputStream = new ClassPathResource(classpathResource).getInputStream()) {
+			return new String(inputStream.readAllBytes(), UTF_8);
 		} catch (IOException e) {
 			throw new IOException(format("Kunne ikke åpne classpath-ressurs %s", classpathResource), e);
 		}
