@@ -102,8 +102,6 @@ spec:
     autoInstrumentation:
       enabled: true
       runtime: java
-      destinations:
-        - id: "elastic-apm"
     logging:
       destinations:
         - id: elastic
@@ -111,7 +109,6 @@ spec:
   azure:
     application:
       enabled: true
-  leaderElection: true
   kafka:
     pool: {{ KAFKA_POOL }}
   maskinporten:
