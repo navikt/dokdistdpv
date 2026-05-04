@@ -1,5 +1,6 @@
 package no.nav.dokdistdpv.kdist003.config;
 
+import jakarta.jms.ConnectionFactory;
 import no.nav.dokdistdpv.cloudstorage.EncryptedBucketStorage;
 import no.nav.dokdistdpv.config.AzureConfig;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
@@ -41,6 +42,11 @@ public class ApplicationTestConfig {
 	@Bean
 	public CommonErrorHandler noRetryErrorHandler() {
 		return new DefaultErrorHandler(new FixedBackOff(0L, 0L));
+	}
+
+	@Bean
+	public ConnectionFactory connectionFactory() {
+		return mock(ConnectionFactory.class);
 	}
 
 }

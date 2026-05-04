@@ -1,20 +1,19 @@
 package no.nav.dokdistdpv.security;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistdpv.config.AzureConfig;
 import no.nav.dokdistdpv.exception.AzureTokenException;
 import no.nav.dokdistdpv.exception.DokdistdpvFunctionalException;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Map;
 
@@ -26,18 +25,18 @@ import static no.nav.dokdistdpv.config.LokalCacheConfig.AZURE_TOKEN_CACHE;
 public class AzureToken {
 
     private final AzureConfig azureConfig;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final WebClient azureClient;
 
     public AzureToken(AzureConfig azureConfig,
-                      ObjectMapper objectMapper,
+                      JsonMapper jsonMapper,
                       WebClient azureClient) {
         this.azureConfig = azureConfig;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
         this.azureClient = azureClient;
     }
 
-    @Retryable(retryFor = DokdistdpvFunctionalException.class, backoff = @Backoff(delay = 2000))
+    @Retryable(includes = DokdistdpvFunctionalException.class, delay = 2000)
     @Cacheable(AZURE_TOKEN_CACHE)
     public String accessToken(String scope) {
 		return fetchAccessToken(scope);
@@ -59,9 +58,9 @@ public class AzureToken {
                 .block();
 
         try {
-            Map<String, Object> tokenData = objectMapper.readValue(responseJson, Map.class);
+            Map<String, Object> tokenData = jsonMapper.readValue(responseJson, Map.class);
             return (String) tokenData.get("access_token");
-        } catch (JsonProcessingException | ClassCastException e) {
+        } catch (JacksonException | ClassCastException e) {
             throw new AzureTokenException(format("Klarte ikke parse token fra Azure. Feilmelding=%s", e.getMessage()), e);
         }
     }

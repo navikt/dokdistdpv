@@ -2,13 +2,13 @@ package no.nav.dokdistdpv;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.resilience.annotation.EnableResilientMethods;
 
 import java.time.Clock;
 import java.time.ZoneId;
 
 @Configuration
-@EnableRetry
+@EnableResilientMethods
 public class CoreConfig {
 
 	public static final ZoneId ZONE_ID_EUROPE_OSLO = ZoneId.of("Europe/Oslo");

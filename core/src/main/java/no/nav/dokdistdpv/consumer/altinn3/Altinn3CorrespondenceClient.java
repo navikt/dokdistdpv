@@ -1,8 +1,5 @@
 package no.nav.dokdistdpv.consumer.altinn3;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.services.altinn3.openapi.domain.AttachmentOverviewExt;
 import no.altinn.services.altinn3.openapi.domain.InitializeAttachmentExt;
@@ -15,10 +12,11 @@ import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -32,18 +30,18 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 @Component
 public class Altinn3CorrespondenceClient {
 	private final RestClient restClientTexas;
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final String altinn3CorrespondenceWriteScopes;
 
 	public Altinn3CorrespondenceClient(RestClient restClientTexas,
 									   DokdistdpvProperties dokdistdpvProperties,
-									   ObjectMapper objectMapper) {
+									   JsonMapper jsonMapper) {
 		this.restClientTexas = restClientTexas.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getAltinn3().getUrl())
 				.build();
 
 		this.altinn3CorrespondenceWriteScopes = dokdistdpvProperties.getEndpoints().getAltinn3().getScope();
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 	}
 
 	/// [Initialize Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment)
@@ -51,7 +49,7 @@ public class Altinn3CorrespondenceClient {
 	/// Initialize a new Attachment to be shared in correspondences
 	///
 	/// @return Attachment Id
-	@Retryable(retryFor = DokdistdpvTechnicalException.class)
+	@Retryable(includes = DokdistdpvTechnicalException.class)
 	public String initializeAttachment(InitializeAttachmentExt initializeAttachmentExt) {
 		String json = restClientTexas.post()
 				.uri("/correspondence/api/v1/attachment")
@@ -66,8 +64,8 @@ public class Altinn3CorrespondenceClient {
 				})
 				.body(String.class);
 		try {
-			return objectMapper.readValue(json, String.class);
-		} catch (JsonProcessingException _) {
+			return jsonMapper.readValue(json, String.class);
+		} catch (JacksonException _) {
 			throw new DokdistdpvTechnicalException("Klarte ikke å deserialisere json");
 		}
 	}
@@ -75,7 +73,7 @@ public class Altinn3CorrespondenceClient {
 	/// [Upload Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload)
 	///
 	/// Initialize Correspondences and uploads attachments in the same request
-	@Retryable(retryFor = DokdistdpvTechnicalException.class)
+	@Retryable(includes = DokdistdpvTechnicalException.class)
 	public AttachmentOverviewExt uploadAttachment(String attachmentId, byte[] attachment) {
 		return restClientTexas.post()
 				.uri("/correspondence/api/v1/attachment/{attachmentId}/upload", attachmentId)
@@ -94,8 +92,8 @@ public class Altinn3CorrespondenceClient {
 	/// [Upload Attachment](https://docs.altinn.studio/nb/api/correspondence/spec/#/Attachment/post_correspondence_api_v1_attachment__attachmentId__upload)
 	///
 	/// Initialize Correspondences
-	@Retryable(retryFor = {DokdistdpvTechnicalException.class, AttachmentIsNotPublishedException.class}, maxAttempts = 6,
-			backoff = @Backoff(delay = 2000, multiplier = 3, maxDelay = 60000))
+	@Retryable(includes = {DokdistdpvTechnicalException.class, AttachmentIsNotPublishedException.class}, maxRetries = 5,
+			delay = 2000, multiplier = 3, maxDelay = 60000)
 	public InitializeCorrespondencesResponseExt initializeCorrespondence(InitializeCorrespondencesExt initializeCorrespondencesExt) {
 		return restClientTexas.post()
 				.uri("/correspondence/api/v1/correspondence")
@@ -134,8 +132,8 @@ public class Altinn3CorrespondenceClient {
 	private ProblemDetails mapProblemDetail(ClientHttpResponse response) throws IOException {
 		byte[] body = response.getBody().readAllBytes();
 		try {
-			return objectMapper.readValue(body, ProblemDetails.class);
-		} catch (JsonMappingException _) {
+			return jsonMapper.readValue(body, ProblemDetails.class);
+		} catch (JacksonException _) {
 			return ProblemDetails.builder()
 					.status(response.getStatusCode().value())
 					.detail(new String(body))

@@ -12,8 +12,7 @@ import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import no.nav.dokdistdpv.utils.NavHeadersFilter;
-import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,6 +22,7 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.util.unit.DataSize.ofMegabytes;
 
 @Slf4j
 @Component
@@ -32,7 +32,7 @@ public class AdministrerForsendelseConsumer {
 
 	public AdministrerForsendelseConsumer(WebClient webClient,
 										  DokdistdpvProperties dokdistdpvProperties,
-										  AzureToken azureToken, HttpCodecsProperties codecsProperties) {
+										  AzureToken azureToken) {
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistdpvProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken,
@@ -41,12 +41,12 @@ public class AdministrerForsendelseConsumer {
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.exchangeStrategies(ExchangeStrategies.builder()
 						.codecs(configurer ->
-								configurer.defaultCodecs().maxInMemorySize((int) codecsProperties.getMaxInMemorySize().toBytes()))
+								configurer.defaultCodecs().maxInMemorySize((int) ofMegabytes(10).toBytes()))
 						.build())
 				.build();
 	}
 
-	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	@Retryable(includes = AdministrerForsendelseTechnicalException.class)
 	public HentForsendelseResponse hentForsendelse(final String forsendelseId) {
 
 		log.info("hentForsendelse henter forsendelse med forsendelseId={}", forsendelseId);
@@ -65,7 +65,7 @@ public class AdministrerForsendelseConsumer {
 		return response;
 	}
 
-	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	@Retryable(includes = AdministrerForsendelseTechnicalException.class)
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelse) {
 		log.info("oppdaterForsendelse oppdaterer forsendelse med forsendelseId={}", oppdaterForsendelse.forsendelseId());
 
@@ -91,7 +91,7 @@ public class AdministrerForsendelseConsumer {
 		}
 	}
 
-	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	@Retryable(includes = AdministrerForsendelseTechnicalException.class)
 	public String finnForsendelse(final FinnForsendelseRequest finnForsendelseRequest) {
 		var oppslagsnoekkel = finnForsendelseRequest.oppslagsnoekkel();
 		var verdi = finnForsendelseRequest.verdi();
@@ -112,7 +112,7 @@ public class AdministrerForsendelseConsumer {
 		return response;
 	}
 
-	@Retryable(retryFor = AdministrerForsendelseTechnicalException.class)
+	@Retryable(includes = AdministrerForsendelseTechnicalException.class)
 	public void distribuerTilNyKanal(final DistribuerTilNyKanalRequest distribuerTilNyKanalRequest) {
 
 		log.info("distribuerTilNyKanal distribuerer forsendelse med forsendelseId={} til print", distribuerTilNyKanalRequest.forsendelseId());

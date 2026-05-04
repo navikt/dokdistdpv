@@ -5,7 +5,7 @@ import no.nav.dokdistdpv.exception.DokarkivTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -29,7 +29,7 @@ public class DokarkivConsumer {
 				.build();
 	}
 
-	@Retryable(retryFor = DokarkivTechnicalException.class)
+	@Retryable(includes = DokarkivTechnicalException.class)
 	public void oppdaterDistribusjonsinfo(String journalpostId, OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest) {
 		log.info("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere datoLest for journalpostId={}", journalpostId);
 
