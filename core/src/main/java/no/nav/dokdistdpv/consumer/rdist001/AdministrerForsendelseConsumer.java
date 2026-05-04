@@ -8,10 +8,12 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
 import no.nav.dokdistdpv.exception.AdministrerForsendelseFunctionalException;
 import no.nav.dokdistdpv.exception.AdministrerForsendelseTechnicalException;
+import no.nav.dokdistdpv.exception.KanIkkeDistribuereTilNyKanalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
 import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import no.nav.dokdistdpv.utils.NavHeadersFilter;
+import org.springframework.http.HttpStatus;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -127,6 +129,10 @@ public class AdministrerForsendelseConsumer {
 
 	private Throwable mapError(Throwable error) {
 		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
+			if(response.getStatusCode() == HttpStatus.CONFLICT) {
+				String responseBody = response.getResponseBodyAsString();
+				throw new KanIkkeDistribuereTilNyKanalException("distribuerTilNyKanal feilet. " + responseBody, response);
+			}
 			return new AdministrerForsendelseFunctionalException(
 					format("Kall mot AdministrerForsendelse feilet med status=%s, feilmelding=%s",
 							response.getStatusCode(),
