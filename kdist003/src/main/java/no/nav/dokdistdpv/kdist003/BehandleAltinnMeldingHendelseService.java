@@ -9,6 +9,7 @@ import no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest;
 import no.nav.dokdistdpv.consumer.rdist001.domain.HentForsendelseResponse;
 import no.nav.dokdistdpv.consumer.rdist001.domain.OppdaterForsendelseRequest;
+import no.nav.dokdistdpv.exception.KanIkkeDistribuereTilNyKanalException;
 import no.nav.dokdistdpv.exception.Kdist003Exception;
 import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -64,6 +65,8 @@ public class BehandleAltinnMeldingHendelseService {
 			} else {
 				loggIngenBehandling(altinnEvent);
 			}
+		} catch(KanIkkeDistribuereTilNyKanalException e) {
+			log.info("Kan ikke distribuere til ny kanal. Avslutter behandling av hendelsen", e);
 		} catch (Exception e) {
 			String message = "kdist003 klarte ikke behandle hendelse. message=" + e.getMessage();
 			log.error(message, e);
@@ -84,6 +87,10 @@ public class BehandleAltinnMeldingHendelseService {
 
 	private void behandleForsendelse(HentForsendelseResponse hentForsendelse, InternAltinnHendelse internAltinnHendelse) {
 		if (SEND_TIL_PRINT_HENDELSESTYPER.contains(internAltinnHendelse.type())) {
+			if (FORSENDELSE_STATUS_FEILET.equals(hentForsendelse.forsendelseStatus())) {
+				log.info("forsendelse med forsendelseId={} er satt til feilet. Sender ikke denne til ny kanal", hentForsendelse.forsendelseId());
+				return;
+			}
 			dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
 					.tilbakestillJournalpost(true)
 					.build());
