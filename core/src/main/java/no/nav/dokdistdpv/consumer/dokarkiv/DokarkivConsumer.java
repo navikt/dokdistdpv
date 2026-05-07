@@ -31,8 +31,6 @@ public class DokarkivConsumer {
 
 	@Retryable(includes = DokarkivTechnicalException.class)
 	public void oppdaterDistribusjonsinfo(String journalpostId, OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest) {
-		log.info("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere datoLest for journalpostId={}", journalpostId);
-
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
 						.path(JOURNALPOST_API_URL + "/{journalpostId}/oppdaterDistribusjonsinfo")

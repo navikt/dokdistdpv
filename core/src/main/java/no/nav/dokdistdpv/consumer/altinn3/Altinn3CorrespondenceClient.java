@@ -8,6 +8,7 @@ import no.altinn.services.altinn3.openapi.domain.InitializeCorrespondencesRespon
 import no.altinn.services.altinn3.openapi.domain.ProblemDetails;
 import no.nav.dokdistdpv.consumer.altinn3.api.correspondence.exceptions.AttachmentIsNotPublishedException;
 import no.nav.dokdistdpv.exception.AltinnException;
+import no.nav.dokdistdpv.exception.AltinnRecipientsLackRequiredRolesException;
 import no.nav.dokdistdpv.exception.DokdistdpvTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import org.springframework.http.HttpStatusCode;
@@ -21,6 +22,7 @@ import tools.jackson.databind.json.JsonMapper;
 import java.io.IOException;
 
 import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.CorrespondenceErrorCodes.ATTACHMENT_IS_NOT_PUBLISHED;
+import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.CorrespondenceErrorCodes.RECIPIENTS_LACK_REQUIRED_ROLES;
 import static no.nav.dokdistdpv.consumer.token.NaisTexasRequestInterceptor.MASKINPORTEN_TARGET_SCOPES;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
@@ -116,7 +118,9 @@ public class Altinn3CorrespondenceClient {
 			int errorCode = mapErrorCode(problemDetail);
 			if (errorCode == ATTACHMENT_IS_NOT_PUBLISHED) {
 				log.info("initializeCorrespondence gir errorCode={}, forsøker retry", ATTACHMENT_IS_NOT_PUBLISHED);
-				throw new AttachmentIsNotPublishedException(feilmelding.formatted(problemDetail));
+				throw new AttachmentIsNotPublishedException("Attachments er ikke publisert");
+			} else if(errorCode == RECIPIENTS_LACK_REQUIRED_ROLES) {
+				throw new AltinnRecipientsLackRequiredRolesException("Organisasjonen har ingen som kan lese correspondence");
 			}
 			throw new AltinnException(feilmelding.formatted(problemDetail));
 		} else {
