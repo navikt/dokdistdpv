@@ -24,7 +24,7 @@ public class RestClientConfig {
 	private static JdkClientHttpRequestFactory jdkClientHttpRequestFactory() {
 		return ClientHttpRequestFactoryBuilder.jdk()
 				.withCustomizer(jdkClientHttpRequestFactory ->
-						jdkClientHttpRequestFactory.setReadTimeout(Duration.ofSeconds(60)))
+						jdkClientHttpRequestFactory.setReadTimeout(Duration.ofSeconds(180)))
 				.build();
 	}
 }
