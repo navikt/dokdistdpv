@@ -11,15 +11,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.wiremock.spring.EnableWireMock;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.wiremock.spring.EnableWireMock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
@@ -30,6 +34,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.ARSAK_PUBLISERING_FEILET;
+import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.MELDINGSFEIL;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,8 +68,8 @@ public class Qdist016Altinn3IT extends AbstractQdist016IT {
 	private static final String VEDLEGG1_TEST_CONTENT = "VEDLEGG1_TEST_CONTENT";
 	private static final String VEDLEGG2_TEST_CONTENT = "VEDLEGG2_TEST_CONTENT";
 
-	private static final String HENTFORSENDELSE_URL = "/rest/v1/administrerforsendelse/" + FORSENDELSE_ID;
-	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
+	private static final String HENTFORSENDELSE_URL = "/administrerforsendelse/" + FORSENDELSE_ID;
+	private static final String OPPDATERFORSENDELSE_URL = "/administrerforsendelse/oppdaterforsendelse";
 	private static final String QDIST016_MELDING = "__files/qdist016-happy.xml";
 
 	@MockitoBean
@@ -131,6 +137,32 @@ public class Qdist016Altinn3IT extends AbstractQdist016IT {
 					.withRequestBody(matchingJsonPath("$[?(@.existingAttachments.size() == 3)]")));
 			verify(putRequestedFor(urlPathEqualTo(OPPDATERFORSENDELSE_URL))
 					.withRequestBody(matchingJsonPath("$[?(@.forsendelseStatus == 'OVERSENDT')]")));
+		});
+	}
+
+	@SneakyThrows
+	@Test
+	public void shouldDistribuerTilNyKanalWhenAltinnErrorCode1044() {
+		stubDokdistGetForsendelse("administrerForsendelse/getForsendelse-happy.json");
+		stubPutOppdaterForsendelse(OK.value());
+		stubDownloadObject();
+		stubSafPostJournalpost();
+		stubAltinnInitializeAttachment("initialize-attachment-ok.json");
+		stubAltinnUploadAttachment("upload-attachment-ok.json");
+		stubAltinnInitializeCorrespondence("initialize-correspondence-lacks-roles.json", BAD_REQUEST);
+		stubPatchOppdaterDistribusjonsinfo();
+		stubPostDistribuerTilPrint();
+
+		sendStringMessage(qdist016, classpathToString(QDIST016_MELDING), MDCOperations.getCallId());
+
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+					.withRequestBody(matchingJsonPath("$.tilbakestillJournalpost", equalTo("true"))));
+			verify(postRequestedFor(urlEqualTo(DISTRIBUERTILPRINT_PATH))
+					.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
+					.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
+					.withRequestBody(matchingJsonPath("$.arsak", equalTo(MELDINGSFEIL)))
+					.withRequestBody(matchingJsonPath("$.arsakBeskrivelse", equalTo(ARSAK_PUBLISERING_FEILET))));
 		});
 	}
 
@@ -322,5 +354,19 @@ public class Qdist016Altinn3IT extends AbstractQdist016IT {
 				.willReturn(aResponse()
 						.withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
+	}
+
+	private void stubPatchOppdaterDistribusjonsinfo() {
+		stubFor(patch(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+				.willReturn(aResponse()
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())));
+	}
+
+	private void stubPostDistribuerTilPrint() {
+		stubFor(post(DISTRIBUERTILPRINT_PATH)
+				.willReturn(aResponse()
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())));
 	}
 }

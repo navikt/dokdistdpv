@@ -5,6 +5,8 @@ import org.apache.camel.Processor;
 
 import static no.nav.dokdistdpv.utils.MDCOperations.removeCallId;
 import static no.nav.dokdistdpv.utils.MDCOperations.removeConsumerId;
+import static no.nav.dokdistdpv.utils.MDCOperations.removeForsendelseId;
+import static no.nav.dokdistdpv.utils.MDCOperations.removeRequestId;
 
 public class MDCRemoveProcessor implements Processor {
 
@@ -12,5 +14,7 @@ public class MDCRemoveProcessor implements Processor {
 	public void process(Exchange exchange) {
 		removeCallId();
 		removeConsumerId();
+		removeRequestId();
+		removeForsendelseId();
 	}
 }

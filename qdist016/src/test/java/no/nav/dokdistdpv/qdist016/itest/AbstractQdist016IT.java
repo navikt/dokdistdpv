@@ -6,6 +6,7 @@ import jakarta.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 
 import java.io.IOException;
@@ -33,8 +34,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 abstract class AbstractQdist016IT {
 
 	private static final String FORSENDELSE_ID = "256569";
-	protected static final String HENTFORSENDELSE_URL = "/rest/v1/administrerforsendelse/" + FORSENDELSE_ID;
-	protected static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
+	protected static final String HENTFORSENDELSE_URL = "/administrerforsendelse/" + FORSENDELSE_ID;
+	protected static final String OPPDATERFORSENDELSE_URL = "/administrerforsendelse/oppdaterforsendelse";
+	protected static final String OPPDATERDISTRIBUSJONSINFO_URL = "/dokarkiv/journalpostapi/v1/journalpost/\\d+/oppdaterDistribusjonsinfo";
+	protected static final String DISTRIBUERTILPRINT_PATH = "/administrerforsendelse/distribuertilnykanal";
 
 	@Autowired
 	protected JmsTemplate jmsTemplate;
@@ -70,8 +73,13 @@ abstract class AbstractQdist016IT {
 	}
 
 	protected static void stubAltinnInitializeCorrespondence(String bodyFile) {
+		stubAltinnInitializeCorrespondence(bodyFile,  OK);
+	}
+
+	protected static void stubAltinnInitializeCorrespondence(String bodyFile, HttpStatus httpStatus) {
 		stubFor(post(urlPathMatching("/altinn3/correspondence/api/v1/correspondence"))
 				.willReturn(aResponse()
+						.withStatus(httpStatus.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withTransformers("response-template")
 						.withBodyFile("altinn3/" + bodyFile)));
