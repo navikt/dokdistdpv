@@ -19,13 +19,13 @@ import org.springframework.stereotype.Component;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakMeldingsfeil;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.arsakVarslingsfeil;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.FinnForsendelseRequest.Oppslagsnoekkel.KONVERSASJONSID;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALL_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.HENDELSESTYPER_SOM_BEHANDLES;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_LEST_DATO_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.SEND_TIL_PRINT_HENDELSESTYPER;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateAltinnEvent;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -129,7 +129,7 @@ public class BehandleAltinnMeldingHendelseService {
 	private DistribuerTilNyKanalRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
 		return switch (eventType) {
 			case MELDING_FEILET_HENDELSESTYPE -> arsakMeldingsfeil(forsendelseId);
-			case VARSLING_FEILET_HENDELSESTYPE, OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE ->
+			case ALL_VARSLING_FEILET_HENDELSESTYPE, OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE ->
 					arsakVarslingsfeil(forsendelseId);
 			case null, default ->
 					throw new UnsupportedOperationException("Kan ikke sende til print. eventType=" + eventType);

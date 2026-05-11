@@ -35,11 +35,11 @@ import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalReq
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.MELDINGSFEIL;
 import static no.nav.dokdistdpv.consumer.rdist001.domain.DistribuerTilNyKanalRequest.VARSLINGSFEIL;
 import static no.nav.dokdistdpv.kdist003.BehandleAltinnMeldingHendelseService.FORSENDELSE_STATUS_EKSPEDERT;
+import static no.nav.dokdistdpv.kdist003.Kdist003Constants.ALL_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.MELDING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_LEST_DATO_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDERT_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE;
-import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -132,7 +132,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	static Stream<Arguments> shouldReadEventTypePublishFailedOrNotificationCreationFailedAndSendMeldingToPrint() {
 		return Stream.of(
 				Arguments.of(MELDING_FEILET_HENDELSESTYPE, MELDINGSFEIL, ARSAK_PUBLISERING_FEILET),
-				Arguments.of(VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET),
+				Arguments.of(ALL_VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET),
 				Arguments.of(OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE, VARSLINGSFEIL, ARSAK_VARSLING_FEILET)
 		);
 	}

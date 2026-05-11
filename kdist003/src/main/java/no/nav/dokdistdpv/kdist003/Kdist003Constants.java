@@ -13,7 +13,7 @@ public class Kdist003Constants {
 	public static final String MELDING_BEKREFTET_HENDELSESTYPE = "no.altinn.correspondence.correspondencereceiverconfirmed";
 	public static final String MELDING_PUBLISERT_HENDELSESTYPE = "no.altinn.correspondence.correspondencepublished";
 	public static final String MELDING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencepublishfailed";
-	public static final String VARSLING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencenotificationfailed";
+	public static final String ALL_VARSLING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencenotificationallfailed";
 	public static final String OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE = "no.altinn.correspondence.correspondencenotificationcreationfailed";
 
 	public static final Set<String> OPPDATER_LEST_DATO_HENDELSESTYPER = Set.of(
@@ -27,7 +27,7 @@ public class Kdist003Constants {
 
 	public static final Set<String> SEND_TIL_PRINT_HENDELSESTYPER = Set.of(
 			MELDING_FEILET_HENDELSESTYPE,
-			VARSLING_FEILET_HENDELSESTYPE,
+			ALL_VARSLING_FEILET_HENDELSESTYPE,
 			OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE
 	);
 
