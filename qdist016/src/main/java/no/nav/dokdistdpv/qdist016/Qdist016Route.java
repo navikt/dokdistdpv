@@ -57,21 +57,24 @@ public class Qdist016Route extends RouteBuilder {
 				.handled(true)
 				.useOriginalMessage()
 				.log(WARN, log, getForsendelseId() + "; ${exception}")
-				.to("jms:" + qdist016TekniskFeil.getQueueName());
+				.to("jms:" + qdist016TekniskFeil.getQueueName())
+				.process(new MDCRemoveProcessor());
 
 		onException(DokdistdpvFunctionalException.class, IllegalArgumentException.class)
 				.handled(true)
 				.useOriginalMessage()
 				.logStackTrace(true)
 				.log(ERROR, log, getForsendelseId() + "; ${exception}")
-				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
+				.to("jms:" + qdist016FunksjonellFeil.getQueueName())
+				.process(new MDCRemoveProcessor());
 
 		onException(AltinnException.class)
 				.handled(true)
 				.useOriginalMessage()
 				.logStackTrace(true)
 				.log(ERROR, log, format("Feil ved distribusjon av forsendelse med %s til Altinn. Feilmelding: ${exception.message};", getForsendelseId()))
-				.to("jms:" + qdist016FunksjonellFeil.getQueueName());
+				.to("jms:" + qdist016FunksjonellFeil.getQueueName())
+				.process(new MDCRemoveProcessor());
 
 		from("jms:" + qdist016.getQueueName() + "?transacted=true")
 				.autoStartup(dokdistdpvProperties.getQdist016().isAutostartup())

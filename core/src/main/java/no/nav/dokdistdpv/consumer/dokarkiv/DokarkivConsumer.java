@@ -1,6 +1,7 @@
 package no.nav.dokdistdpv.consumer.dokarkiv;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistdpv.exception.DokarkivFunctionalException;
 import no.nav.dokdistdpv.exception.DokarkivTechnicalException;
 import no.nav.dokdistdpv.properties.DokdistdpvProperties;
 import no.nav.dokdistdpv.security.AzureToken;
@@ -8,7 +9,9 @@ import no.nav.dokdistdpv.security.WebClientAzureAuthentication;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import static java.lang.String.format;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -38,7 +41,21 @@ public class DokarkivConsumer {
 				.bodyValue(oppdaterDistribusjonsinfoRequest)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(Throwable.class, err -> log.warn("Kall mot dokarkiv oppdaterDistribusjonsinfo feilet med feilmelding={}", err.getMessage()))
+				.onErrorMap(this::mapError)
 				.block();
+	}
+
+	private Throwable mapError(Throwable error) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
+			return new DokarkivFunctionalException(
+					format("Kall mot oppdaterDistribusjonsinfo feilet med status=%s, feilmelding=%s",
+							response.getStatusCode(),
+							response.getMessage()),
+					error);
+		} else {
+			return new DokarkivTechnicalException(
+					format("Kall mot oppdaterDistribusjonsinfo feilet med feilmelding=%s", error.getMessage()),
+					error);
+		}
 	}
 }

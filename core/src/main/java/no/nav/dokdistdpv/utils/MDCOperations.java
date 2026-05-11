@@ -6,6 +6,8 @@ import org.slf4j.MDC;
 import java.util.UUID;
 
 import static no.nav.dokdistdpv.utils.DokdistdpvConstant.CALL_ID;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_FORSENDELSE_ID;
+import static no.nav.dokdistdpv.utils.DokdistdpvConstant.MDC_REQUEST_ID;
 import static no.nav.dokdistdpv.utils.DokdistdpvConstant.NAV_CONSUMER_ID;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -30,15 +32,23 @@ public class MDCOperations {
 		}
 	}
 
-	public static void removeCallId() {
-		MDC.remove(CALL_ID);
-	}
-
 	public static void removeConsumerId() {
 		MDC.remove(NAV_CONSUMER_ID);
 	}
 
 	public static String getCallId() {
 		return MDC.get(CALL_ID);
+	}
+
+	public static void removeCallId() {
+		MDC.remove(CALL_ID);
+	}
+
+	public static void removeRequestId() {
+		MDC.remove(MDC_REQUEST_ID);
+	}
+
+	public static void removeForsendelseId() {
+		MDC.remove(MDC_FORSENDELSE_ID);
 	}
 }
