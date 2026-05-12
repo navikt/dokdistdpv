@@ -60,7 +60,7 @@ public class BehandleAltinnMeldingHendelseService {
 			validateCloudEvent(cloudEvent);
 
 			if (HENDELSESTYPER_SOM_BEHANDLES.contains(cloudEvent.getType())) {
-				InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(cloudEvent);
+				InternAltinnHendelse internAltinnHendelse = MapInternCloudEvent.map(cloudEvent);
 				behandleHendelse(internAltinnHendelse);
 			} else {
 				loggIngenBehandling(cloudEvent);

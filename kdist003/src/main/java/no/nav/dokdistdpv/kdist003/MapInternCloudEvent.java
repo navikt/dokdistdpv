@@ -3,7 +3,7 @@ package no.nav.dokdistdpv.kdist003;
 import no.altinn.event.domain.CloudEvent;
 import no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse;
 
-public class MapInternAltinnEvent {
+public class MapInternCloudEvent {
 
 	public static InternAltinnHendelse map(CloudEvent cloudEvent) {
 		return InternAltinnHendelse.builder()
@@ -14,6 +14,6 @@ public class MapInternAltinnEvent {
 				.build();
 	}
 
-	private MapInternAltinnEvent() {
+	private MapInternCloudEvent() {
 	}
 }
