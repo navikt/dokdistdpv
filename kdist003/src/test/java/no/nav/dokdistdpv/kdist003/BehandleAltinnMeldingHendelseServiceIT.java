@@ -1,6 +1,6 @@
 package no.nav.dokdistdpv.kdist003;
 
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.altinn.event.domain.CloudEvent;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,7 +70,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				verify(putRequestedFor(urlEqualTo(OPPDATER_FORSENDELSE_PATH))
 						.withRequestBody(matchingJsonPath("$.forsendelseId", equalTo(FORSENDELSE_ID)))
 						.withRequestBody(matchingJsonPath("$.forsendelseStatus", equalTo(FORSENDELSE_STATUS_EKSPEDERT))));
-			} catch (RuntimeException e) {
+			} catch (RuntimeException _) {
 				fail();
 			}
 		});
@@ -94,7 +94,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 			try {
 				verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
 						.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z"))));
-			} catch (RuntimeException e) {
+			} catch (RuntimeException _) {
 				fail();
 			}
 		});
@@ -123,7 +123,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 						.withRequestBody(matchingJsonPath("$.kanal", equalTo("PRINT")))
 						.withRequestBody(matchingJsonPath("$.arsak", equalTo(expectedArsak)))
 						.withRequestBody(matchingJsonPath("$.arsakBeskrivelse", equalTo(expectedArsakbeskrivelse))));
-			} catch (RuntimeException e) {
+			} catch (RuntimeException _) {
 				fail();
 			}
 		});
@@ -158,8 +158,8 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				));
 	}
 
-	AltinnEvent createMelding(String type) {
-		return AltinnEvent.builder()
+	CloudEvent createMelding(String type) {
+		return CloudEvent.builder()
 				.id(UUID.randomUUID())
 				.resourceinstance(UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d"))
 				.resource("urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost")

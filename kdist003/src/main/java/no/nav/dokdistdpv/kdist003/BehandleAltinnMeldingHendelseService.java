@@ -1,7 +1,7 @@
 package no.nav.dokdistdpv.kdist003;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.altinn.event.domain.CloudEvent;
 import no.nav.dokdistdpv.consumer.dokarkiv.DokarkivConsumer;
 import no.nav.dokdistdpv.consumer.dokarkiv.OppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistdpv.consumer.rdist001.AdministrerForsendelseConsumer;
@@ -26,7 +26,7 @@ import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPDATER_TIL_EKSPEDER
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.OPPRETTELSE_VARSLING_FEILET_HENDELSESTYPE;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.SEND_TIL_PRINT_HENDELSESTYPER;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.VARSLING_FEILET_HENDELSESTYPE;
-import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateAltinnEvent;
+import static no.nav.dokdistdpv.kdist003.Kdist003Validator.validateCloudEvent;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
@@ -50,20 +50,20 @@ public class BehandleAltinnMeldingHendelseService {
 	@KafkaListener(
 			topics = "${dokdistdpv.topic.altinn-melding-hendelse}",
 			groupId = "dokdistdpv-kdist003")
-	public void lesOgBehandleAltinnMelding(ConsumerRecord<String, AltinnEvent> altinnHendelseConsumerRecord) {
+	public void lesOgBehandleAltinnMelding(ConsumerRecord<String, CloudEvent> altinnHendelseConsumerRecord) {
 
 		try {
-			AltinnEvent altinnEvent = altinnHendelseConsumerRecord.value();
+			CloudEvent cloudEvent = altinnHendelseConsumerRecord.value();
 			log.info("kdist003 har mottatt hendelse med id={}, resourceinstance={}, type={}",
-					altinnEvent.id(), altinnEvent.resourceinstance(), altinnEvent.type());
+					cloudEvent.getId(), cloudEvent.getResourceinstance(), cloudEvent.getType());
 
-			validateAltinnEvent(altinnEvent);
+			validateCloudEvent(cloudEvent);
 
-			if (HENDELSESTYPER_SOM_BEHANDLES.contains(altinnEvent.type())) {
-				InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(altinnEvent);
+			if (HENDELSESTYPER_SOM_BEHANDLES.contains(cloudEvent.getType())) {
+				InternAltinnHendelse internAltinnHendelse = MapInternAltinnEvent.map(cloudEvent);
 				behandleHendelse(internAltinnHendelse);
 			} else {
-				loggIngenBehandling(altinnEvent);
+				loggIngenBehandling(cloudEvent);
 			}
 		} catch(KanIkkeDistribuereTilNyKanalException e) {
 			log.info("Kan ikke distribuere til ny kanal. Avslutter behandling av hendelsen", e);
@@ -122,8 +122,8 @@ public class BehandleAltinnMeldingHendelseService {
 		return isBlank(forsendelseId) ? null : administrerForsendelseConsumer.hentForsendelse(forsendelseId);
 	}
 
-	private void loggIngenBehandling(AltinnEvent altinnEvent) {
-		log.info("Hendelse med resourceinstance={}, type={} har ingen behandling", altinnEvent.resourceinstance(), altinnEvent.type());
+	private void loggIngenBehandling(CloudEvent cloudEvent) {
+		log.info("Hendelse med resourceinstance={}, type={} har ingen behandling", cloudEvent.getResourceinstance(), cloudEvent.getType());
 	}
 
 	private DistribuerTilNyKanalRequest mapDistribuerTilPrint(String eventType, Long forsendelseId) {
