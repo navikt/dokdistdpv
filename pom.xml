@@ -34,7 +34,7 @@
 		<com.ibm.mq.jakarta.client.version>9.4.5.0</com.ibm.mq.jakarta.client.version>
 		<httpclient.version>4.5.14</httpclient.version>
 		<dok-common.version>1.7.1</dok-common.version>
-		<dok-common-altinn-schemas.version>5-4359cc4</dok-common-altinn-schemas.version>
+		<dok-common-altinn-schemas.version>7-059ccb5</dok-common-altinn-schemas.version>
 		<dok-legacy-tjenestespesifikasjoner.version>41-d282678</dok-legacy-tjenestespesifikasjoner.version>
 		<jackson-databind-nullable.version>0.2.10</jackson-databind-nullable.version>
 		<commons-compress.version>1.28.0</commons-compress.version>

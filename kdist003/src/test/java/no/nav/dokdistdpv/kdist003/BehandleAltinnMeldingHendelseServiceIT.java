@@ -160,7 +160,7 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 
 	CloudEvent createMelding(String type) {
 		return CloudEvent.builder()
-				.id(UUID.randomUUID())
+				.id(UUID.randomUUID().toString())
 				.resourceinstance(UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d"))
 				.resource("urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost")
 				.source(URI.create("https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d"))
