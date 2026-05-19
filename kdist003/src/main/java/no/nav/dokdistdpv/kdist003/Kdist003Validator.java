@@ -1,33 +1,36 @@
 package no.nav.dokdistdpv.kdist003;
 
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.altinn.event.domain.CloudEvent;
 
 import static java.lang.String.format;
+import static no.nav.dokdistdpv.kdist003.CloudEventExtensions.getExtension;
 import static no.nav.dokdistdpv.kdist003.Kdist003Constants.RESOURCE;
 import static no.nav.dokdistdpv.kdist003.domain.InternAltinnHendelse.isResourceNavTaushetsbelagtpost;
 
 public class Kdist003Validator {
 
 
-	public static void validateAltinnEvent(AltinnEvent altinnEvent) {
-		if (altinnEvent == null) {
-			throw new IllegalArgumentException("altinnEvent kan ikke være null");
+	public static void validateCloudEvent(CloudEvent cloudEvent) {
+		if (cloudEvent == null) {
+			throw new IllegalArgumentException("cloudEvent kan ikke være null");
 		}
 
-		if (altinnEvent.resourceinstance() == null) {
+		String resourceinstance = getExtension(cloudEvent, "resourceinstance");
+		if (resourceinstance == null) {
 			throw new IllegalArgumentException("resourceinstance kan ikke være null");
 		}
 
-		if (!isResourceNavTaushetsbelagtpost(altinnEvent.resource())) {
-			throw new IllegalArgumentException(format("Ugyldig verdi: resource %s er ikke lik med %s", altinnEvent.resource(), RESOURCE));
+		String resource = getExtension(cloudEvent, "resource");
+		if (!isResourceNavTaushetsbelagtpost(resource)) {
+			throw new IllegalArgumentException(format("Ugyldig verdi: resource %s er ikke lik med %s", resource, RESOURCE));
 
 		}
 
-		if (altinnEvent.type() == null) {
+		if (cloudEvent.getType() == null) {
 			throw new IllegalArgumentException("type kan ikke være null");
 		}
 
-		if (altinnEvent.time() == null) {
+		if (cloudEvent.getTime() == null) {
 			throw new IllegalArgumentException("time kan ikke være null");
 		}
 	}

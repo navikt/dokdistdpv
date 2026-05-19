@@ -1,6 +1,8 @@
 package no.nav.dokdistdpv.kdist003;
 
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.altinn.event.domain.CloudEvent;
+import no.altinn.event.domain.CloudEventAttribute;
+import no.altinn.event.domain.CloudEventAttributeType;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -158,17 +161,31 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 				));
 	}
 
-	AltinnEvent createMelding(String type) {
-		return AltinnEvent.builder()
-				.id(UUID.randomUUID())
-				.resourceinstance(UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d"))
-				.resource("urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost")
-				.source(URI.create("https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d"))
-				.type(type)
-				.alternativesubject("/organisation/889640782")
-				.specversion("1.0")
-				.time(OffsetDateTime.parse("2026-04-16T09:42:29Z"))
-				.build();
+	CloudEvent createMelding(String type) {
+		CloudEvent cloudEvent = new CloudEvent();
+		cloudEvent.setId(UUID.randomUUID().toString());
+		cloudEvent.setSource(URI.create("https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d"));
+		cloudEvent.setType(type);
+		cloudEvent.setTime(OffsetDateTime.parse("2026-04-16T09:42:29Z"));
+		cloudEvent.setExtensionAttributes(List.of(
+				createExtensionAttribute("resourceinstance", "af0e7e0c-579c-4563-9398-10cdf031b80d"),
+				createExtensionAttribute("resource", "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost"),
+				createExtensionAttribute("alternativesubject", "/organisation/889640782"),
+				createExtensionAttribute("specversion", "1.0")
+		));
+		return cloudEvent;
+	}
+
+	private CloudEventAttribute createExtensionAttribute(String name, String value) {
+		CloudEventAttributeType attributeType = new CloudEventAttributeType();
+		attributeType.setName(value);
+
+		CloudEventAttribute attribute = new CloudEventAttribute();
+		attribute.setName(name);
+		attribute.setType(attributeType);
+		attribute.setIsExtension(true);
+		attribute.setIsRequired(false);
+		return attribute;
 	}
 
 	private void stubAzure() {

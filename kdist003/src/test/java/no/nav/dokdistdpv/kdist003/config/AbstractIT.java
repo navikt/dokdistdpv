@@ -2,7 +2,7 @@ package no.nav.dokdistdpv.kdist003.config;
 
 import tools.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
+import no.altinn.event.domain.CloudEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -58,8 +58,8 @@ public abstract class AbstractIT {
 	}
 
 	@SneakyThrows
-	protected void sendToInnTopic(AltinnEvent altinnEvent) {
-		kafkaTemplate.send(PRIVAT_ALTINN_MELDING_TOPIC, jsonMapper.writeValueAsString(altinnEvent))
+	protected void sendToInnTopic(CloudEvent cloudEvent) {
+		kafkaTemplate.send(PRIVAT_ALTINN_MELDING_TOPIC, jsonMapper.writeValueAsString(cloudEvent))
 				.get(10, TimeUnit.SECONDS);
 	}
 }
