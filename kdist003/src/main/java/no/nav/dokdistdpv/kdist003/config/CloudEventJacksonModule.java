@@ -3,6 +3,7 @@ package no.nav.dokdistdpv.kdist003.config;
 import no.altinn.event.domain.CloudEvent;
 import no.altinn.event.domain.CloudEventAttribute;
 import no.altinn.event.domain.CloudEventAttributeType;
+import no.altinn.event.domain.CloudEventsSpecVersion;
 import org.springframework.boot.jackson.JacksonComponent;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
@@ -62,6 +63,10 @@ public class CloudEventJacksonModule {
 				gen.writeStringProperty("dataschema", cloudEvent.getDataSchema().toString());
 			}
 
+			if (cloudEvent.getSpecVersion() != null && cloudEvent.getSpecVersion().getVersionId() != null) {
+				gen.writeStringProperty("specversion", cloudEvent.getSpecVersion().getVersionId());
+			}
+
 			if (cloudEvent.getExtensionAttributes() != null) {
 				for (CloudEventAttribute attr : cloudEvent.getExtensionAttributes()) {
 					if (attr.getName() != null && attr.getType() != null && attr.getType().getName() != null) {
@@ -106,7 +111,9 @@ public class CloudEventJacksonModule {
 			}
 
 			if (node.has("specversion")) {
-				extensionAttributes.add(createExtensionAttribute("specversion", node.get("specversion").asText()));
+				CloudEventsSpecVersion specVersion = new CloudEventsSpecVersion();
+				specVersion.setVersionId(node.get("specversion").asText());
+				cloudEvent.setSpecVersion(specVersion);
 			}
 
 			cloudEvent.setExtensionAttributes(extensionAttributes);

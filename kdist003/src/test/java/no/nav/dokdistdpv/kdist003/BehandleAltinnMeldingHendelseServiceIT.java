@@ -3,6 +3,7 @@ package no.nav.dokdistdpv.kdist003;
 import no.altinn.event.domain.CloudEvent;
 import no.altinn.event.domain.CloudEventAttribute;
 import no.altinn.event.domain.CloudEventAttributeType;
+import no.altinn.event.domain.CloudEventsSpecVersion;
 import no.nav.dokdistdpv.kdist003.config.AbstractIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -167,11 +168,13 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		cloudEvent.setSource(URI.create("https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d"));
 		cloudEvent.setType(type);
 		cloudEvent.setTime(OffsetDateTime.parse("2026-04-16T09:42:29Z"));
+		CloudEventsSpecVersion specVersion = new CloudEventsSpecVersion();
+		specVersion.setVersionId("1.0");
+		cloudEvent.setSpecVersion(specVersion);
 		cloudEvent.setExtensionAttributes(List.of(
 				createExtensionAttribute("resourceinstance", "af0e7e0c-579c-4563-9398-10cdf031b80d"),
 				createExtensionAttribute("resource", "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost"),
-				createExtensionAttribute("alternativesubject", "/organisation/889640782"),
-				createExtensionAttribute("specversion", "1.0")
+				createExtensionAttribute("alternativesubject", "/organisation/889640782")
 		));
 		return cloudEvent;
 	}
