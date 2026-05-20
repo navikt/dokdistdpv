@@ -37,7 +37,7 @@
 		<dok-legacy-tjenestespesifikasjoner.version>41-d282678</dok-legacy-tjenestespesifikasjoner.version>
 		<jackson-databind-nullable.version>0.2.10</jackson-databind-nullable.version>
 		<commons-compress.version>1.28.0</commons-compress.version>
-		<commons-io.version>2.21.0</commons-io.version>
+		<commons-io.version>2.22.0</commons-io.version>
 
 		<!-- Test -->
 		<wiremock-spring-boot.version>4.2.1</wiremock-spring-boot.version>
