@@ -17,8 +17,6 @@ public class KafkaErrorHandlerConfig {
 
 		// maxRetries=10, initialInterval=2000ms, multiplier=1.5 gir totalt ~2min 34s fra første forsøk til siste forsøk
 		var backOff = new ExponentialBackOffWithMaxRetries(10);
-		backOff.setInitialInterval(2000L);
-		backOff.setMultiplier(1.5);
 
 		var errorHandler = new DefaultErrorHandler(backOff);
 		errorHandler.addNotRetryableExceptions(DeserializationException.class);
