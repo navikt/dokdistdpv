@@ -19,6 +19,7 @@ import org.springframework.web.client.RestClient;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static no.nav.dokdistdpv.consumer.altinn3.api.correspondence.CorrespondenceErrorCodes.ATTACHMENT_IS_NOT_PUBLISHED;
@@ -82,7 +83,8 @@ public class Altinn3CorrespondenceClient {
 				.attribute(MASKINPORTEN_TARGET_SCOPES, altinn3CorrespondenceWriteScopes)
 				.accept(APPLICATION_JSON)
 				.contentType(APPLICATION_OCTET_STREAM)
-				.body(attachment)
+				.contentLength(attachment.length)
+				.body(outputStream -> new ByteArrayInputStream(attachment).transferTo(outputStream))
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (_, response) -> {
 					String feilmelding = "attachment/upload feilet med problemdetail=%s";
