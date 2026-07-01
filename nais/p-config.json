@@ -5,6 +5,8 @@
   "KAFKA_POOL": "nav-prod",
   "MIN_REPLICAS": "2",
   "MAX_REPLICAS": "4",
+  "MEMORY_LIMITS": "15Gi",
+  "MEMORY_REQUESTS": "2Gi",
   "INGRESSES": [
     "https://dokdistdpv.intern.nav.no"
   ],
