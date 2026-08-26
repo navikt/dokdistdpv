@@ -108,6 +108,7 @@ public class BehandleAltinnMeldingHendelseService {
 					OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_LEST_DATO_HENDELSESTYPER.contains(internAltinnHendelse.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
 			dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
+					.settStatusEkspedert(!FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus()))
 					.datoLest(internAltinnHendelse.time())
 					.build());
 		}
