@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
@@ -85,6 +86,30 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 	void shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato(String type) {
 		stubFinnForsendelse();
 		stubHentForsendelse("hent_forsendelse_ekspedert_response.json");
+		stubPatchOppdaterDistribusjonsinfo();
+
+		sendToInnTopic(createMelding(type));
+
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			try {
+				verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+						.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z")))
+						.withRequestBody(matchingJsonPath("$.settStatusEkspedert", equalToIgnoreCase("false"))));
+			} catch (RuntimeException e) {
+				fail();
+			}
+		});
+	}
+
+	static Stream<Arguments> shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato() {
+		return OPPDATER_LEST_DATO_HENDELSESTYPER.stream().map(Arguments::of);
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	void shouldReadEventsAndUpdateJournalpostLestDatoAndSetSettStatusEkspedert(String type) {
+		stubFinnForsendelse();
+		stubHentForsendelse();
 		stubPutOppdaterForsendelse();
 		stubPatchOppdaterDistribusjonsinfo();
 
@@ -93,14 +118,16 @@ class BehandleAltinnMeldingHendelseServiceIT extends AbstractIT {
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			try {
 				verify(patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL))
-						.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z"))));
+						.withRequestBody(matchingJsonPath("$.datoLest", equalTo("2026-04-16T09:42:29Z")))
+						.withRequestBody(matchingJsonPath("$.settStatusEkspedert", equalToIgnoreCase("true")))
+				);
 			} catch (RuntimeException e) {
 				fail();
 			}
 		});
 	}
 
-	static Stream<Arguments> shouldReadEventsConfirmedOrReadAndUpdateJournalpostLestDato() {
+	static Stream<Arguments> shouldReadEventsAndUpdateJournalpostLestDatoAndSetSettStatusEkspedert() {
 		return OPPDATER_LEST_DATO_HENDELSESTYPER.stream().map(Arguments::of);
 	}
 
