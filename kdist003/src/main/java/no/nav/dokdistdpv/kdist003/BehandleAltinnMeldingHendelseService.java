@@ -108,9 +108,14 @@ public class BehandleAltinnMeldingHendelseService {
 					OppdaterForsendelseRequest.ekspedert(hentForsendelse.forsendelseId()));
 		} else if (OPPDATER_LEST_DATO_HENDELSESTYPER.contains(internAltinnHendelse.type()) && ARKIV_SYSTEM_JOARK.equalsIgnoreCase(hentForsendelse.arkivInformasjon().arkivSystem())) {
 			dokarkivConsumer.oppdaterDistribusjonsinfo(hentForsendelse.arkivInformasjon().arkivId(), OppdaterDistribusjonsinfoRequest.builder()
+					.settStatusEkspedert(erForsendelseStatusUlikEkspedert(hentForsendelse))
 					.datoLest(internAltinnHendelse.time())
 					.build());
 		}
+	}
+
+	private static boolean erForsendelseStatusUlikEkspedert(HentForsendelseResponse hentForsendelse) {
+		return !FORSENDELSE_STATUS_EKSPEDERT.equals(hentForsendelse.forsendelseStatus());
 	}
 
 	private HentForsendelseResponse hentForsendelse(String konversasjonId) {
